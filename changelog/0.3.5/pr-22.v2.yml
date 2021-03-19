@@ -1,0 +1,4 @@
+type: fix
+fix:
+  description: Non-tag builds will no longer be published, although they will get still get sent to the sonatype staging repo.
+  links: []

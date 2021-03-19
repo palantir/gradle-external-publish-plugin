@@ -1,0 +1,4 @@
+type: fix
+fix:
+  description: Actually ensure we publish from excavator branches properly.
+  links: []

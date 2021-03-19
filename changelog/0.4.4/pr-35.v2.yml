@@ -1,0 +1,4 @@
+type: feature
+feature:
+  description: A `com.palantir.external-publish-custom` plugin to enable truly one off custom publications easily.
+  links: []

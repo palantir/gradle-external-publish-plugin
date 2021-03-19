@@ -1,0 +1,109 @@
+buildscript {
+    repositories {
+        gradlePluginPortal()
+        mavenCentral()
+        maven { url 'https://palantir.bintray.com/releases' }
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.palantir.javaformat:gradle-palantir-java-format:1.0.1'
+        classpath 'com.palantir.gradle.consistentversions:gradle-consistent-versions:1.28.0'
+        classpath 'com.palantir.baseline:gradle-baseline-java:3.76.0'
+        classpath 'com.palantir.gradle.gitversion:gradle-git-version:0.12.3'
+        classpath 'gradle.plugin.org.inferred:gradle-processors:3.3.0'
+    }
+}
+
+plugins {
+    id 'com.gradle.plugin-publish' version '0.13.0'
+    id 'maven-publish'
+}
+
+repositories {
+    mavenCentral()
+    maven { url 'https://palantir.bintray.com/releases' }
+    jcenter()
+}
+
+apply plugin: 'com.palantir.git-version'
+
+group 'com.palantir.gradle.externalpublish'
+version System.env.CIRCLE_TAG ?: gitVersion()
+
+apply plugin: 'com.palantir.baseline'
+apply plugin: 'java-gradle-plugin'
+apply plugin: 'groovy'
+apply plugin: 'org.inferred.processors'
+apply plugin: 'com.palantir.consistent-versions'
+
+dependencies {
+    implementation 'io.github.gradle-nexus:publish-plugin'
+    implementation 'com.netflix.nebula:nebula-publishing-plugin'
+    implementation 'com.netflix.nebula:gradle-info-plugin'
+
+    testImplementation gradleTestKit()
+    testImplementation 'com.netflix.nebula:nebula-test'
+    testImplementation 'org.rauschig:jarchivelib'
+}
+
+sourceCompatibility = 1.8
+
+gradlePlugin {
+    plugins {
+        def pluginDescription = { artifactType ->
+            "Publishes ${artifactType} from a Palantir open source project to an open source package repository"
+        }
+
+        externalPublish {
+            id = 'com.palantir.external-publish'
+            displayName = 'Palantir External Publish Plugin'
+            description = pluginDescription('artifacts')
+            implementationClass = 'com.palantir.gradle.externalpublish.ExternalPublishRootPlugin'
+        }
+        externalPublishJar {
+            id = 'com.palantir.external-publish-jar'
+            displayName = 'Palantir External Publish Jar Plugin'
+            description = pluginDescription('jars')
+            implementationClass = 'com.palantir.gradle.externalpublish.ExternalPublishJarPlugin'
+        }
+        externalPublishDist {
+            id = 'com.palantir.external-publish-dist'
+            displayName = 'Palantir External Publish Dist Plugin'
+            description = pluginDescription('distributions')
+            implementationClass = 'com.palantir.gradle.externalpublish.ExternalPublishDistPlugin'
+        }
+        externalPublishApplicationDist {
+            id = 'com.palantir.external-publish-application-dist'
+            displayName = 'Palantir External Publish Application Dist Plugin'
+            description = pluginDescription('application distributions')
+            implementationClass = 'com.palantir.gradle.externalpublish.ExternalPublishApplicationDistPlugin'
+        }
+        externalPublishConjure {
+            id = 'com.palantir.external-publish-conjure'
+            displayName = 'Palantir External Publish Conjure Plugin'
+            description = pluginDescription('conjure IR')
+            implementationClass = 'com.palantir.gradle.externalpublish.ExternalPublishConjurePlugin'
+        }
+        externalPublishCustom {
+            id = 'com.palantir.external-publish-custom'
+            displayName = 'Palantir External Publish Custom Plugin'
+            description = pluginDescription('custom gradle publications')
+            implementationClass = 'com.palantir.gradle.externalpublish.ExternalPublishCustomPlugin'
+        }
+    }
+}
+
+pluginBundle {
+    website = 'https://github.com/palantir/gradle-external-publish-plugin'
+    vcsUrl = 'https://github.com/palantir/gradle-external-publish-plugin'
+    description = 'Publishes Palantir open source projects to open source package repositories'
+    tags = ['publishing']
+}
+
+tasks.publish.dependsOn tasks.publishPlugins
+publishPlugins.onlyIf {
+    versionDetails().isCleanTag
+}
+project.ext.'gradle.publish.key' = System.env["GRADLE_KEY"]
+project.ext.'gradle.publish.secret' = System.env["GRADLE_SECRET"]

@@ -1,0 +1,4 @@
+type: fix
+fix:
+  description: Applying the `com.palantir.external-publish` plugin to the root is no longer required if another specific publish plugin is applied to the root.
+  links: []

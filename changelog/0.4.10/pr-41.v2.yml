@@ -1,0 +1,4 @@
+type: feature
+feature:
+  description: A `com.palantir.external-publish-conjure` plugin is available to easily publish conjure.
+  links: []

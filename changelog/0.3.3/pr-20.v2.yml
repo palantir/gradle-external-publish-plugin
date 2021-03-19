@@ -1,0 +1,4 @@
+type: fix
+fix:
+  description: Use correct environment variable for the GPG signing key password
+  links: []

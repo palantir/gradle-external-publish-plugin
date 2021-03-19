@@ -1,0 +1,4 @@
+type: feature
+feature:
+  description: Added a `com.palantir.external-publish-gradle-plugin` to make Gradle publishing simple, and removed a bug where Gradle plugin descriptors would be published to Sonatype when using the `external-publish-jar` plugin in a Gradle plugin project.
+  links: []

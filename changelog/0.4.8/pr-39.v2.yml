@@ -1,0 +1,4 @@
+type: fix
+fix:
+  description: Ensure `check` task exists when required.
+  links: []

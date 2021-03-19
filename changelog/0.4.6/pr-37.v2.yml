@@ -1,0 +1,4 @@
+type: fix
+fix:
+  description: Bump up client timeout for Nexus client to 20 mins to avoid timing out when closing repo.
+  links: []

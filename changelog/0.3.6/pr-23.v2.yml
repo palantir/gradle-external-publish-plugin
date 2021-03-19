@@ -1,0 +1,4 @@
+type: feature
+feature:
+  description: New `com.palantir.external-publish-dist` plugin for general dists that do not use the `application` plugin.
+  links: []
