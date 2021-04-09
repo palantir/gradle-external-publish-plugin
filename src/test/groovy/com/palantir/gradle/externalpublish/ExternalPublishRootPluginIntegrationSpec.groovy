@@ -256,7 +256,7 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
         ArchiverFactory.createArchiver(ArchiveFormat.TAR)
                 .extract(new GzipCompressorInputStream(new FileInputStream(applicationDistTar)), extracted)
         new File(extracted, "application-dist-version/bin/application-dist.bat").text
-                .contains('set CLASSPATH=%APP_HOME%\\lib\\\r\n')
+                .contains('set CLASSPATH=%APP_HOME%\\lib\\*\r\n')
 
         verifyPomFile(gnv, 'application-dist')
     }
