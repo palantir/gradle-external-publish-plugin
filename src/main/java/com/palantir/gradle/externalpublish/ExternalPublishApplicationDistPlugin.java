@@ -59,7 +59,7 @@ public class ExternalPublishApplicationDistPlugin implements Plugin<Project> {
             CreateStartScripts createStartScripts = (CreateStartScripts) task;
 
             String windowsScript = GFileUtils.readFile(createStartScripts.getWindowsScript());
-            String modified = windowsScript.replaceFirst("(set CLASSPATH=%APP_HOME%\\\\lib\\\\).*", "$1");
+            String modified = windowsScript.replaceFirst("(set CLASSPATH=%APP_HOME%\\\\lib\\\\).*", "$1*");
             GFileUtils.writeFile(modified, createStartScripts.getWindowsScript(), StandardCharsets.UTF_8.toString());
         }
     }
