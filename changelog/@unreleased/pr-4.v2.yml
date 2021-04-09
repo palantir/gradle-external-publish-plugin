@@ -1,0 +1,6 @@
+type: fix
+fix:
+  description: Fix Windows start scripts to have a valid classpath
+  links:
+  - https://github.com/palantir/gradle-external-publish-plugin/pull/4
+  - https://github.com/palantir/gradle-external-publish-plugin/pull/4
