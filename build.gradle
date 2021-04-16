@@ -17,6 +17,7 @@ buildscript {
     }
 }
 
+apply plugin: 'com.palantir.external-publish'
 apply plugin: 'com.palantir.external-publish-gradle-plugin'
 // So we get publishToMavenLocal
 apply plugin: 'maven-publish'
