@@ -111,7 +111,7 @@ final class ExternalPublishBasePlugin implements Plugin<Project> {
 
     private void alwaysRunPublishIfOnExcavatorUpgradeBranch() {
         boolean isPublishingExcavatorBranch = EnvironmentVariables.envVarOrFromTestingProperty(project, "CIRCLE_BRANCH")
-                .filter(name -> PUBLISHING_UPGRADE_EXCAVATOR_BRANCH_NAMES.contains(name))
+                .filter(PUBLISHING_UPGRADE_EXCAVATOR_BRANCH_NAMES::contains)
                 .isPresent();
 
         // If we're upgrading publishing logic via excavator using a known excavator PR, ensure we test the publish
