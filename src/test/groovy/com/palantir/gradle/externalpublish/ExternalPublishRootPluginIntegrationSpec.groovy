@@ -41,7 +41,6 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
                 repositories {
                     gradlePluginPortal()
                     mavenCentral()
-                    maven { url 'https://dl.bintray.com/palantir/releases/' }
                 }
                 
                 dependencies {
@@ -58,7 +57,6 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
                 
                 repositories {
                     mavenCentral()
-                    maven { url 'https://dl.bintray.com/palantir/releases/' }
                 }
             }
         '''.stripIndent()
