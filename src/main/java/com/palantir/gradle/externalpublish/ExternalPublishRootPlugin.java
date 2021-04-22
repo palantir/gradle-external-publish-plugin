@@ -19,6 +19,7 @@ package com.palantir.gradle.externalpublish;
 import io.github.gradlenexus.publishplugin.NexusPublishExtension;
 import io.github.gradlenexus.publishplugin.NexusPublishPlugin;
 import java.time.Duration;
+import java.util.Optional;
 import org.gradle.api.GradleException;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
@@ -61,11 +62,13 @@ public class ExternalPublishRootPlugin implements Plugin<Project> {
                 .configure(CircleCiContextDeadlineAvoidance::avoidHittingCircleCiContextDeadlineByPrintingEverySoOften);
     }
 
-    public final TaskProvider<?> sonatypeFinishingTask() {
+    public final Optional<TaskProvider<?>> sonatypeFinishingTask() {
         boolean isTagBuild = EnvironmentVariables.isTagBuild(rootProject);
 
-        return rootProject
-                .getTasks()
-                .named(isTagBuild ? "closeAndReleaseSonatypeStagingRepository" : "closeSonatypeStagingRepository");
+        if (!isTagBuild) {
+            return Optional.empty();
+        }
+
+        return Optional.of(rootProject.getTasks().named("closeAndReleaseSonatypeStagingRepository"));
     }
 }

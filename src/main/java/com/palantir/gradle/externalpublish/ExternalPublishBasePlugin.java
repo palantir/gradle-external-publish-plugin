@@ -16,11 +16,9 @@
 
 package com.palantir.gradle.externalpublish;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import nebula.plugin.info.scm.ScmInfoPlugin;
 import nebula.plugin.publishing.maven.MavenBasePublishPlugin;
@@ -36,14 +34,10 @@ import org.gradle.api.publish.maven.MavenPublication;
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin;
 import org.gradle.api.publish.maven.tasks.PublishToMavenRepository;
 import org.gradle.api.publish.tasks.GenerateModuleMetadata;
-import org.gradle.language.base.plugins.LifecycleBasePlugin;
 import org.gradle.plugins.signing.SigningExtension;
 import org.gradle.plugins.signing.SigningPlugin;
 
 final class ExternalPublishBasePlugin implements Plugin<Project> {
-    private static final Set<String> PUBLISHING_UPGRADE_EXCAVATOR_BRANCH_NAMES = Collections.unmodifiableSet(
-            Stream.of("roomba/external-publish-plugin-migration", "roomba/latest-oss-publishing")
-                    .collect(Collectors.toSet()));
 
     private final Set<String> sonatypePublicationNames = new HashSet<>();
 
@@ -55,7 +49,6 @@ final class ExternalPublishBasePlugin implements Plugin<Project> {
 
         applyPublishingPlugins();
         linkWithRootProject();
-        alwaysRunPublishIfOnExcavatorUpgradeBranch();
         disableOtherPublicationsFromPublishingToSonatype();
         disableModuleMetadata();
 
@@ -91,8 +84,10 @@ final class ExternalPublishBasePlugin implements Plugin<Project> {
                         "The com.palantir.external-publish plugin must be applied to the root project "
                                 + "*before* this plugin is evaluated"));
 
-        project.getTasks().named("publish").configure(publish -> {
-            publish.dependsOn(rootPlugin.sonatypeFinishingTask());
+        rootPlugin.sonatypeFinishingTask().ifPresent(sonatypeFinishingTask -> {
+            project.getTasks().named("publish").configure(publish -> {
+                publish.dependsOn(sonatypeFinishingTask);
+            });
         });
     }
 
@@ -107,32 +102,6 @@ final class ExternalPublishBasePlugin implements Plugin<Project> {
                 return true;
             });
         });
-    }
-
-    private void alwaysRunPublishIfOnExcavatorUpgradeBranch() {
-        boolean isPublishingExcavatorBranch = EnvironmentVariables.envVarOrFromTestingProperty(project, "CIRCLE_BRANCH")
-                .filter(PUBLISHING_UPGRADE_EXCAVATOR_BRANCH_NAMES::contains)
-                .isPresent();
-
-        // If we're upgrading publishing logic via excavator using a known excavator PR, ensure we test the publish
-        // even if the publish command is not called. However, don't force every single PR to do the publish that
-        // takes ages.
-        if (isPublishingExcavatorBranch) {
-            project.afterEvaluate(_ignored -> {
-                project.getPluginManager().apply(LifecycleBasePlugin.class);
-
-                // Use the check task as many OSS don't use circle-templates so can't depend on say publishToMavenLocal
-                // being run.
-                project.getTasks().named(LifecycleBasePlugin.CHECK_TASK_NAME, checkTask -> {
-                    // We use publishToSonatype rather than each individual publish task we know about to exercise the
-                    // sonatype publishes of other maven publications (like gradle plugin descriptors) that cause
-                    // errors.
-                    checkTask.dependsOn(
-                            project.getTasks().named("publishToSonatype"),
-                            project.getRootProject().getTasks().named("closeSonatypeStagingRepository"));
-                });
-            });
-        }
     }
 
     private void disableModuleMetadata() {
