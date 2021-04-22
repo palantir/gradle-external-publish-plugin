@@ -356,12 +356,13 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
     }
 
     @Unroll
-    def 'publish task for #type depends on publishing to sonatype'() {
+    def 'publish task for #type depends on publishing to sonatype on tag builds'() {
         setup:
         publishProject(type)
 
         when:
-        def stdout = runSuccessfullyWithSigning('--dry-run', ":${type}:publish").standardOutput
+        def stdout = runSuccessfullyWithSigning(
+                '--dry-run', "-P__TESTING_CIRCLE_TAG=tag", ":${type}:publish").standardOutput
 
         then:
         stdout.find ":${type}:publish.*PublicationToSonatypeRepository SKIPPED"
