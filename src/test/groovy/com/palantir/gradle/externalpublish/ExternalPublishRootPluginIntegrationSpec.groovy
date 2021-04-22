@@ -407,7 +407,7 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
         errorMessage.contains 'dirty'
     }
 
-    def 'does close but not release staging sonatype repo if not on a tag build'() {
+    def 'does not close or release staging sonatype repo if not on a tag build'() {
         setup:
         allPublishProjects()
 
@@ -415,7 +415,7 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
         def stdout = runSuccessfullyWithSigning('publish', '--dry-run').standardOutput
 
         then:
-        stdout.contains(':closeSonatypeStagingRepository')
+        !stdout.contains(':closeSonatypeStagingRepository')
         !stdout.contains(':releaseSonatypeStagingRepository')
     }
 
@@ -429,25 +429,6 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
         then:
         stdout.contains(':closeSonatypeStagingRepository')
         stdout.contains(':releaseSonatypeStagingRepository')
-    }
-
-    def 'runs publish tasks as a dependency of check on upgrade excavator'() {
-        setup:
-        allPublishProjects()
-
-        when:
-        def stdout = runSuccessfullyWithSigning(
-                '--dry-run', '-P__TESTING_CIRCLE_BRANCH=roomba/external-publish-plugin-migration', 'check')
-                .standardOutput
-
-        println stdout
-
-        then:
-        stdout.contains(':initializeSonatypeStagingRepository SKIPPED')
-        stdout.contains(':jar:publishMavenPublicationToSonatypeRepository SKIPPED')
-        stdout.contains(':dist:publishDistPublicationToSonatypeRepository SKIPPED')
-        stdout.contains(':closeSonatypeStagingRepository SKIPPED')
-        !stdout.contains(':releaseSonatypeStagingRepository SKIPPED')
     }
 
     def 'does not run publish tasks as a dependency of check on normal run'() {

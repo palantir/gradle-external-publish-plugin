@@ -16,11 +16,9 @@
 
 package com.palantir.gradle.externalpublish;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import nebula.plugin.info.scm.ScmInfoPlugin;
 import nebula.plugin.publishing.maven.MavenBasePublishPlugin;
@@ -36,7 +34,6 @@ import org.gradle.api.publish.maven.MavenPublication;
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin;
 import org.gradle.api.publish.maven.tasks.PublishToMavenRepository;
 import org.gradle.api.publish.tasks.GenerateModuleMetadata;
-import org.gradle.language.base.plugins.LifecycleBasePlugin;
 import org.gradle.plugins.signing.SigningExtension;
 import org.gradle.plugins.signing.SigningPlugin;
 
@@ -87,8 +84,10 @@ final class ExternalPublishBasePlugin implements Plugin<Project> {
                         "The com.palantir.external-publish plugin must be applied to the root project "
                                 + "*before* this plugin is evaluated"));
 
-        project.getTasks().named("publish").configure(publish -> {
-            publish.dependsOn(rootPlugin.sonatypeFinishingTask());
+        rootPlugin.sonatypeFinishingTask().ifPresent(sonatypeFinishingTask -> {
+            project.getTasks().named("publish").configure(publish -> {
+                publish.dependsOn(sonatypeFinishingTask);
+            });
         });
     }
 
