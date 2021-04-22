@@ -98,7 +98,7 @@ final class ExternalPublishBasePlugin implements Plugin<Project> {
                     boolean isSonatypePublish = sonatypePublicationNames.contains(
                             publishTask.getPublication().getName());
 
-                    return isSonatypePublish && EnvironmentVariables.isTagBuild(project) ;
+                    return isSonatypePublish && EnvironmentVariables.isTagBuild(project);
                 }
 
                 return true;
