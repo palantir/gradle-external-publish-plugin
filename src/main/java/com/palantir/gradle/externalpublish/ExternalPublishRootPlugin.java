@@ -53,6 +53,7 @@ public class ExternalPublishRootPlugin implements Plugin<Project> {
         TaskProvider<?> checkVersion = rootProject.getTasks().register("checkVersion", CheckVersionTask.class);
 
         rootProject.getTasks().named("initializeSonatypeStagingRepository").configure(initialize -> {
+            initialize.onlyIf(_ignored -> EnvironmentVariables.isTagBuild(rootProject));
             initialize.dependsOn(checkSigningKey, checkVersion);
         });
 

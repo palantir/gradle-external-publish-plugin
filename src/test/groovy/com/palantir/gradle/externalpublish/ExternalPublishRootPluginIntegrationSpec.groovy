@@ -408,17 +408,22 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
         errorMessage.contains 'dirty'
     }
 
-    def 'does not close or release staging sonatype repo if not on a tag build'() {
+    def 'does not init, close, release or publish to staging sonatype repo if not on a tag build'() {
         // See https://issues.sonatype.org/browse/OSSRH-65523?focusedCommentId=1046249#comment-1046249 for why we can't
         // exercise the publishing codepath on develop - basically it overwhelms Sonatype and harms other users (note
         // there is no per user rate limiting, so it's possible for us to harm everyone else).
         setup:
         allPublishProjects()
+        disableAllTaskActions()
 
         when:
-        def stdout = runSuccessfullyWithSigning('publish', '--dry-run').standardOutput
+        def stdout = runSuccessfullyWithSigning('publish').standardOutput
 
         then:
+        stdout.contains(':initializeSonatypeStagingRepository SKIPPED')
+        PUBLISH_PROJECT_TYPES.forEach {type ->
+            stdout.find(":${type}:publish.*PublicationToSonatypeRepository SKIPPED")
+        }
         !stdout.contains(':closeSonatypeStagingRepository')
         !stdout.contains(':releaseSonatypeStagingRepository')
     }
@@ -426,11 +431,16 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
     def 'does release staging sonatype repo if on a tag build'() {
         setup:
         allPublishProjects()
+        disableAllTaskActions()
 
         when:
-        def stdout = runSuccessfullyWithSigning('-P__TESTING_CIRCLE_TAG=tag', 'publish', '--dry-run').standardOutput
+        def stdout = runSuccessfullyWithSigning('-P__TESTING_CIRCLE_TAG=tag', 'publish').standardOutput
 
         then:
+        stdout.contains(':initializeSonatypeStagingRepository UP-TO-DATE')
+        PUBLISH_PROJECT_TYPES.forEach {type ->
+            stdout.find(":${type}:publish.*PublicationToSonatypeRepository UP-TO-DATE")
+        }
         stdout.contains(':closeSonatypeStagingRepository')
         stdout.contains(':releaseSonatypeStagingRepository')
     }

@@ -95,8 +95,10 @@ final class ExternalPublishBasePlugin implements Plugin<Project> {
         project.getTasks().withType(PublishToMavenRepository.class).configureEach(publishTask -> {
             publishTask.onlyIf(_ignored -> {
                 if (publishTask.getRepository().getName().equals("sonatype")) {
-                    return sonatypePublicationNames.contains(
+                    boolean isSonatypePublish = sonatypePublicationNames.contains(
                             publishTask.getPublication().getName());
+
+                    return isSonatypePublish && EnvironmentVariables.isTagBuild(project) ;
                 }
 
                 return true;
