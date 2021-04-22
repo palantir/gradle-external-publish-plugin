@@ -1,0 +1,5 @@
+type: fix
+fix:
+  description: Ensure a Sonatype staging repo is not created at all or published to when on a branch.
+  links:
+  - https://github.com/palantir/gradle-external-publish-plugin/pull/12
