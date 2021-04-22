@@ -408,6 +408,9 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
     }
 
     def 'does not close or release staging sonatype repo if not on a tag build'() {
+        // See https://issues.sonatype.org/browse/OSSRH-65523?focusedCommentId=1046249#comment-1046249 for why we can't
+        // exercise the publishing codepath on develop - basically it overwhelms Sonatype and harms other users (note
+        // there is no per user rate limiting, so it's possible for us to harm everyone else).
         setup:
         allPublishProjects()
 
