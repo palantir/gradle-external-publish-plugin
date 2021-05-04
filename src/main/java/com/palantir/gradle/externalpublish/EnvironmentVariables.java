@@ -25,6 +25,10 @@ final class EnvironmentVariables {
     static Optional<String> envVarOrFromTestingProperty(Project project, String envVar) {
         Optional<String> fromTestingProp = Optional.ofNullable((String) project.findProperty("__TESTING_" + envVar));
 
+        if (fromTestingProp.equals(Optional.of("unset"))) {
+            return Optional.empty();
+        }
+
         if (fromTestingProp.isPresent()) {
             return fromTestingProp;
         }

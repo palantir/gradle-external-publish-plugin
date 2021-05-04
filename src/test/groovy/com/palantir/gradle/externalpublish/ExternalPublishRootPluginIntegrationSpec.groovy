@@ -378,7 +378,12 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
         publishProject(type)
 
         when:
-        def errorMessage = runTasksWithFailure(":${type}:publish").failure.cause.cause.message
+        def errorMessage = runTasksWithFailure(
+                        ":${type}:publish",
+                        '-P__TESTING_GPG_SIGNING_KEY=unset',
+                        '-P__TESTING_GPG_SIGNING_KEY_ID=unset',
+                        '-P__TESTING_GPG_SIGNING_KEY_PASSWORD=unset',
+                ).failure.cause.cause.message
 
         then:
         errorMessage == 'The required environment variables to sign the release could not be found. ' +
