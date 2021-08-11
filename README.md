@@ -85,6 +85,16 @@ Apply the `com.palantir.external-publish-conjure` to publish conjure IR JSON. Re
 apply plugin: 'com.palantir.external-publish-conjure'
 ```
 
+## Publishing Gradle Plugins
+
+Apply the `com.palantir.external-publish-gradle-plugin` to publish gradle plugins to the gradle plugin repository.
+Note that the standard `pluginBundle` and `gradlePlugin` configuration is still necessary. See the documentation on
+[publishing gradle plugins](https://docs.gradle.org/current/userguide/publishing_gradle_plugins.html#configure_the_plugin_publishing_plugin).
+
+```gradle
+apply plugin: 'com.palantir.external-publish-gradle-plugin'
+```
+
 ## Publishing custom publications
 
 **PLEASE THINK BEFORE USING THIS! If you end up copying and pasting the same code to enable publishing of a type of artifact, please make a plugin in this repo instead. It makes it far, far easier to maintain.**
