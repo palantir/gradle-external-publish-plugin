@@ -1,0 +1,5 @@
+type: fix
+fix:
+  description: Republish to fix internal build issue on tag builds.
+  links:
+  - https://github.com/palantir/gradle-external-publish-plugin/pull/49

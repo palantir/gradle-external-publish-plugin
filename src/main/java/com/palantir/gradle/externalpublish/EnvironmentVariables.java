@@ -23,14 +23,10 @@ final class EnvironmentVariables {
     private EnvironmentVariables() {}
 
     static Optional<String> envVarOrFromTestingProperty(Project project, String envVar) {
-        Optional<String> fromTestingProp = Optional.ofNullable((String) project.findProperty("__TESTING_" + envVar));
+        boolean isTesting = Optional.ofNullable((String) project.findProperty("__TESTING")).equals(Optional.of("true"));
 
-        if (fromTestingProp.equals(Optional.of("unset"))) {
-            return Optional.empty();
-        }
-
-        if (fromTestingProp.isPresent()) {
-            return fromTestingProp;
+        if (isTesting) {
+            return Optional.ofNullable((String) project.findProperty("__TESTING_" + envVar));
         }
 
         return Optional.ofNullable(System.getenv(envVar));
