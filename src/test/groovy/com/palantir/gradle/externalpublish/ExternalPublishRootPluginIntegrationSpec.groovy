@@ -376,12 +376,7 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
         publishProject(type)
 
         when:
-        def errorMessage = runTasksWithFailure(
-                        ":${type}:publish",
-                        '-P__TESTING_GPG_SIGNING_KEY=unset',
-                        '-P__TESTING_GPG_SIGNING_KEY_ID=unset',
-                        '-P__TESTING_GPG_SIGNING_KEY_PASSWORD=unset',
-                ).failure.cause.cause.message
+        def errorMessage = runTasksWithFailure(":${type}:publish").failure.cause.cause.message
 
         then:
         errorMessage == 'The required environment variables to sign the release could not be found. ' +
@@ -396,11 +391,7 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
         allPublishProjects()
 
         when:
-        def executionResult = runTasksSuccessfully('publish',
-                '-P__TESTING_GPG_SIGNING_KEY=unset',
-                '-P__TESTING_GPG_SIGNING_KEY_ID=unset',
-                '-P__TESTING_GPG_SIGNING_KEY_PASSWORD=unset',
-                '-P__TESTING_CIRCLE_PR_USERNAME=forkyfork')
+        def executionResult = runTasksSuccessfully('publish', '-P__TESTING_CIRCLE_PR_USERNAME=forkyfork')
 
         then:
         executionResult.wasSkipped('checkSigningKey')
@@ -586,8 +577,7 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
         return runTasksMethod(Stream.concat(Stream.of(
                     '-P__TESTING_GPG_SIGNING_KEY_ID=4F33301C',
                     "-P__TESTING_GPG_SIGNING_KEY=${Base64.getEncoder().encodeToString(privateKey)}",
-                    '-P__TESTING_GPG_SIGNING_KEY_PASSWORD=password',
-                    '-P__TESTING_CIRCLE_TAG=').map({ it.toString() }),
+                    '-P__TESTING_GPG_SIGNING_KEY_PASSWORD=password').map({ it.toString() }),
                 Stream.of(tasks)).toArray({new String[it] }))
     }
 
@@ -601,5 +591,10 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
         }
 
         return executionResult
+    }
+
+    @Override
+    ExecutionResult runTasks(String... tasks) {
+        return super.runTasks(Stream.concat(Stream.of("-P__TESTING=true"), Stream.of(tasks)).toArray({ new String[it] }))
     }
 }
