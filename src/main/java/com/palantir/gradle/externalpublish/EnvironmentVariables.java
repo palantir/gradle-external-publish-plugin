@@ -41,4 +41,8 @@ final class EnvironmentVariables {
                 .filter(tag -> !tag.isEmpty())
                 .isPresent();
     }
+
+    static boolean isFork(Project project) {
+        return envVarOrFromTestingProperty(project, "CIRCLE_PR_USERNAME").isPresent();
+    }
 }

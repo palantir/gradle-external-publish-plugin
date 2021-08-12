@@ -49,12 +49,17 @@ public class ExternalPublishRootPlugin implements Plugin<Project> {
             repo.getPassword().set(System.getenv("SONATYPE_PASSWORD"));
         });
 
-        TaskProvider<?> checkSigningKey = rootProject.getTasks().register("checkSigningKey", CheckSigningKeyTask.class);
+        TaskProvider<?> checkSigningKeyTask = rootProject
+                .getTasks()
+                .register("checkSigningKey", CheckSigningKeyTask.class, checkSigningKey -> {
+                    checkSigningKey.onlyIf(_ignored -> !EnvironmentVariables.isFork(rootProject));
+                });
+
         TaskProvider<?> checkVersion = rootProject.getTasks().register("checkVersion", CheckVersionTask.class);
 
         rootProject.getTasks().named("initializeSonatypeStagingRepository").configure(initialize -> {
             initialize.onlyIf(_ignored -> EnvironmentVariables.isTagBuild(rootProject));
-            initialize.dependsOn(checkSigningKey, checkVersion);
+            initialize.dependsOn(checkSigningKeyTask, checkVersion);
         });
 
         rootProject
