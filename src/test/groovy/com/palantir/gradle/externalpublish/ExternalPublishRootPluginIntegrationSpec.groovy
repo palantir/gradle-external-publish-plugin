@@ -41,7 +41,6 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
                 repositories {
                     gradlePluginPortal()
                     mavenCentral()
-                    maven { url 'https://dl.bintray.com/palantir/releases/' }
                 }
                 
                 dependencies {
@@ -58,7 +57,6 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
                 
                 repositories {
                     mavenCentral()
-                    maven { url 'https://dl.bintray.com/palantir/releases/' }
                 }
             }
         '''.stripIndent()
@@ -391,6 +389,21 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
 
         where:
         type << SONATYPE_PROJECT_TYPES
+    }
+
+    def 'does not check for signing keys when on a fork'() {
+        setup:
+        allPublishProjects()
+
+        when:
+        def executionResult = runTasksSuccessfully('publish',
+                '-P__TESTING_GPG_SIGNING_KEY=unset',
+                '-P__TESTING_GPG_SIGNING_KEY_ID=unset',
+                '-P__TESTING_GPG_SIGNING_KEY_PASSWORD=unset',
+                '-P__TESTING_CIRCLE_PR_USERNAME=forkyfork')
+
+        then:
+        executionResult.wasSkipped('checkSigningKey')
     }
 
     def 'fails build if publish if version ends in dirty'() {
