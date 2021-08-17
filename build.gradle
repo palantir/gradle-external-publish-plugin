@@ -42,6 +42,7 @@ dependencies {
     implementation 'com.netflix.nebula:gradle-info-plugin'
 
     testImplementation gradleTestKit()
+    testImplementation 'com.google.guava:guava'
     testImplementation 'com.netflix.nebula:nebula-test'
     testImplementation 'org.rauschig:jarchivelib'
 }
@@ -99,3 +100,8 @@ pluginBundle {
     description = 'Publishes Palantir open source projects to open source package repositories'
     tags = ['publishing']
 }
+
+tasks.named('processResources').configure {
+    duplicatesStrategy 'include'
+}
+
