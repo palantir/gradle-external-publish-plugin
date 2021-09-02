@@ -1,7 +1,7 @@
 com.netflix.nebula:nebula-test = 10.0.0
 io.github.gradle-nexus:publish-plugin = 1.1.0
 com.netflix.nebula:nebula-publishing-plugin = 17.3.3
-com.netflix.nebula:gradle-info-plugin = 10.0.0
+com.netflix.nebula:gradle-info-plugin = 10.1.2
 org.rauschig:jarchivelib = 1.1.0
 com.google.guava:guava = 30.1.1-jre
 
