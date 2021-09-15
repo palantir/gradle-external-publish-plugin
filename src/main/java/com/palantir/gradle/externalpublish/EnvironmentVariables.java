@@ -23,7 +23,8 @@ final class EnvironmentVariables {
     private EnvironmentVariables() {}
 
     static Optional<String> envVarOrFromTestingProperty(Project project, String envVar) {
-        boolean isTesting = Optional.ofNullable((String) project.findProperty("__TESTING")).equals(Optional.of("true"));
+        boolean isTesting =
+                Optional.ofNullable((String) project.findProperty("__TESTING")).equals(Optional.of("true"));
 
         if (isTesting) {
             return Optional.ofNullable((String) project.findProperty("__TESTING_" + envVar));
