@@ -3,7 +3,7 @@ io.github.gradle-nexus:publish-plugin = 1.1.0
 com.netflix.nebula:nebula-publishing-plugin = 18.0.0
 com.netflix.nebula:gradle-info-plugin = 11.0.0
 org.rauschig:jarchivelib = 1.1.0
-com.google.guava:guava = 30.1.1-jre
+com.google.guava:guava = 31.0-jre
 
 # conflict resolution
 com.google.code.findbugs:jsr305 = 3.0.2
