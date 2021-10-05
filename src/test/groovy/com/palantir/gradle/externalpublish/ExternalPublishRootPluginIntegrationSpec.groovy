@@ -285,7 +285,8 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
         when:
         runSuccessfullyWithSigning(
                 'publishFooPublicationToTestRepoRepository',
-                'publishBarPublicationToTestRepoRepository')
+                'publishBarPublicationToTestRepoRepository',
+                '--warning-mode=none')
 
 
         then:
