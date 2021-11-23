@@ -38,6 +38,7 @@ apply plugin: 'java-gradle-plugin'
 apply plugin: 'groovy'
 apply plugin: 'org.inferred.processors'
 apply plugin: 'com.palantir.consistent-versions'
+apply plugin: 'com.palantir.baseline-java-versions'
 
 dependencies {
     implementation 'io.github.gradle-nexus:publish-plugin'
@@ -50,7 +51,6 @@ dependencies {
     testImplementation 'org.rauschig:jarchivelib'
 }
 
-sourceCompatibility = 1.8
 
 gradlePlugin {
     plugins {
@@ -106,5 +106,9 @@ pluginBundle {
 
 tasks.named('processResources').configure {
     duplicatesStrategy 'include'
+}
+
+javaVersions {
+    libraryTarget = 11
 }
 
