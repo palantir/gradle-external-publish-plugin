@@ -51,7 +51,7 @@ final class ExternalPublishBasePlugin implements Plugin<Project> {
         linkWithRootProject();
         disableOtherPublicationsFromPublishingToSonatype();
         // TODO(fwindheuser): Temporarily disable publishing module metadata.
-        // See TODO
+        // See: https://github.com/palantir/gradle-external-publish-plugin/pull/130
         disableModuleMetadata();
 
         // Sonatype requires we set a description on the pom, but the maven plugin will overwrite anything we set on
