@@ -1,0 +1,5 @@
+type: improvement
+improvement:
+  description: Disable publishing Gradle module metadata
+  links:
+  - https://github.com/palantir/gradle-external-publish-plugin/pull/130
