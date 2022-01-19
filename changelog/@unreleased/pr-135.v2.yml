@@ -1,0 +1,5 @@
+type: improvement
+improvement:
+  description: Re-enable gradle module metadata
+  links:
+  - https://github.com/palantir/gradle-external-publish-plugin/pull/135
