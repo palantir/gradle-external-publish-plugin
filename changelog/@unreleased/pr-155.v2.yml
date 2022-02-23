@@ -1,0 +1,6 @@
+type: improvement
+improvement:
+  description: Opt out of gradle module metadata to resolve issues with error-prone
+    dependency versions
+  links:
+  - https://github.com/palantir/gradle-external-publish-plugin/pull/155
