@@ -33,6 +33,7 @@ import org.gradle.api.publish.PublishingExtension;
 import org.gradle.api.publish.maven.MavenPublication;
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin;
 import org.gradle.api.publish.maven.tasks.PublishToMavenRepository;
+import org.gradle.api.publish.tasks.GenerateModuleMetadata;
 import org.gradle.plugins.signing.SigningExtension;
 import org.gradle.plugins.signing.SigningPlugin;
 
@@ -49,6 +50,7 @@ final class ExternalPublishBasePlugin implements Plugin<Project> {
         applyPublishingPlugins();
         linkWithRootProject();
         disableOtherPublicationsFromPublishingToSonatype();
+        disableModuleMetadata();
 
         // Sonatype requires we set a description on the pom, but the maven plugin will overwrite anything we set on
         // pom object. So we set the description on the project if it is not set, which the maven plugin reads from.
@@ -102,6 +104,13 @@ final class ExternalPublishBasePlugin implements Plugin<Project> {
                 return true;
             });
         });
+    }
+
+    private void disableModuleMetadata() {
+        // Turning off module metadata so that all consumers just use regular POMs
+        project.getTasks()
+                .withType(GenerateModuleMetadata.class)
+                .configureEach(generateModuleMetadata -> generateModuleMetadata.setEnabled(false));
     }
 
     public void addPublication(String publicationName, Action<MavenPublication> publicationConfiguration) {
