@@ -1,7 +1,7 @@
 buildscript {
     repositories {
-        gradlePluginPortal()
-        mavenCentral()
+        gradlePluginPortal() { metadataSources { mavenPom(); ignoreGradleMetadataRedirection() } }
+        mavenCentral() { metadataSources { mavenPom(); ignoreGradleMetadataRedirection() } }
     }
 
     dependencies {
@@ -25,7 +25,7 @@ apply plugin: 'maven-publish'
 
 repositories {
     gradlePluginPortal()
-    mavenCentral()
+    mavenCentral() { metadataSources { mavenPom(); ignoreGradleMetadataRedirection() } }
 }
 
 apply plugin: 'com.palantir.git-version'
