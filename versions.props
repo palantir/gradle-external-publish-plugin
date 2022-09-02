@@ -2,11 +2,11 @@ com.fasterxml.jackson.core:jackson-databind = 2.13.2.1
 com.netflix.nebula:nebula-test = 10.0.0
 io.github.gradle-nexus:publish-plugin = 1.1.0
 com.netflix.nebula:nebula-publishing-plugin = 18.4.0
-com.netflix.nebula:gradle-info-plugin = 11.3.3
+com.netflix.nebula:gradle-info-plugin = 11.4.1
 org.rauschig:jarchivelib = 1.1.0
 com.google.guava:guava = 31.1-jre
 
 # conflict resolution
 com.google.code.findbugs:jsr305 = 3.0.2
 com.google.errorprone:error_prone_annotations = 2.11.0
-org.checkerframework:checker-qual = 3.24.0
+org.checkerframework:checker-qual = 3.25.0
