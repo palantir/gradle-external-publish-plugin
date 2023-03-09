@@ -17,6 +17,9 @@
 package com.palantir.gradle.externalpublish
 
 import com.google.common.collect.ImmutableList
+
+import java.util.jar.Attributes
+import java.util.jar.JarFile
 import java.util.stream.Stream
 import nebula.test.IntegrationSpec
 import nebula.test.functional.ExecutionResult
@@ -205,8 +208,9 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
 
         then:
         def gnv = new File(mavenRepoDir, 'group/jar/version')
+        def jarFile = new File(gnv, 'jar-version.jar')
 
-        new File(gnv, 'jar-version.jar').exists()
+        jarFile.exists()
         new File(gnv, 'jar-version.jar.asc').exists()
         new File(gnv, 'jar-version-javadoc.jar').exists()
         new File(gnv, 'jar-version-javadoc.jar.asc').exists()
@@ -214,6 +218,39 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
         new File(gnv, 'jar-version-sources.jar.asc').exists()
 
         verifyPomFile(gnv, 'jar')
+        getJarVersionFromManifest(jarFile) == 'version'
+    }
+
+    def 'can publish jar to local maven repo on disk with version declared after plugin'() {
+        setup:
+        publishJar()
+        new File(projectDir, 'jar/build.gradle') << """
+        version = 'updated'
+        """.stripIndent()
+        def mavenRepoDir = testingMavenRepo()
+
+        when:
+        runSuccessfullyWithSigning('publishMavenPublicationToTestRepoRepository')
+
+        then:
+        def gnv = new File(mavenRepoDir, 'group/jar/updated')
+        def jarFile = new File(gnv, 'jar-updated.jar')
+
+        jarFile.exists()
+        new File(gnv, 'jar-updated.jar.asc').exists()
+        new File(gnv, 'jar-updated-javadoc.jar').exists()
+        new File(gnv, 'jar-updated-javadoc.jar.asc').exists()
+        new File(gnv, 'jar-updated-sources.jar').exists()
+        new File(gnv, 'jar-updated-sources.jar.asc').exists()
+
+        verifyPomFile(gnv, 'jar', 'updated')
+        getJarVersionFromManifest(jarFile) == 'updated'
+    }
+
+    private static String getJarVersionFromManifest(File jarFile) {
+        try (JarFile jar = new JarFile(jarFile)) {
+            return jar.manifest.mainAttributes.getValue(Attributes.Name.IMPLEMENTATION_VERSION)
+        }
     }
 
     def 'can publish dist to local maven repo on disk'() {
@@ -299,11 +336,15 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
     }
 
     void verifyPomFile(File gnv, String name) {
-        def pom = new XmlParser().parse(new File(gnv, "${name}-version.pom"))
+        verifyPomFile(gnv, name, 'version')
+    }
+
+    void verifyPomFile(File gnv, String name, String version) {
+        def pom = new XmlParser().parse(new File(gnv, "${name}-${version}.pom"))
 
         pom.groupId.text() == 'group'
         pom.name.text() == name
-        pom.version.text() == 'version'
+        pom.version.text() == version
         // Sonatype requires a description
         !pom.description.text().isEmpty()
         pom.url.text().endsWith 'gradle-external-publish-plugin'

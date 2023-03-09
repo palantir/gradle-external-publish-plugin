@@ -1,0 +1,6 @@
+type: fix
+fix:
+  description: Update the jar Implementation-Version lazily to avoid a race between
+    project initialization and application of the publishing plugin.
+  links:
+  - https://github.com/palantir/gradle-external-publish-plugin/pull/291
