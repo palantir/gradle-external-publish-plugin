@@ -17,6 +17,7 @@
 package com.palantir.gradle.externalpublish;
 
 import java.util.Collections;
+import org.gradle.api.Action;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.JavaLibraryPlugin;
@@ -37,8 +38,15 @@ public class ExternalPublishJarPlugin implements Plugin<Project> {
     private static void configureJars(Project project) {
         project.getPluginManager().apply(JavaLibraryPlugin.class);
 
-        project.getTasks().withType(Jar.class).named("jar").configure(jar -> {
-            jar.getManifest().attributes(Collections.singletonMap("Implementation-Version", project.getVersion()));
+        // Update the manifest Implementation-Version attribute after the project is evaluated, otherwise
+        // project version information may not be available yet.
+        project.afterEvaluate(new Action<Project>() {
+            @Override
+            public void execute(Project proj) {
+                proj.getTasks().withType(Jar.class).named("jar").configure(jar -> {
+                    jar.getManifest().attributes(Collections.singletonMap("Implementation-Version", proj.getVersion()));
+                });
+            }
         });
 
         JavaPluginExtension javaPluginExtension = project.getExtensions().getByType(JavaPluginExtension.class);
