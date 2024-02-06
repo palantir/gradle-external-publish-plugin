@@ -1,4 +1,4 @@
-# Run ./gradlew --write-locks to regenerate this file
+# Run ./gradlew writeVersionsLock to regenerate this file
 com.googlecode.javaewah:JavaEWAH:1.1.12 (1 constraints: 750eee5e)
 com.jcraft:jsch.agentproxy.connector-factory:0.0.7 (1 constraints: 920c0b02)
 com.jcraft:jsch.agentproxy.core:0.0.7 (6 constraints: 64657639)
