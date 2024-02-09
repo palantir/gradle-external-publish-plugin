@@ -49,7 +49,11 @@ public class ExternalPublishGradlePluginPlugin implements Plugin<Project> {
         EnvironmentVariables envVars = OurEnvironmentVariables.environmentVariables(project);
 
         ExtraPropertiesExtension extraProperties = project.getExtensions().getExtraProperties();
-        extraProperties.set("gradle.publish.key", envVars.envVarOrFromTestingProperty("GRADLE_KEY").getOrNull());
-        extraProperties.set("gradle.publish.secret", envVars.envVarOrFromTestingProperty("GRADLE_SECRET").getOrNull());
+        extraProperties.set(
+                "gradle.publish.key",
+                envVars.envVarOrFromTestingProperty("GRADLE_KEY").getOrNull());
+        extraProperties.set(
+                "gradle.publish.secret",
+                envVars.envVarOrFromTestingProperty("GRADLE_SECRET").getOrNull());
     }
 }

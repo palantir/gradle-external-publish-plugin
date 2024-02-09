@@ -48,8 +48,12 @@ public class ExternalPublishRootPlugin implements Plugin<Project> {
         publishExtension.getRepositories().sonatype(repo -> {
             EnvironmentVariables envVars = OurEnvironmentVariables.environmentVariables(rootProject);
 
-            repo.getUsername().set(envVars.envVarOrFromTestingProperty("SONATYPE_USERNAME").getOrNull());
-            repo.getPassword().set(envVars.envVarOrFromTestingProperty("SONATYPE_USERNAME").getOrNull());
+            repo.getUsername()
+                    .set(envVars.envVarOrFromTestingProperty("SONATYPE_USERNAME")
+                            .getOrNull());
+            repo.getPassword()
+                    .set(envVars.envVarOrFromTestingProperty("SONATYPE_USERNAME")
+                            .getOrNull());
         });
 
         TaskProvider<?> checkSigningKeyTask = rootProject
