@@ -591,6 +591,31 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
         executionResult.success
     }
 
+    def 'runs publishToMavenLocal on build when local or on circle node 0'() {
+        setup:
+        publishProject('jar', '.')
+
+        when: 'on circle node 0 - should run pTML'
+        def stdout = runTasksSuccessfully('build', '--dry-run',
+                '-P__TESTING_CIRCLE_NODE_INDEX=0').standardOutput
+
+        then:
+        stdout.contains(':publishMavenPublicationToMavenLocal SKIPPED')
+
+        when: 'on circle node 1 - should not run pTML'
+        stdout = runTasksSuccessfully('build', '--dry-run',
+                '-P__TESTING_CIRCLE_NODE_INDEX=1').standardOutput
+
+        then:
+        !stdout.contains(':publishMavenPublicationToMavenLocal SKIPPED')
+
+        when: 'locally - should not run pTML'
+        stdout = runTasksSuccessfully('build', '--dry-run').standardOutput
+
+        then:
+        stdout.contains(':publishMavenPublicationToMavenLocal SKIPPED')
+    }
+
     private void disableAllTaskActions() {
         buildFile << '''
             allprojects {
