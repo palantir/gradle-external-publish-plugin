@@ -49,6 +49,7 @@ dependencies {
     implementation 'io.github.gradle-nexus:publish-plugin'
     implementation 'com.netflix.nebula:nebula-publishing-plugin'
     implementation 'com.netflix.nebula:gradle-info-plugin'
+    implementation 'com.palantir.gradle.utils:environment-variables'
 
     testImplementation gradleTestKit()
     testImplementation 'com.google.guava:guava'

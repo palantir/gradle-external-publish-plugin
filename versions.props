@@ -5,6 +5,7 @@ com.netflix.nebula:nebula-publishing-plugin = 20.0.0
 com.netflix.nebula:gradle-info-plugin = 12.0.1
 org.rauschig:jarchivelib = 1.1.0
 com.google.guava:guava = 31.1-jre
+com.palantir.gradle.utils:environment-variables = 0.7.0
 
 # conflict resolution
 com.google.code.findbugs:jsr305 = 3.0.2

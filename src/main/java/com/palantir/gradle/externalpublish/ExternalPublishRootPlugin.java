@@ -16,6 +16,7 @@
 
 package com.palantir.gradle.externalpublish;
 
+import com.palantir.gradle.utils.environmentvariables.EnvironmentVariables;
 import io.github.gradlenexus.publishplugin.NexusPublishExtension;
 import io.github.gradlenexus.publishplugin.NexusPublishPlugin;
 import java.time.Duration;
@@ -45,20 +46,22 @@ public class ExternalPublishRootPlugin implements Plugin<Project> {
         publishExtension.getClientTimeout().set(Duration.ofMinutes(25));
 
         publishExtension.getRepositories().sonatype(repo -> {
-            repo.getUsername().set(System.getenv("SONATYPE_USERNAME"));
-            repo.getPassword().set(System.getenv("SONATYPE_PASSWORD"));
+            EnvironmentVariables envVars = OurEnvironmentVariables.environmentVariables(rootProject);
+
+            repo.getUsername().set(envVars.envVarOrFromTestingProperty("SONATYPE_USERNAME").getOrNull());
+            repo.getPassword().set(envVars.envVarOrFromTestingProperty("SONATYPE_USERNAME").getOrNull());
         });
 
         TaskProvider<?> checkSigningKeyTask = rootProject
                 .getTasks()
                 .register("checkSigningKey", CheckSigningKeyTask.class, checkSigningKey -> {
-                    checkSigningKey.onlyIf(_ignored -> !EnvironmentVariables.isFork(rootProject));
+                    checkSigningKey.onlyIf(_ignored -> !OurEnvironmentVariables.isFork(rootProject));
                 });
 
         TaskProvider<?> checkVersion = rootProject.getTasks().register("checkVersion", CheckVersionTask.class);
 
         rootProject.getTasks().named("initializeSonatypeStagingRepository").configure(initialize -> {
-            initialize.onlyIf(_ignored -> EnvironmentVariables.isTagBuild(rootProject));
+            initialize.onlyIf(_ignored -> OurEnvironmentVariables.isTagBuild(rootProject));
             initialize.dependsOn(checkSigningKeyTask, checkVersion);
         });
 
@@ -69,7 +72,7 @@ public class ExternalPublishRootPlugin implements Plugin<Project> {
     }
 
     public final Optional<TaskProvider<?>> sonatypeFinishingTask() {
-        boolean isTagBuild = EnvironmentVariables.isTagBuild(rootProject);
+        boolean isTagBuild = OurEnvironmentVariables.isTagBuild(rootProject);
 
         if (!isTagBuild) {
             return Optional.empty();
