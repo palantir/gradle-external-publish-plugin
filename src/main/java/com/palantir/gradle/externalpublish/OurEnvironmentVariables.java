@@ -16,21 +16,18 @@
 
 package com.palantir.gradle.externalpublish;
 
+import com.palantir.gradle.utils.environmentvariables.EnvironmentVariables;
 import java.util.Optional;
 import org.gradle.api.Project;
 
-final class EnvironmentVariables {
-    private EnvironmentVariables() {}
+final class OurEnvironmentVariables {
+    private OurEnvironmentVariables() {}
 
     static Optional<String> envVarOrFromTestingProperty(Project project, String envVar) {
-        boolean isTesting =
-                Optional.ofNullable((String) project.findProperty("__TESTING")).equals(Optional.of("true"));
+        EnvironmentVariables environmentVariables = environmentVariables(project);
 
-        if (isTesting) {
-            return Optional.ofNullable((String) project.findProperty("__TESTING_" + envVar));
-        }
-
-        return Optional.ofNullable(System.getenv(envVar));
+        return Optional.ofNullable(
+                environmentVariables.envVarOrFromTestingProperty(envVar).getOrNull());
     }
 
     static boolean isTagBuild(Project project) {
@@ -41,5 +38,9 @@ final class EnvironmentVariables {
 
     static boolean isFork(Project project) {
         return envVarOrFromTestingProperty(project, "CIRCLE_PR_USERNAME").isPresent();
+    }
+
+    static EnvironmentVariables environmentVariables(Project project) {
+        return project.getObjects().newInstance(EnvironmentVariables.class);
     }
 }
