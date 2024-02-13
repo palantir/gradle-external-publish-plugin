@@ -52,7 +52,7 @@ public class ExternalPublishRootPlugin implements Plugin<Project> {
                     .set(envVars.envVarOrFromTestingProperty("SONATYPE_USERNAME")
                             .getOrNull());
             repo.getPassword()
-                    .set(envVars.envVarOrFromTestingProperty("SONATYPE_USERNAME")
+                    .set(envVars.envVarOrFromTestingProperty("SONATYPE_PASSWORD")
                             .getOrNull());
         });
 
