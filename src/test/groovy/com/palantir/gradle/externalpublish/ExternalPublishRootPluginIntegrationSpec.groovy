@@ -18,6 +18,7 @@ package com.palantir.gradle.externalpublish
 
 import com.google.common.collect.ImmutableList
 
+import java.nio.file.Path
 import java.util.jar.Attributes
 import java.util.jar.JarFile
 import java.util.stream.Stream
@@ -47,7 +48,7 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
                 }
                 
                 dependencies {
-                    classpath 'com.gradle.publish:plugin-publish-plugin:0.13.0'
+                    classpath 'com.gradle.publish:plugin-publish-plugin:1.2.1'
                     classpath 'com.palantir.gradle.conjure:gradle-conjure:5.2.0'
                 }
             }
@@ -120,13 +121,16 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
 
         if (type == 'gradle-plugin') {
             subprojectBuildGradle << '''
+                apply plugin: 'com.palantir.external-publish-jar'
                 apply plugin: 'com.gradle.plugin-publish'
                 
                 gradlePlugin {
                     plugins {
-                        test {
-                            id = 'test-plugin'
-                            implementationClass = 'test.TestPlugin'
+                        testPlugin {
+                            id = 'com.palantir.testplugin'
+                            implementationClass = 'com.palantir.external.TestPlugin'
+                            displayName = 'TestPlugin Display'
+                            description = 'TestPlugin Description'
                         }
                     }
                 }
@@ -140,12 +144,14 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
             '''.stripIndent()
 
             writeJavaSourceFile('''
+                package com.palantir.external;
+                
                 import org.gradle.api.Plugin;
                 import org.gradle.api.Project;
-                class TestPlugin extends Plugin<Project> {
+                public final class TestPlugin implements Plugin<Project> {
                     public void apply(Project project) { }
                 }
-            '''.stripIndent(), 'src/main/java/test/TestPlugin.java')
+            '''.stripIndent(), subprojectDir)
         }
 
         if (type == 'conjure') {
@@ -527,6 +533,22 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
         stdout.contains(':gradle-plugin:publishPlugins SKIPPED')
     }
 
+    def 'fixes gradle#26091' () {
+        setup:
+        publishGradlePlugin()
+
+        when:
+        ExecutionResult result = runSuccessfullyWithSigning('-P__TESTING_CIRCLE_TAG=tag', 'publishToMavenLocal', "--info", "--warning-mode=fail")
+
+        then:
+        result.success
+        result.wasExecuted(":gradle-plugin:signPluginMavenPublication")
+        result.wasExecuted(":gradle-plugin:publishPluginMavenPublicationToMavenLocal")
+        result.wasExecuted(":gradle-plugin:signMavenPublication")
+        result.wasExecuted(":gradle-plugin:publishMavenPublicationToMavenLocal")
+        !result.standardError.contains("Gradle detected a problem")
+    }
+
     def 'publishes gradle plugins on publish on tag build'() {
         setup:
         publishGradlePlugin()
@@ -554,7 +576,7 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
 
         then:
         stdout.contains(':gradle-plugin:publishPluginMavenPublicationToSonatypeRepository SKIPPED')
-        stdout.contains(':gradle-plugin:publishTestPluginMarkerMavenPublicationToSonatypeRepository SKIPPED')
+        stdout.contains(':gradle-plugin:publishTestPluginPluginMarkerMavenPublicationToSonatypeRepository SKIPPED')
         stdout.contains(':gradle-plugin:publishMavenPublicationToSonatypeRepository UP-TO-DATE')
         stdout.contains(':gradle-plugin:publishPlugins UP-TO-DATE')
     }
