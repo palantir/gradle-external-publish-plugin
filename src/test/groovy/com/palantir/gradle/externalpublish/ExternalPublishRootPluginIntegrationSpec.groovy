@@ -126,7 +126,7 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
                 
                 gradlePlugin {
                     plugins {
-                        testPlugin {
+                        test {
                             id = 'com.palantir.testplugin'
                             implementationClass = 'com.palantir.external.TestPlugin'
                             displayName = 'TestPlugin Display'
@@ -576,7 +576,7 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
 
         then:
         stdout.contains(':gradle-plugin:publishPluginMavenPublicationToSonatypeRepository SKIPPED')
-        stdout.contains(':gradle-plugin:publishTestPluginPluginMarkerMavenPublicationToSonatypeRepository SKIPPED')
+        stdout.contains(':gradle-plugin:publishTestPluginMarkerMavenPublicationToSonatypeRepository SKIPPED')
         stdout.contains(':gradle-plugin:publishMavenPublicationToSonatypeRepository UP-TO-DATE')
         stdout.contains(':gradle-plugin:publishPlugins UP-TO-DATE')
     }
