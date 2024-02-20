@@ -31,6 +31,7 @@ public class ExternalPublishGradlePluginPlugin implements Plugin<Project> {
         project.getPluginManager().apply("java-gradle-plugin");
         // So we can get the publish task
         project.getPluginManager().apply("publishing");
+        project.getPluginManager().apply(ExternalPublishBasePlugin.class);
 
         try {
             project.getPluginManager().apply("com.gradle.plugin-publish");
