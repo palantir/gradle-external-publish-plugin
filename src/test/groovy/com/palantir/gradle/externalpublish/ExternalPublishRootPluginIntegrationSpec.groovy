@@ -121,8 +121,6 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
 
         if (type == 'gradle-plugin') {
             subprojectBuildGradle << '''
-                apply plugin: 'com.palantir.external-publish-gradle-plugin'
-                
                 gradlePlugin {
                     plugins {
                         test {
@@ -133,14 +131,7 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
                         }
                     }
                 }
-                
-                pluginBundle {
-                    website = 'https://example.com/'
-                    vcsUrl = 'https://example.com/'
-                    description = 'Test'
-                    tags = ['testing']
-                }
-            '''.stripIndent()
+            '''.stripIndent(true)
 
             writeJavaSourceFile('''
                 package com.palantir.external;
@@ -545,7 +536,6 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
         ExecutionResult result = runSuccessfullyWithSigning('-P__TESTING_CIRCLE_TAG=tag', 'publishToMavenLocal')
 
         then:
-        result.success
         result.wasExecuted(":gradle-plugin:publishPluginMavenPublicationToMavenLocal")
         result.wasExecuted(":gradle-plugin:signMavenPublication")
         result.wasExecuted(":gradle-plugin:publishMavenPublicationToMavenLocal")
