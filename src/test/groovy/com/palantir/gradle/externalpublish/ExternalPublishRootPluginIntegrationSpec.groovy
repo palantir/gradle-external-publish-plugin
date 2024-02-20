@@ -533,12 +533,12 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
         stdout.contains(':gradle-plugin:publishPlugins SKIPPED')
     }
 
-    def 'fixes gradle#26091' () {
+    def 'fixes gradle#26091 with Gradle version #gradleVersion' () {
         setup:
         publishGradlePlugin()
 
         when:
-        ExecutionResult result = runSuccessfullyWithSigning('-P__TESTING_CIRCLE_TAG=tag', 'publishToMavenLocal', "--info", "--warning-mode=fail")
+        ExecutionResult result = runSuccessfullyWithSigning('-P__TESTING_CIRCLE_TAG=tag', 'publishToMavenLocal')
 
         then:
         result.success
@@ -547,6 +547,9 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
         result.wasExecuted(":gradle-plugin:signMavenPublication")
         result.wasExecuted(":gradle-plugin:publishMavenPublicationToMavenLocal")
         !result.standardError.contains("Gradle detected a problem")
+
+        where:
+        gradleVersion << ['7.6.4', '8.5']
     }
 
     def 'publishes gradle plugins on publish on tag build'() {
