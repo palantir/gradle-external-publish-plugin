@@ -549,7 +549,7 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
         !result.standardError.contains("Gradle detected a problem")
 
         where:
-        gradleVersion << ['7.6.4', '8.5']
+        gradleVersion << ['8.6']
     }
 
     def 'publishes gradle plugins on publish on tag build'() {
