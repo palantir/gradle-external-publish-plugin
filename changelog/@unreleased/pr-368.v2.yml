@@ -1,0 +1,5 @@
+type: fix
+fix:
+  description: AbstractPublishToMaven tasks depend on signing tasks
+  links:
+  - https://github.com/palantir/gradle-external-publish-plugin/pull/368

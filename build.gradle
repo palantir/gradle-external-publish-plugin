@@ -119,3 +119,7 @@ javaVersions {
     runtime = 17
 }
 
+tasks.named('test') {
+    systemProperty 'ignoreDeprecations', 'true'
+}
+

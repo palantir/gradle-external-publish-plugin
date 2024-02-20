@@ -32,11 +32,13 @@ import org.gradle.api.publish.Publication;
 import org.gradle.api.publish.PublishingExtension;
 import org.gradle.api.publish.maven.MavenPublication;
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin;
+import org.gradle.api.publish.maven.tasks.AbstractPublishToMaven;
 import org.gradle.api.publish.maven.tasks.PublishToMavenLocal;
 import org.gradle.api.publish.maven.tasks.PublishToMavenRepository;
 import org.gradle.api.publish.tasks.GenerateModuleMetadata;
 import org.gradle.api.tasks.TaskCollection;
 import org.gradle.language.base.plugins.LifecycleBasePlugin;
+import org.gradle.plugins.signing.Sign;
 import org.gradle.plugins.signing.SigningExtension;
 import org.gradle.plugins.signing.SigningPlugin;
 
@@ -55,6 +57,7 @@ final class ExternalPublishBasePlugin implements Plugin<Project> {
         disableOtherPublicationsFromPublishingToSonatype();
         disableModuleMetadata();
         publishToMavenLocalAsPartOfBuild();
+        addSignPublishDependency();
 
         // Sonatype requires we set a description on the pom, but the maven plugin will overwrite anything we set on
         // pom object. So we set the description on the project if it is not set, which the maven plugin reads from.
@@ -173,6 +176,16 @@ final class ExternalPublishBasePlugin implements Plugin<Project> {
             SigningExtension signing = project.getExtensions().getByType(SigningExtension.class);
             signing.useInMemoryPgpKeys(gpgSigningKey.keyId(), gpgSigningKey.key(), gpgSigningKey.password());
             signing.sign(publication);
+        });
+    }
+
+    private void addSignPublishDependency() {
+        // TODO(gradle#26091): Fix Gradle warning about signing tasks using publishing task outputs without explicit.
+        // see: https://github.com/gradle/gradle/issues/26091
+        project.getPluginManager().withPlugin("signing", _plugin -> {
+            project.getTasks().withType(AbstractPublishToMaven.class).configureEach(publishTask -> {
+                publishTask.dependsOn(project.getTasks().withType(Sign.class));
+            });
         });
     }
 
