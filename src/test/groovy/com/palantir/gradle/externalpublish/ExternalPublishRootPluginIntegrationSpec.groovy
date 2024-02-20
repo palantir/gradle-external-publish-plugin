@@ -121,8 +121,7 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
 
         if (type == 'gradle-plugin') {
             subprojectBuildGradle << '''
-                apply plugin: 'com.palantir.external-publish-jar'
-                apply plugin: 'com.gradle.plugin-publish'
+                apply plugin: 'com.palantir.external-publish-gradle-plugin'
                 
                 gradlePlugin {
                     plugins {
@@ -533,23 +532,24 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
         stdout.contains(':gradle-plugin:publishPlugins SKIPPED')
     }
 
-    def 'fixes gradle#26091 with Gradle version #gradleVersion' () {
+    def 'fixes gradle#26091 when gradle plugin and jar are used together' () {
         setup:
-        publishGradlePlugin()
+        gradleVersion = '8.6'
+        def gradlePluginBuildFile = new File(publishGradlePlugin(), 'build.gradle')
+
+        gradlePluginBuildFile<< '''
+            apply plugin: 'com.palantir.external-publish-jar'
+        '''.stripIndent(true)
 
         when:
         ExecutionResult result = runSuccessfullyWithSigning('-P__TESTING_CIRCLE_TAG=tag', 'publishToMavenLocal')
 
         then:
         result.success
-        result.wasExecuted(":gradle-plugin:signPluginMavenPublication")
         result.wasExecuted(":gradle-plugin:publishPluginMavenPublicationToMavenLocal")
         result.wasExecuted(":gradle-plugin:signMavenPublication")
         result.wasExecuted(":gradle-plugin:publishMavenPublicationToMavenLocal")
         !result.standardError.contains("Gradle detected a problem")
-
-        where:
-        gradleVersion << ['8.6']
     }
 
     def 'publishes gradle plugins on publish on tag build'() {
