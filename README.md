@@ -12,7 +12,7 @@ Ensure you apply the `com.palantir.external-publish` to the root project:
 
 ```gradle
 plugins {
-    id 'com.palantir.external-publish' version '<latest version>
+    id 'com.palantir.external-publish' version '<latest version>'
 }
 ```
 
