@@ -16,6 +16,7 @@
 
 package com.palantir.gradle.externalpublish;
 
+import com.palantir.gradle.utils.environmentvariables.EnvironmentVariables;
 import org.gradle.api.GradleException;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
@@ -30,6 +31,7 @@ public class ExternalPublishGradlePluginPlugin implements Plugin<Project> {
         project.getPluginManager().apply("java-gradle-plugin");
         // So we can get the publish task
         project.getPluginManager().apply("publishing");
+        project.getPluginManager().apply(ExternalPublishBasePlugin.class);
 
         try {
             project.getPluginManager().apply("com.gradle.plugin-publish");
@@ -42,11 +44,17 @@ public class ExternalPublishGradlePluginPlugin implements Plugin<Project> {
         project.getTasks().named("publish").configure(publish -> publish.dependsOn(publishPluginsTask));
 
         publishPluginsTask.configure(publishPlugins -> {
-            publishPlugins.onlyIf(_ignored -> EnvironmentVariables.isTagBuild(project));
+            publishPlugins.onlyIf(_ignored -> OurEnvironmentVariables.isTagBuild(project));
         });
 
+        EnvironmentVariables envVars = OurEnvironmentVariables.environmentVariables(project);
+
         ExtraPropertiesExtension extraProperties = project.getExtensions().getExtraProperties();
-        extraProperties.set("gradle.publish.key", System.getenv("GRADLE_KEY"));
-        extraProperties.set("gradle.publish.secret", System.getenv("GRADLE_SECRET"));
+        extraProperties.set(
+                "gradle.publish.key",
+                envVars.envVarOrFromTestingProperty("GRADLE_KEY").getOrNull());
+        extraProperties.set(
+                "gradle.publish.secret",
+                envVars.envVarOrFromTestingProperty("GRADLE_SECRET").getOrNull());
     }
 }

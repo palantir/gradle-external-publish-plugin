@@ -1,0 +1,7 @@
+type: fix
+fix:
+  description: Run `publishToMavenLocal` as a dependency of `build` to ensure publishable
+    artifacts are built as part of PR builds and do not spuriously merge and then
+    break publishing on develop.
+  links:
+  - https://github.com/palantir/gradle-external-publish-plugin/pull/362

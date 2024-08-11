@@ -58,10 +58,10 @@ final class GpgSigningKey {
     }
 
     private static Optional<String> gpgKeyEnvVar(Project project, String envVar) {
-        Optional<String> value = EnvironmentVariables.envVarOrFromTestingProperty(project, envVar);
+        Optional<String> value = OurEnvironmentVariables.envVarOrFromTestingProperty(project, envVar);
 
-        boolean onCi = System.getenv("CI") != null;
-        if (onCi && !value.isPresent()) {
+        boolean onCi = OurEnvironmentVariables.isTagBuild(project);
+        if (onCi && value.isEmpty()) {
             log.warn("Could not find environment variable {}, signing will be disabled", envVar);
         }
 

@@ -18,6 +18,7 @@ package com.palantir.gradle.externalpublish
 
 import com.google.common.collect.ImmutableList
 
+import java.nio.file.Path
 import java.util.jar.Attributes
 import java.util.jar.JarFile
 import java.util.stream.Stream
@@ -47,7 +48,7 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
                 }
                 
                 dependencies {
-                    classpath 'com.gradle.publish:plugin-publish-plugin:0.13.0'
+                    classpath 'com.gradle.publish:plugin-publish-plugin:1.2.1'
                     classpath 'com.palantir.gradle.conjure:gradle-conjure:5.2.0'
                 }
             }
@@ -120,32 +121,27 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
 
         if (type == 'gradle-plugin') {
             subprojectBuildGradle << '''
-                apply plugin: 'com.gradle.plugin-publish'
-                
                 gradlePlugin {
                     plugins {
                         test {
-                            id = 'test-plugin'
-                            implementationClass = 'test.TestPlugin'
+                            id = 'com.palantir.testplugin'
+                            implementationClass = 'com.palantir.external.TestPlugin'
+                            displayName = 'TestPlugin Display'
+                            description = 'TestPlugin Description'
                         }
                     }
                 }
-                
-                pluginBundle {
-                    website = 'https://example.com/'
-                    vcsUrl = 'https://example.com/'
-                    description = 'Test'
-                    tags = ['testing']
-                }
-            '''.stripIndent()
+            '''.stripIndent(true)
 
             writeJavaSourceFile('''
+                package com.palantir.external;
+                
                 import org.gradle.api.Plugin;
                 import org.gradle.api.Project;
-                class TestPlugin extends Plugin<Project> {
+                public final class TestPlugin implements Plugin<Project> {
                     public void apply(Project project) { }
                 }
-            '''.stripIndent(), 'src/main/java/test/TestPlugin.java')
+            '''.stripIndent(), subprojectDir)
         }
 
         if (type == 'conjure') {
@@ -527,6 +523,25 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
         stdout.contains(':gradle-plugin:publishPlugins SKIPPED')
     }
 
+    def 'fixes gradle#26091 when gradle plugin and jar are used together' () {
+        setup:
+        gradleVersion = '8.6'
+        def gradlePluginBuildFile = new File(publishGradlePlugin(), 'build.gradle')
+
+        gradlePluginBuildFile<< '''
+            apply plugin: 'com.palantir.external-publish-jar'
+        '''.stripIndent(true)
+
+        when:
+        ExecutionResult result = runSuccessfullyWithSigning('-P__TESTING_CIRCLE_TAG=tag', 'publishToMavenLocal')
+
+        then:
+        result.wasExecuted(":gradle-plugin:publishPluginMavenPublicationToMavenLocal")
+        result.wasExecuted(":gradle-plugin:signMavenPublication")
+        result.wasExecuted(":gradle-plugin:publishMavenPublicationToMavenLocal")
+        !result.standardError.contains("Gradle detected a problem")
+    }
+
     def 'publishes gradle plugins on publish on tag build'() {
         setup:
         publishGradlePlugin()
@@ -589,6 +604,31 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
 
         then:
         executionResult.success
+    }
+
+    def 'runs publishToMavenLocal on build when local or on circle node 0'() {
+        setup:
+        publishProject('jar', '.')
+
+        when: 'on circle node 0 - should run pTML'
+        def stdout = runTasksSuccessfully('build', '--dry-run',
+                '-P__TESTING_CIRCLE_NODE_INDEX=0').standardOutput
+
+        then:
+        stdout.contains(':publishMavenPublicationToMavenLocal SKIPPED')
+
+        when: 'on circle node 1 - should not run pTML'
+        stdout = runTasksSuccessfully('build', '--dry-run',
+                '-P__TESTING_CIRCLE_NODE_INDEX=1').standardOutput
+
+        then:
+        !stdout.contains(':publishMavenPublicationToMavenLocal SKIPPED')
+
+        when: 'locally - should not run pTML'
+        stdout = runTasksSuccessfully('build', '--dry-run').standardOutput
+
+        then:
+        stdout.contains(':publishMavenPublicationToMavenLocal SKIPPED')
     }
 
     private void disableAllTaskActions() {

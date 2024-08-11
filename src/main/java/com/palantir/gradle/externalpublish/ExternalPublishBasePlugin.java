@@ -32,8 +32,13 @@ import org.gradle.api.publish.Publication;
 import org.gradle.api.publish.PublishingExtension;
 import org.gradle.api.publish.maven.MavenPublication;
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin;
+import org.gradle.api.publish.maven.tasks.AbstractPublishToMaven;
+import org.gradle.api.publish.maven.tasks.PublishToMavenLocal;
 import org.gradle.api.publish.maven.tasks.PublishToMavenRepository;
 import org.gradle.api.publish.tasks.GenerateModuleMetadata;
+import org.gradle.api.tasks.TaskCollection;
+import org.gradle.language.base.plugins.LifecycleBasePlugin;
+import org.gradle.plugins.signing.Sign;
 import org.gradle.plugins.signing.SigningExtension;
 import org.gradle.plugins.signing.SigningPlugin;
 
@@ -51,6 +56,8 @@ final class ExternalPublishBasePlugin implements Plugin<Project> {
         linkWithRootProject();
         disableOtherPublicationsFromPublishingToSonatype();
         disableModuleMetadata();
+        publishToMavenLocalAsPartOfBuild();
+        addSignPublishDependency();
 
         // Sonatype requires we set a description on the pom, but the maven plugin will overwrite anything we set on
         // pom object. So we set the description on the project if it is not set, which the maven plugin reads from.
@@ -98,7 +105,7 @@ final class ExternalPublishBasePlugin implements Plugin<Project> {
                     boolean isSonatypePublish = sonatypePublicationNames.contains(
                             publishTask.getPublication().getName());
 
-                    return isSonatypePublish && EnvironmentVariables.isTagBuild(project);
+                    return isSonatypePublish && OurEnvironmentVariables.isTagBuild(project);
                 }
 
                 return true;
@@ -111,6 +118,30 @@ final class ExternalPublishBasePlugin implements Plugin<Project> {
         project.getTasks()
                 .withType(GenerateModuleMetadata.class)
                 .configureEach(generateModuleMetadata -> generateModuleMetadata.setEnabled(false));
+    }
+
+    private void publishToMavenLocalAsPartOfBuild() {
+        // This ensures we try out publishing and build all publishable artifacts at PR time before
+        // merging into the main branch, rather than having these tasks fail at publish time.
+
+        // Only run on circle node 0 to avoid repeating work on every circle node
+        if (!OurEnvironmentVariables.environmentVariables(project)
+                .isCircleNode0OrLocal()
+                .get()) {
+            return;
+        }
+
+        project.getPluginManager().apply(LifecycleBasePlugin.class);
+        project.getTasks().named(LifecycleBasePlugin.BUILD_TASK_NAME).configure(build -> {
+            TaskCollection<?> publishToMavenLocalsForOurPublications = project.getTasks()
+                    .withType(PublishToMavenLocal.class)
+                    .matching(publishToMavenLocal -> {
+                        return sonatypePublicationNames.contains(
+                                publishToMavenLocal.getPublication().getName());
+                    });
+
+            build.dependsOn(publishToMavenLocalsForOurPublications);
+        });
     }
 
     public void addPublication(String publicationName, Action<MavenPublication> publicationConfiguration) {
@@ -145,6 +176,16 @@ final class ExternalPublishBasePlugin implements Plugin<Project> {
             SigningExtension signing = project.getExtensions().getByType(SigningExtension.class);
             signing.useInMemoryPgpKeys(gpgSigningKey.keyId(), gpgSigningKey.key(), gpgSigningKey.password());
             signing.sign(publication);
+        });
+    }
+
+    private void addSignPublishDependency() {
+        // TODO(gradle#26091): Fix Gradle warning about signing tasks using publishing task outputs without explicit.
+        // see: https://github.com/gradle/gradle/issues/26091
+        project.getPluginManager().withPlugin("signing", _plugin -> {
+            project.getTasks().withType(AbstractPublishToMaven.class).configureEach(publishTask -> {
+                publishTask.dependsOn(project.getTasks().withType(Sign.class));
+            });
         });
     }
 
