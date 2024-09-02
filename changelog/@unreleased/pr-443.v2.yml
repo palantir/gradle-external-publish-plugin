@@ -1,0 +1,5 @@
+type: fix
+fix:
+  description: Unbreak the repo and check if publishing works.
+  links:
+  - https://github.com/palantir/gradle-external-publish-plugin/pull/443

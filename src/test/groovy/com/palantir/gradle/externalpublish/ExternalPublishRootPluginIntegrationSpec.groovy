@@ -17,8 +17,6 @@
 package com.palantir.gradle.externalpublish
 
 import com.google.common.collect.ImmutableList
-
-import java.nio.file.Path
 import java.util.jar.Attributes
 import java.util.jar.JarFile
 import java.util.stream.Stream
@@ -49,7 +47,7 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
                 
                 dependencies {
                     classpath 'com.gradle.publish:plugin-publish-plugin:1.2.1'
-                    classpath 'com.palantir.gradle.conjure:gradle-conjure:5.2.0'
+                    classpath 'com.palantir.gradle.conjure:gradle-conjure:5.50.0'
                 }
             }
 
