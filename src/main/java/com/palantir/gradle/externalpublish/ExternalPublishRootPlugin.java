@@ -19,11 +19,13 @@ package com.palantir.gradle.externalpublish;
 import com.palantir.gradle.utils.environmentvariables.EnvironmentVariables;
 import io.github.gradlenexus.publishplugin.NexusPublishExtension;
 import io.github.gradlenexus.publishplugin.NexusPublishPlugin;
+import java.net.URI;
 import java.time.Duration;
 import java.util.Optional;
 import org.gradle.api.GradleException;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
+import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.TaskProvider;
 
 public class ExternalPublishRootPlugin implements Plugin<Project> {
@@ -47,6 +49,17 @@ public class ExternalPublishRootPlugin implements Plugin<Project> {
 
         publishExtension.getRepositories().sonatype(repo -> {
             EnvironmentVariables envVars = OurEnvironmentVariables.environmentVariables(rootProject);
+
+            Provider<String> nexusUrl = envVars.envVarOrFromTestingProperty("SONATYPE_NEXUS_URL");
+            Provider<String> snapshotRepositoryUrl = envVars.envVarOrFromTestingProperty("SONATYPE_SNAPSHOT_REPO_URL");
+
+            if (nexusUrl.isPresent()) {
+                repo.getNexusUrl().set(URI.create(nexusUrl.get()));
+            }
+
+            if (snapshotRepositoryUrl.isPresent()) {
+                repo.getSnapshotRepositoryUrl().set(URI.create(snapshotRepositoryUrl.get()));
+            }
 
             repo.getUsername()
                     .set(envVars.envVarOrFromTestingProperty("SONATYPE_USERNAME")
