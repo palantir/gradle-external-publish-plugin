@@ -1,4 +1,4 @@
-# Run ./gradlew writeVersionsLock to regenerate this file
+# Run ./gradlew writeVersionsLocks to regenerate this file
 com.jcraft:jzlib:1.1.2 (1 constraints: df085992)
 com.netflix.nebula:gradle-contacts-plugin:7.0.1 (2 constraints: 64222fe2)
 com.netflix.nebula:gradle-info-plugin:13.1.2 (2 constraints: e317db71)
