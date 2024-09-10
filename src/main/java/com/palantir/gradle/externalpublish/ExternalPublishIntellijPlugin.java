@@ -13,7 +13,7 @@ import org.jetbrains.intellij.tasks.PublishPluginTask;
 public class ExternalPublishIntellijPlugin implements Plugin<Project> {
 
     @Override
-    public void apply(Project project) {
+    public final void apply(Project project) {
 
         project.getPlugins().apply("org.jetbrains.intellij");
 
