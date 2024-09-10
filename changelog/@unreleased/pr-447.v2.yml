@@ -1,0 +1,5 @@
+type: feature
+feature:
+  description: Add external publish intellij plugin
+  links:
+  - https://github.com/palantir/gradle-external-publish-plugin/pull/447
