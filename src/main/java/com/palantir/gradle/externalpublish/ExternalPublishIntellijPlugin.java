@@ -22,10 +22,10 @@ public class ExternalPublishIntellijPlugin implements Plugin<Project> {
 
         TaskProvider<BuildPluginTask> buildPlugin = project.getTasks().named("buildPlugin", BuildPluginTask.class);
 
-        TaskProvider<PatchPluginXmlTask> patchPlugin =
+        TaskProvider<PatchPluginXmlTask> patchPluginXml =
                 project.getTasks().named("patchPluginXml", PatchPluginXmlTask.class);
 
-        patchPlugin.configure(task -> {
+        patchPluginXml.configure(task -> {
             task.getVersion().set(project.getVersion().toString());
         });
 
@@ -34,8 +34,8 @@ public class ExternalPublishIntellijPlugin implements Plugin<Project> {
             task.dependsOn(buildPlugin);
         });
 
-        project.afterEvaluate(p -> {
-            p.getTasks().withType(JavaExec.class).named("runIde", task -> {
+        project.afterEvaluate(projectAfterEvaluate -> {
+            projectAfterEvaluate.getTasks().withType(JavaExec.class).named("runIde", task -> {
                 task.getJavaLauncher().set((JavaLauncher) null);
             });
         });

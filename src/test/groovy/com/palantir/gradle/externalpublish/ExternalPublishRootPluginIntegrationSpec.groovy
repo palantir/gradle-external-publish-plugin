@@ -186,7 +186,7 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
                 patchPluginXml {
                     pluginDescription = "bar"
                     sinceBuild = '213'
-                    untilBuild = \'\'
+                    untilBuild = ''
                 } 
             '''
         }
@@ -348,6 +348,7 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
         def mavenRepoDir = testingMavenRepo()
 
         when:
+        // instrumentCode causes a crash as trying it tries to publish to the intellij marketplace
         runTasksSuccessfully('publishIntellijPublicationToTestRepoRepository',
                 '-x', ':intellij:instrumentCode',
                 '-x', ':intellij:verifyPlugin')
@@ -478,6 +479,7 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
         allPublishProjects()
 
         when:
+        // instrumentCode causes a crash as trying it tries to publish to the intellij marketplace
         def executionResult = runTasksSuccessfully(
                 'publish',
                 '-x', ':intellij:instrumentCode',
@@ -705,7 +707,7 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
         def stdoutTagBuild = runTasksSuccessfully('publishPlugin', '-P__TESTING_CIRCLE_TAG=tag').standardOutput
 
         then: 'publishPlugin task should be executed'
-        stdoutTagBuild.contains('Skipping task \':intellij:publishPlugin\' as it has no actions.')
+        stdoutTagBuild.contains("Skipping task ':intellij:publishPlugin' as it has no actions.")
 
         when: 'not on a tag build'
         def stdoutNonTagBuild = runTasksSuccessfully('publishPlugin').standardOutput
@@ -725,10 +727,6 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
         then:
         def postText = new File("versions.lock").text
         assert emptyText == postText
-    }
-
-    def cleanup() {
-        OurEnvironmentVariables.metaClass = null
     }
 
     private void disableAllTaskActions() {
