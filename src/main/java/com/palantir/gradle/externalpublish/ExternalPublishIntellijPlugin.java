@@ -59,10 +59,7 @@ public class ExternalPublishIntellijPlugin implements Plugin<Project> {
             task.setEnabled(false);
         });
 
-        // Prevent nebula.maven-publish from trying to publish components.java
-        project.getExtensions().getExtraProperties().set("nebulaPublish.maven.jar", false);
-
-        project.getPlugins().withId("com.palantir.versions-lock", _ignored -> {
+        project.getRootProject().getPlugins().withId("com.palantir.versions-lock", _ignored -> {
             project.getExtensions().configure("versionsLock", versionsLock -> {
                 // 'org.jetbrains.intellij' creates a dependency on *IntelliJ*, which GCV cannot resolve
                 try {
@@ -76,7 +73,7 @@ public class ExternalPublishIntellijPlugin implements Plugin<Project> {
             });
         });
 
-        ExternalPublishBasePlugin.applyTo(project).addPublication("nebula", publication -> {
+        ExternalPublishBasePlugin.applyTo(project).addPublication("intellij", publication -> {
             publication.artifact(buildPlugin);
         });
     }

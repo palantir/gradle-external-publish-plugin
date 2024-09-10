@@ -17,6 +17,9 @@
 package com.palantir.gradle.externalpublish
 
 import com.google.common.collect.ImmutableList
+import com.palantir.gradle.utils.environmentvariables.EnvironmentVariables
+import org.gradle.api.Project
+
 import java.util.jar.Attributes
 import java.util.jar.JarFile
 import java.util.stream.Stream
@@ -34,10 +37,12 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
     private static final List<String> NON_CONFLICTING_PROJECT_TYPES = PUBLISH_PROJECT_TYPES - 'dist'
 
     def setup() {
+        // language=gradle
         settingsFile << '''
             rootProject.name = 'root'
         '''.stripIndent()
 
+        // language=gradle
         buildFile << '''
             buildscript {
                 repositories {
@@ -48,10 +53,12 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
                 dependencies {
                     classpath 'com.gradle.publish:plugin-publish-plugin:1.2.1'
                     classpath 'com.palantir.gradle.conjure:gradle-conjure:5.50.0'
+                    classpath 'com.palantir.gradle.consistentversions:gradle-consistent-versions:2.23.0'
                 }
             }
 
             apply plugin: 'com.palantir.external-publish'
+            apply plugin: 'com.palantir.consistent-versions'
             
             allprojects {
                 group = 'group'
@@ -62,6 +69,8 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
                 }
             }
         '''.stripIndent()
+
+        runTasks('writeVersionLocks')
     }
 
     File publishJar() {
@@ -100,7 +109,7 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
         }
 
         def subprojectBuildGradle = new File(subprojectDir, 'build.gradle')
-
+        // language=gradle
         subprojectBuildGradle << """
             apply plugin: 'com.palantir.external-publish-${type}'
         """.stripIndent()
@@ -108,6 +117,7 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
         writeHelloWorld(subprojectDir)
 
         if (type == 'dist') {
+            // language=gradle
             subprojectBuildGradle << '''
                 task distTar(type: Tar) {
                     archiveFileName = 'foo'
@@ -122,6 +132,7 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
         }
 
         if (type == 'gradle-plugin') {
+            // language=gradle
             subprojectBuildGradle << '''
                 gradlePlugin {
                     plugins {
@@ -147,7 +158,7 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
         }
 
         if (type == 'conjure') {
-
+            // language=gradle
             buildFile << '''
                 configurations.all { conf ->
                     ['com.palantir.conjure:conjure:4.14.2', 'com.palantir.conjure.java:conjure-java:5.49.0'].each {
@@ -163,7 +174,7 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
         }
 
         if (type == 'intellij') {
-            // language=groovy
+            // language=gradle
             subprojectBuildGradle << '''
                 intellij{
                     pluginName = 'foo'
@@ -181,6 +192,7 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
         }
 
         if (type == 'custom') {
+            // language=gradle
             subprojectBuildGradle << '''
                 externalPublishing {
                     publication('foo') {
@@ -336,10 +348,15 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
         def mavenRepoDir = testingMavenRepo()
 
         when:
-        runTasksSuccessfully('publishNebulaPublicationToTestRepoRepository')
+        runTasksSuccessfully('publishIntellijPublicationToTestRepoRepository',
+                '-x', ':intellij:instrumentCode',
+                '-x', ':intellij:verifyPlugin')
 
         then:
-        result.success
+        def gnv = new File(mavenRepoDir, 'group/intellij/version')
+
+        new File(gnv, 'intellij-version.zip').exists()
+        verifyPomFile(gnv, 'intellij')
     }
 
     def 'can publish custom publications to local maven repo on disk'() {
@@ -667,7 +684,55 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
         stdout.contains(':publishMavenPublicationToMavenLocal SKIPPED')
     }
 
+    def 'runs publishPlugin when publishing intellij using dry-run'() {
+        setup:
+        publishIntellij()
+
+        when:
+        def stdout = runTasksSuccessfully('publish', '--dry-run').standardOutput
+
+        then:
+        stdout.contains(":publishPlugin SKIPPED")
+    }
+
+    def 'publishPlugin task runs only if CIRCLE TAG is set'() {
+        setup:
+        publishIntellij()
+        disableAllTaskActions()
+
+        when: 'on a tag build'
+
+        def stdoutTagBuild = runTasksSuccessfully('publishPlugin', '-P__TESTING_CIRCLE_TAG=tag').standardOutput
+
+        then: 'publishPlugin task should be executed'
+        stdoutTagBuild.contains('Skipping task \':intellij:publishPlugin\' as it has no actions.')
+
+        when: 'not on a tag build'
+        def stdoutNonTagBuild = runTasksSuccessfully('publishPlugin').standardOutput
+
+        then: 'publishPlugin task should be skipped'
+        stdoutNonTagBuild.contains("Skipping task ':intellij:publishPlugin' as task onlyIf 'Task satisfies onlyIf spec' is false.")
+    }
+
+    def 'Check versions.lock is not effected by intellij plugin' (){
+        setup:
+        publishIntellij()
+        def emptyText = new File("versions.lock").text
+
+        when:
+        runTasksSuccessfully("writeVersionsLock")
+
+        then:
+        def postText = new File("versions.lock").text
+        assert emptyText == postText
+    }
+
+    def cleanup() {
+        OurEnvironmentVariables.metaClass = null
+    }
+
     private void disableAllTaskActions() {
+        //language=groovy
         buildFile << '''
             allprojects {
                 afterEvaluate {
