@@ -461,7 +461,11 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
         allPublishProjects()
 
         when:
-        def executionResult = runTasksSuccessfully('publish', '-P__TESTING_CIRCLE_PR_USERNAME=forkyfork')
+        def executionResult = runTasksSuccessfully(
+                'publish',
+                '-x', ':intellij:instrumentCode',
+                '-x', ':intellij:verifyPlugin',
+                '-P__TESTING_CIRCLE_PR_USERNAME=forkyfork')
 
         then:
         executionResult.wasSkipped('checkSigningKey')
