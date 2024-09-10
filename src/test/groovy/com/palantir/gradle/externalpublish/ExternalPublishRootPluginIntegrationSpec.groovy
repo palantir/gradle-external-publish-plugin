@@ -169,7 +169,7 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
                     pluginName = 'foo'
                     updateSinceUntilBuild = true
                     version = "2024.1"
-                    plugins = ['java']
+                    plugins = ['java', 'org.jetbrains.plugins.gradle']
                 }
                 
                 patchPluginXml {
@@ -328,6 +328,18 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
         new File(gnv, 'conjure-version.conjure.json.asc').exists()
 
         verifyPomFile(gnv, 'conjure')
+    }
+
+    def 'can publish intellij plugin to local maven repo on disk'() {
+        setup:
+        publishIntellij()
+        def mavenRepoDir = testingMavenRepo()
+
+        when:
+        runTasksSuccessfully('publishNebulaPublicationToTestRepoRepository')
+
+        then:
+        result.success
     }
 
     def 'can publish custom publications to local maven repo on disk'() {
