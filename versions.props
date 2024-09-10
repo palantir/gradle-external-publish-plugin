@@ -6,6 +6,7 @@ com.netflix.nebula:gradle-info-plugin = 13.1.2
 org.rauschig:jarchivelib = 1.1.0
 com.google.guava:guava = 33.3.0-jre
 com.palantir.gradle.utils:environment-variables = 0.7.0
+org.jetbrains.intellij.plugins:gradle-intellij-plugin = 1.17.3
 
 # conflict resolution
 com.google.code.findbugs:jsr305 = 3.0.2

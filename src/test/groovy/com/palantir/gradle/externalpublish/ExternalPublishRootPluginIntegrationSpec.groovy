@@ -29,7 +29,7 @@ import spock.lang.Unroll
 
 class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
     private static final List<String> PUBLISH_PROJECT_TYPES = ImmutableList.of(
-            'jar', 'dist', 'application-dist', 'gradle-plugin', 'conjure', 'custom')
+            'jar', 'dist', 'application-dist', 'gradle-plugin', 'conjure', 'intellij', 'custom')
     private static final List<String> SONATYPE_PROJECT_TYPES = PUBLISH_PROJECT_TYPES - 'gradle-plugin'
     private static final List<String> NON_CONFLICTING_PROJECT_TYPES = PUBLISH_PROJECT_TYPES - 'dist'
 
@@ -82,6 +82,10 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
 
     File publishConjure() {
         publishProject('conjure')
+    }
+
+    File publishIntellij() {
+        publishProject('intellij')
     }
 
     File publishCustom() {
@@ -156,6 +160,24 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
             settingsFile << "include '${subprojectDir.getName()}:${conjureObjectsDir.getName()}'\n"
 
             file('src/main/conjure/api.yml', subprojectDir) << '{}'
+        }
+
+        if (type == 'intellij') {
+            // language=groovy
+            subprojectBuildGradle << '''
+                intellij{
+                    pluginName = 'foo'
+                    updateSinceUntilBuild = true
+                    version = "2024.1"
+                    plugins = ['java']
+                }
+                
+                patchPluginXml {
+                    pluginDescription = "bar"
+                    sinceBuild = '213'
+                    untilBuild = \'\'
+                } 
+            '''
         }
 
         if (type == 'custom') {
