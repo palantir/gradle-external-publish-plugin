@@ -686,7 +686,7 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
         stdout.contains(':publishMavenPublicationToMavenLocal SKIPPED')
     }
 
-    def 'runs publishPlugin when publishing intellij using dry-run'() {
+    def 'runs publish depends on publishPlugin for intellij'() {
         setup:
         publishIntellij()
 
