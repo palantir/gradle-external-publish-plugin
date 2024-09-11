@@ -21,6 +21,8 @@ import org.gradle.api.Project;
 import org.gradle.api.tasks.JavaExec;
 import org.gradle.api.tasks.TaskProvider;
 import org.gradle.jvm.toolchain.JavaLauncher;
+import org.gradle.language.base.plugins.LifecycleBasePlugin;
+import org.jetbrains.intellij.IntelliJPlugin;
 import org.jetbrains.intellij.tasks.BuildPluginTask;
 import org.jetbrains.intellij.tasks.PatchPluginXmlTask;
 import org.jetbrains.intellij.tasks.PublishPluginTask;
@@ -30,21 +32,24 @@ public class ExternalPublishIntellijPlugin implements Plugin<Project> {
     @Override
     public final void apply(Project project) {
 
-        project.getPlugins().apply("org.jetbrains.intellij");
+        project.getPlugins().apply(LifecycleBasePlugin.class);
+        project.getPlugins().apply(IntelliJPlugin.class);
 
         TaskProvider<PublishPluginTask> publishPlugin =
                 project.getTasks().named("publishPlugin", PublishPluginTask.class);
 
         TaskProvider<BuildPluginTask> buildPlugin = project.getTasks().named("buildPlugin", BuildPluginTask.class);
 
-        TaskProvider<PatchPluginXmlTask> patchPluginXml =
-                project.getTasks().named("patchPluginXml", PatchPluginXmlTask.class);
+        ExternalPublishBasePlugin.applyTo(project).addPublication("intellij", publication -> {
+            publication.artifact(buildPlugin);
+        });
 
-        patchPluginXml.configure(task -> {
-            task.getVersion().set(project.getVersion().toString());
+        project.getTasks().named("patchPluginXml", PatchPluginXmlTask.class).configure(task -> {
+            task.getVersion().set(project.provider(() -> project.getVersion().toString()));
         });
 
         project.getTasks().withType(JavaExec.class).named("runIde", task -> {
+            // allows for debugging
             task.jvmArgs("--add-exports=java.base/jdk.internal.vm=ALL-UNNAMED");
             task.dependsOn(buildPlugin);
         });
@@ -60,10 +65,8 @@ public class ExternalPublishIntellijPlugin implements Plugin<Project> {
             task.getToken().set(System.getenv("JETBRAINS_PLUGIN_REPO_TOKEN"));
         });
 
-        project.afterEvaluate(_ignored -> {
-            project.getTasks().named("publish", task -> {
-                task.dependsOn(publishPlugin);
-            });
+        project.getTasks().named("publish", task -> {
+            task.dependsOn(publishPlugin);
         });
 
         project.getTasks().named("check", task -> {
@@ -74,6 +77,9 @@ public class ExternalPublishIntellijPlugin implements Plugin<Project> {
             task.setEnabled(false);
         });
 
+        // We are using reflection to call the correct methods. This avoids having a direct dependency on GCV, which is
+        // sometimes using in `plugins {` blocks so is in a different classloader, making configuring using Java
+        // correctly without ClassCastExceptions exceedingly difficult.
         project.getRootProject().getPlugins().withId("com.palantir.versions-lock", _ignored -> {
             project.getExtensions().configure("versionsLock", versionsLock -> {
                 // 'org.jetbrains.intellij' creates a dependency on *IntelliJ*, which GCV cannot resolve
@@ -86,10 +92,6 @@ public class ExternalPublishIntellijPlugin implements Plugin<Project> {
                     throw new RuntimeException(e);
                 }
             });
-        });
-
-        ExternalPublishBasePlugin.applyTo(project).addPublication("intellij", publication -> {
-            publication.artifact(buildPlugin);
         });
     }
 }

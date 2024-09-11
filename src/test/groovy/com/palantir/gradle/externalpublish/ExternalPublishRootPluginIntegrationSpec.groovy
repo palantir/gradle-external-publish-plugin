@@ -40,7 +40,7 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
         // language=gradle
         settingsFile << '''
             rootProject.name = 'root'
-        '''.stripIndent()
+        '''.stripIndent(true)
 
         // language=gradle
         buildFile << '''
@@ -68,7 +68,7 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
                     mavenCentral()
                 }
             }
-        '''.stripIndent()
+        '''.stripIndent(true)
 
         runTasks('writeVersionLocks')
     }
@@ -128,7 +128,7 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
                         include 'build.gradle'
                     }
                 }
-            '''.stripIndent()
+            '''.stripIndent(true)
         }
 
         if (type == 'gradle-plugin') {
@@ -165,7 +165,7 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
                         conf.dependencyConstraints.add(project.dependencies.constraints.create(it))
                     }
                 }
-            '''.stripIndent()
+            '''.stripIndent(true)
 
             def conjureObjectsDir = directory('conjure-objects', subprojectDir)
             settingsFile << "include '${subprojectDir.getName()}:${conjureObjectsDir.getName()}'\n"
@@ -188,7 +188,7 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
                     sinceBuild = '213'
                     untilBuild = ''
                 } 
-            '''
+            '''.stripIndent(true)
         }
 
         if (type == 'custom') {
@@ -204,7 +204,7 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
                         artifact file('build.gradle')
                     }
                 }
-            '''
+            '''.stripIndent(true)
         }
 
         return subprojectDir
@@ -348,7 +348,7 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
         def mavenRepoDir = testingMavenRepo()
 
         when:
-        // instrumentCode causes a crash as trying it tries to publish to the intellij marketplace
+        // instrumentCode causes a crash due to some issue with classloaders we don't fully understand
         runTasksSuccessfully('publishIntellijPublicationToTestRepoRepository',
                 '-x', ':intellij:instrumentCode',
                 '-x', ':intellij:verifyPlugin')
@@ -479,7 +479,7 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
         allPublishProjects()
 
         when:
-        // instrumentCode causes a crash as trying it tries to publish to the intellij marketplace
+        // instrumentCode causes a crash due to some issue with classloaders we don't fully understand
         def executionResult = runTasksSuccessfully(
                 'publish',
                 '-x', ':intellij:instrumentCode',
