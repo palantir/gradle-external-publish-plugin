@@ -17,6 +17,9 @@
 package com.palantir.gradle.externalpublish
 
 import com.google.common.collect.ImmutableList
+import com.palantir.gradle.utils.environmentvariables.EnvironmentVariables
+import org.gradle.api.Project
+
 import java.util.jar.Attributes
 import java.util.jar.JarFile
 import java.util.stream.Stream
@@ -29,15 +32,17 @@ import spock.lang.Unroll
 
 class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
     private static final List<String> PUBLISH_PROJECT_TYPES = ImmutableList.of(
-            'jar', 'dist', 'application-dist', 'gradle-plugin', 'conjure', 'custom')
+            'jar', 'dist', 'application-dist', 'gradle-plugin', 'conjure', 'intellij', 'custom')
     private static final List<String> SONATYPE_PROJECT_TYPES = PUBLISH_PROJECT_TYPES - 'gradle-plugin'
     private static final List<String> NON_CONFLICTING_PROJECT_TYPES = PUBLISH_PROJECT_TYPES - 'dist'
 
     def setup() {
+        // language=gradle
         settingsFile << '''
             rootProject.name = 'root'
-        '''.stripIndent()
+        '''.stripIndent(true)
 
+        // language=gradle
         buildFile << '''
             buildscript {
                 repositories {
@@ -48,10 +53,12 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
                 dependencies {
                     classpath 'com.gradle.publish:plugin-publish-plugin:1.2.1'
                     classpath 'com.palantir.gradle.conjure:gradle-conjure:5.50.0'
+                    classpath 'com.palantir.gradle.consistentversions:gradle-consistent-versions:2.23.0'
                 }
             }
 
             apply plugin: 'com.palantir.external-publish'
+            apply plugin: 'com.palantir.consistent-versions'
             
             allprojects {
                 group = 'group'
@@ -61,7 +68,9 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
                     mavenCentral()
                 }
             }
-        '''.stripIndent()
+        '''.stripIndent(true)
+
+        runTasks('writeVersionLocks')
     }
 
     File publishJar() {
@@ -84,6 +93,10 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
         publishProject('conjure')
     }
 
+    File publishIntellij() {
+        publishProject('intellij')
+    }
+
     File publishCustom() {
         publishProject('custom')
     }
@@ -96,7 +109,7 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
         }
 
         def subprojectBuildGradle = new File(subprojectDir, 'build.gradle')
-
+        // language=gradle
         subprojectBuildGradle << """
             apply plugin: 'com.palantir.external-publish-${type}'
         """.stripIndent()
@@ -104,6 +117,7 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
         writeHelloWorld(subprojectDir)
 
         if (type == 'dist') {
+            // language=gradle
             subprojectBuildGradle << '''
                 task distTar(type: Tar) {
                     archiveFileName = 'foo'
@@ -114,10 +128,11 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
                         include 'build.gradle'
                     }
                 }
-            '''.stripIndent()
+            '''.stripIndent(true)
         }
 
         if (type == 'gradle-plugin') {
+            // language=gradle
             subprojectBuildGradle << '''
                 gradlePlugin {
                     plugins {
@@ -143,14 +158,14 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
         }
 
         if (type == 'conjure') {
-
+            // language=gradle
             buildFile << '''
                 configurations.all { conf ->
                     ['com.palantir.conjure:conjure:4.14.2', 'com.palantir.conjure.java:conjure-java:5.49.0'].each {
                         conf.dependencyConstraints.add(project.dependencies.constraints.create(it))
                     }
                 }
-            '''.stripIndent()
+            '''.stripIndent(true)
 
             def conjureObjectsDir = directory('conjure-objects', subprojectDir)
             settingsFile << "include '${subprojectDir.getName()}:${conjureObjectsDir.getName()}'\n"
@@ -158,7 +173,26 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
             file('src/main/conjure/api.yml', subprojectDir) << '{}'
         }
 
+        if (type == 'intellij') {
+            // language=gradle
+            subprojectBuildGradle << '''
+                intellij{
+                    pluginName = 'foo'
+                    updateSinceUntilBuild = true
+                    version = "2024.1"
+                    plugins = ['java', 'org.jetbrains.plugins.gradle']
+                }
+                
+                patchPluginXml {
+                    pluginDescription = "bar"
+                    sinceBuild = '213'
+                    untilBuild = ''
+                } 
+            '''.stripIndent(true)
+        }
+
         if (type == 'custom') {
+            // language=gradle
             subprojectBuildGradle << '''
                 externalPublishing {
                     publication('foo') {
@@ -170,7 +204,7 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
                         artifact file('build.gradle')
                     }
                 }
-            '''
+            '''.stripIndent(true)
         }
 
         return subprojectDir
@@ -308,6 +342,24 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
         verifyPomFile(gnv, 'conjure')
     }
 
+    def 'can publish intellij plugin to local maven repo on disk'() {
+        setup:
+        publishIntellij()
+        def mavenRepoDir = testingMavenRepo()
+
+        when:
+        // instrumentCode causes a crash due to some issue with classloaders we don't fully understand
+        runTasksSuccessfully('publishIntellijPublicationToTestRepoRepository',
+                '-x', ':intellij:instrumentCode',
+                '-x', ':intellij:verifyPlugin')
+
+        then:
+        def gnv = new File(mavenRepoDir, 'group/intellij/version')
+
+        new File(gnv, 'intellij-version.zip').exists()
+        verifyPomFile(gnv, 'intellij')
+    }
+
     def 'can publish custom publications to local maven repo on disk'() {
         setup:
         publishCustom()
@@ -427,7 +479,12 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
         allPublishProjects()
 
         when:
-        def executionResult = runTasksSuccessfully('publish', '-P__TESTING_CIRCLE_PR_USERNAME=forkyfork')
+        // instrumentCode causes a crash due to some issue with classloaders we don't fully understand
+        def executionResult = runTasksSuccessfully(
+                'publish',
+                '-x', ':intellij:instrumentCode',
+                '-x', ':intellij:verifyPlugin',
+                '-P__TESTING_CIRCLE_PR_USERNAME=forkyfork')
 
         then:
         executionResult.wasSkipped('checkSigningKey')
@@ -629,7 +686,51 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
         stdout.contains(':publishMavenPublicationToMavenLocal SKIPPED')
     }
 
+    def 'runs publish depends on publishPlugin for intellij'() {
+        setup:
+        publishIntellij()
+
+        when:
+        def stdout = runTasksSuccessfully('publish', '--dry-run').standardOutput
+
+        then:
+        stdout.contains(":publishPlugin SKIPPED")
+    }
+
+    def 'publishPlugin task runs only if CIRCLE TAG is set'() {
+        setup:
+        publishIntellij()
+        disableAllTaskActions()
+
+        when: 'on a tag build'
+
+        def stdoutTagBuild = runTasksSuccessfully('publishPlugin', '-P__TESTING_CIRCLE_TAG=tag').standardOutput
+
+        then: 'publishPlugin task should be executed'
+        stdoutTagBuild.contains("Skipping task ':intellij:publishPlugin' as it has no actions.")
+
+        when: 'not on a tag build'
+        def stdoutNonTagBuild = runTasksSuccessfully('publishPlugin').standardOutput
+
+        then: 'publishPlugin task should be skipped'
+        stdoutNonTagBuild.contains("Skipping task ':intellij:publishPlugin' as task onlyIf 'Task satisfies onlyIf spec' is false.")
+    }
+
+    def 'Check versions.lock is not effected by intellij plugin' (){
+        setup:
+        publishIntellij()
+        def emptyText = new File("versions.lock").text
+
+        when:
+        runTasksSuccessfully("writeVersionsLock")
+
+        then:
+        def postText = new File("versions.lock").text
+        assert emptyText == postText
+    }
+
     private void disableAllTaskActions() {
+        //language=groovy
         buildFile << '''
             allprojects {
                 afterEvaluate {

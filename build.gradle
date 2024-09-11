@@ -52,6 +52,7 @@ dependencies {
     implementation 'com.netflix.nebula:nebula-publishing-plugin'
     implementation 'com.netflix.nebula:gradle-info-plugin'
     implementation 'com.palantir.gradle.utils:environment-variables'
+    implementation 'org.jetbrains.intellij.plugins:gradle-intellij-plugin'
 
     testImplementation gradleTestKit()
     testImplementation 'com.google.guava:guava'
@@ -95,6 +96,12 @@ gradlePlugin {
             displayName = 'Palantir External Publish Conjure Plugin'
             description = pluginDescription('conjure IR')
             implementationClass = 'com.palantir.gradle.externalpublish.ExternalPublishConjurePlugin'
+        }
+        externalPublishIntellij {
+            id = 'com.palantir.external-publish-intellij'
+            displayName = 'Palantir External Publish Intellij Plugin'
+            description = pluginDescription('an intellij plugin')
+            implementationClass = 'com.palantir.gradle.externalpublish.ExternalPublishIntellijPlugin'
         }
         externalPublishCustom {
             id = 'com.palantir.external-publish-custom'
