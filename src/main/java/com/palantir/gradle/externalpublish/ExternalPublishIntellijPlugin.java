@@ -93,5 +93,16 @@ public class ExternalPublishIntellijPlugin implements Plugin<Project> {
                 }
             });
         });
+
+        project.getRootProject().getExtensions().configure("versionRecommendations", versionRecommendations -> {
+            try {
+                versionRecommendations
+                        .getClass()
+                        .getMethod("excludeConfigurations", String[].class)
+                        .invoke(versionRecommendations, (Object) new String[] {"idea"});
+            } catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 }
