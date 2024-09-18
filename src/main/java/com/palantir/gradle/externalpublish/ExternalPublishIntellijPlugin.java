@@ -59,7 +59,7 @@ public class ExternalPublishIntellijPlugin implements Plugin<Project> {
             projectAfterEvaluate.getTasks().withType(JavaExec.class).named("runIde", task -> {
                 task.getJavaLauncher().set((JavaLauncher) null);
             });
-            projectAfterEvaluate.getTasks().named("test", Test.class, task -> {
+            projectAfterEvaluate.getTasks().withType(Test.class).named("test", task -> {
                 task.getJavaLauncher().set((JavaLauncher) null);
             });
         });
