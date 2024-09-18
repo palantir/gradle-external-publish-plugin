@@ -20,6 +20,7 @@ import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.tasks.JavaExec;
 import org.gradle.api.tasks.TaskProvider;
+import org.gradle.api.tasks.testing.Test;
 import org.gradle.jvm.toolchain.JavaLauncher;
 import org.gradle.language.base.plugins.LifecycleBasePlugin;
 import org.jetbrains.intellij.IntelliJPlugin;
@@ -56,6 +57,9 @@ public class ExternalPublishIntellijPlugin implements Plugin<Project> {
 
         project.afterEvaluate(projectAfterEvaluate -> {
             projectAfterEvaluate.getTasks().withType(JavaExec.class).named("runIde", task -> {
+                task.getJavaLauncher().set((JavaLauncher) null);
+            });
+            projectAfterEvaluate.getTasks().withType(Test.class).named("test", task -> {
                 task.getJavaLauncher().set((JavaLauncher) null);
             });
         });
