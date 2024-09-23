@@ -35,6 +35,7 @@ repositories {
 }
 
 apply plugin: 'com.palantir.git-version'
+apply plugin: 'com.palantir.jdks'
 
 group 'com.palantir.gradle.externalpublish'
 version System.env.CIRCLE_TAG ?: gitVersion()
@@ -130,5 +131,9 @@ javaVersions {
 
 tasks.named('test') {
     systemProperty 'ignoreDeprecations', 'true'
+}
+
+jdks {
+    daemonTarget = 17
 }
 
