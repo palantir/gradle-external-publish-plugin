@@ -125,8 +125,7 @@ tasks.named('processResources').configure {
 }
 
 javaVersions {
-    libraryTarget = 11
-    runtime = 17
+    libraryTarget = 17
 }
 
 tasks.named('test') {
