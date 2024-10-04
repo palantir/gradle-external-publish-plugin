@@ -1,0 +1,5 @@
+type: fix
+fix:
+  description: migrate to newer plugin publish format
+  links:
+  - https://github.com/palantir/gradle-external-publish-plugin/pull/472
