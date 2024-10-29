@@ -1,4 +1,4 @@
-com.fasterxml.jackson.core:jackson-databind = 2.18.0
+com.fasterxml.jackson.core:jackson-databind = 2.18.1
 com.netflix.nebula:nebula-test = 10.6.1
 io.github.gradle-nexus:publish-plugin = 2.0.0
 com.netflix.nebula:nebula-publishing-plugin = 21.1.0
