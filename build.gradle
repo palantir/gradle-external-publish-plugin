@@ -136,6 +136,6 @@ tasks.named('test') {
 }
 
 jdks {
-    daemonTarget = 21
+    daemonTarget = 17
 }
 
