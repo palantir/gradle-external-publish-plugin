@@ -4,7 +4,7 @@ io.github.gradle-nexus:publish-plugin = 2.0.0
 com.netflix.nebula:nebula-publishing-plugin = 21.1.0
 com.netflix.nebula:gradle-info-plugin = 13.3.0
 org.rauschig:jarchivelib = 1.1.0
-com.google.guava:guava = 33.3.1-jre
+com.google.guava:guava = 33.4.0-jre
 com.palantir.gradle.utils:environment-variables = 0.7.0
 org.jetbrains.intellij.plugins:gradle-intellij-plugin = 1.17.3
 
