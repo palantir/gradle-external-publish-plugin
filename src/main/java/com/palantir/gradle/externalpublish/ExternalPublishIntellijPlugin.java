@@ -23,10 +23,10 @@ import org.gradle.api.tasks.TaskProvider;
 import org.gradle.api.tasks.testing.Test;
 import org.gradle.jvm.toolchain.JavaLauncher;
 import org.gradle.language.base.plugins.LifecycleBasePlugin;
-import org.jetbrains.intellij.IntelliJPlugin;
-import org.jetbrains.intellij.tasks.BuildPluginTask;
-import org.jetbrains.intellij.tasks.PatchPluginXmlTask;
-import org.jetbrains.intellij.tasks.PublishPluginTask;
+import org.jetbrains.intellij.platform.gradle.plugins.project.IntelliJPlatformPlugin;
+import org.jetbrains.intellij.platform.gradle.tasks.BuildPluginTask;
+import org.jetbrains.intellij.platform.gradle.tasks.PatchPluginXmlTask;
+import org.jetbrains.intellij.platform.gradle.tasks.PublishPluginTask;
 
 public class ExternalPublishIntellijPlugin implements Plugin<Project> {
 
@@ -34,7 +34,7 @@ public class ExternalPublishIntellijPlugin implements Plugin<Project> {
     public final void apply(Project project) {
 
         project.getPlugins().apply(LifecycleBasePlugin.class);
-        project.getPlugins().apply(IntelliJPlugin.class);
+        project.getPlugins().apply(IntelliJPlatformPlugin.class);
 
         TaskProvider<PublishPluginTask> publishPlugin =
                 project.getTasks().named("publishPlugin", PublishPluginTask.class);
@@ -46,7 +46,8 @@ public class ExternalPublishIntellijPlugin implements Plugin<Project> {
         });
 
         project.getTasks().named("patchPluginXml", PatchPluginXmlTask.class).configure(task -> {
-            task.getVersion().set(project.provider(() -> project.getVersion().toString()));
+            task.getPluginVersion()
+                    .set(project.provider(() -> project.getVersion().toString()));
         });
 
         project.getTasks().withType(JavaExec.class).named("runIde", task -> {
