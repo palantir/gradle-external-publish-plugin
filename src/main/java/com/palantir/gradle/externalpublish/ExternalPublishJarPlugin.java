@@ -17,7 +17,6 @@
 package com.palantir.gradle.externalpublish;
 
 import java.util.Collections;
-import java.util.Objects;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.JavaLibraryPlugin;
@@ -55,7 +54,7 @@ public class ExternalPublishJarPlugin implements Plugin<Project> {
      **/
     private record ToStringProvider(String string) {
 
-    @Override
+        @Override
         public String toString() {
             return string;
         }
