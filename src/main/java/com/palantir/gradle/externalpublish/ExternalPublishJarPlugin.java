@@ -37,11 +37,12 @@ public class ExternalPublishJarPlugin implements Plugin<Project> {
 
     private static void configureJars(Project project) {
         project.getPluginManager().apply(JavaLibraryPlugin.class);
+        String projectVersion = project.getVersion().toString();
 
         project.getTasks().withType(Jar.class).named("jar").configure(jar -> {
             jar.getManifest()
                     .attributes(
-                            Collections.singletonMap("Implementation-Version", new ProjectVersionToString(project)));
+                            Collections.singletonMap("Implementation-Version", new ToStringProvider(projectVersion)));
         });
 
         JavaPluginExtension javaPluginExtension = project.getExtensions().getByType(JavaPluginExtension.class);
@@ -50,20 +51,13 @@ public class ExternalPublishJarPlugin implements Plugin<Project> {
     }
 
     /**
-     * This is effectively a provider for the project version string value. The jar manifest may be configured
-     * before project versions have been set, particularly for subprojects which are configured via 'allprojects'
-     * or 'subprojects'.
-     */
-    private static final class ProjectVersionToString {
-        private final Project project;
+     * Mocks the value expected in Implementation-Version
+     **/
+    private record ToStringProvider(String string) {
 
-        private ProjectVersionToString(Project project) {
-            this.project = project;
-        }
-
-        @Override
+    @Override
         public String toString() {
-            return Objects.toString(project.getVersion());
+            return string;
         }
     }
 }
