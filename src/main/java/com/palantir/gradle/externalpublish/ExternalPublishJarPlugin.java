@@ -21,10 +21,10 @@ import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.JavaLibraryPlugin;
 import org.gradle.api.plugins.JavaPluginExtension;
+import org.gradle.api.provider.Provider;
 import org.gradle.jvm.tasks.Jar;
 
 public class ExternalPublishJarPlugin implements Plugin<Project> {
-
     @Override
     public final void apply(Project project) {
         configureJars(project);
@@ -36,27 +36,15 @@ public class ExternalPublishJarPlugin implements Plugin<Project> {
 
     private static void configureJars(Project project) {
         project.getPluginManager().apply(JavaLibraryPlugin.class);
-        String projectVersion = project.getVersion().toString();
+        Provider<String> versionProvider =
+                project.provider(() -> project.getVersion().toString());
 
         project.getTasks().withType(Jar.class).named("jar").configure(jar -> {
-            jar.getManifest()
-                    .attributes(
-                            Collections.singletonMap("Implementation-Version", new ToStringProvider(projectVersion)));
+            jar.getManifest().attributes(Collections.singletonMap("Implementation-Version", versionProvider));
         });
 
         JavaPluginExtension javaPluginExtension = project.getExtensions().getByType(JavaPluginExtension.class);
         javaPluginExtension.withJavadocJar();
         javaPluginExtension.withSourcesJar();
-    }
-
-    /**
-     * Mocks the value expected in Implementation-Version
-     **/
-    private record ToStringProvider(String string) {
-
-        @Override
-        public String toString() {
-            return string;
-        }
     }
 }
