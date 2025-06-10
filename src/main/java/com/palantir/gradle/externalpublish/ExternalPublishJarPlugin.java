@@ -36,6 +36,9 @@ public class ExternalPublishJarPlugin implements Plugin<Project> {
 
     private static void configureJars(Project project) {
         project.getPluginManager().apply(JavaLibraryPlugin.class);
+
+        // The jar manifest may be configured before project versions have been set,
+        // particularly for subprojects which are configured via 'allprojects' or 'subprojects'.
         Provider<String> versionProvider =
                 project.provider(() -> project.getVersion().toString());
 
