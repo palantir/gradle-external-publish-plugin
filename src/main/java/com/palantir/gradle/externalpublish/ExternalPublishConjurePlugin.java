@@ -24,6 +24,7 @@ import org.gradle.api.plugins.UnknownPluginException;
 public class ExternalPublishConjurePlugin implements Plugin<Project> {
     private static final String CONJURE_PUBLISH_PLUGIN = "com.palantir.conjure-publish";
 
+    @SuppressWarnings("for-rollout:UnusedException")
     @Override
     public final void apply(Project project) {
         try {

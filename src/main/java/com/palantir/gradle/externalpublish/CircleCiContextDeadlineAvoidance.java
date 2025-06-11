@@ -55,6 +55,7 @@ final class CircleCiContextDeadlineAvoidance {
         });
 
         task.doLast(new Action<Task>() {
+            @SuppressWarnings("for-rollout:Interruption")
             @Override
             public void execute(Task _ignored) {
                 spammerTask.get().cancel(true);
