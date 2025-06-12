@@ -24,7 +24,6 @@ import org.gradle.api.publish.maven.MavenPublication;
 public class ExternalPublishCustomExtension {
     private final PublicationAdder publicationAdder;
 
-    @SuppressWarnings("for-rollout:UnnecessarilyVisible")
     @Inject
     public ExternalPublishCustomExtension(PublicationAdder publicationAdder) {
         this.publicationAdder = publicationAdder;

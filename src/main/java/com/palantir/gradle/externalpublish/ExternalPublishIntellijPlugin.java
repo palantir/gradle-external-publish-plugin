@@ -30,7 +30,6 @@ import org.jetbrains.intellij.tasks.PublishPluginTask;
 
 public class ExternalPublishIntellijPlugin implements Plugin<Project> {
 
-    @SuppressWarnings("for-rollout:ThrowSpecificExceptions")
     @Override
     public final void apply(Project project) {
 
