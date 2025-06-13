@@ -26,6 +26,7 @@ import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.plugins.UnknownPluginException;
 import org.gradle.api.publish.PublishingExtension;
 import org.gradle.api.publish.maven.MavenPublication;
+import org.gradle.api.publish.maven.tasks.GenerateMavenPom;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.SourceSetContainer;
 import org.gradle.api.tasks.TaskProvider;
@@ -105,7 +106,7 @@ public class ExternalPublishGradlePluginPlugin implements Plugin<Project> {
         // Because the GeneratePom task is an UntrackedTask, it doesn't know that another task needs to run in order
         // to provide all of its inputs.  So we have to force the dependsOn.
         project.afterEvaluate(_ignored -> {
-            project.getTasks().named("generatePomFileForPluginMavenPublication").configure(generatePom -> {
+            project.getTasks().withType(GenerateMavenPom.class).configureEach(generatePom -> {
                 generatePom.dependsOn(generatePluginMdTask);
             });
         });
