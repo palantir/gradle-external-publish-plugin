@@ -26,7 +26,6 @@ import org.gradle.api.tasks.TaskProvider;
 
 public class ExternalPublishGradlePluginPlugin implements Plugin<Project> {
 
-    @SuppressWarnings("for-rollout:UnusedException")
     @Override
     public final void apply(Project project) {
         project.getPluginManager().apply("java-gradle-plugin");
