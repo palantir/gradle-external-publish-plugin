@@ -17,15 +17,14 @@
 package com.palantir.gradle.externalpublish;
 
 import java.util.Collections;
-import java.util.Objects;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.JavaLibraryPlugin;
 import org.gradle.api.plugins.JavaPluginExtension;
+import org.gradle.api.provider.Provider;
 import org.gradle.jvm.tasks.Jar;
 
 public class ExternalPublishJarPlugin implements Plugin<Project> {
-
     @Override
     public final void apply(Project project) {
         configureJars(project);
@@ -38,32 +37,17 @@ public class ExternalPublishJarPlugin implements Plugin<Project> {
     private static void configureJars(Project project) {
         project.getPluginManager().apply(JavaLibraryPlugin.class);
 
+        // The jar manifest may be configured before project versions have been set,
+        // particularly for subprojects which are configured via 'allprojects' or 'subprojects'.
+        Provider<String> versionProvider =
+                project.provider(() -> project.getVersion().toString());
+
         project.getTasks().withType(Jar.class).named("jar").configure(jar -> {
-            jar.getManifest()
-                    .attributes(
-                            Collections.singletonMap("Implementation-Version", new ProjectVersionToString(project)));
+            jar.getManifest().attributes(Collections.singletonMap("Implementation-Version", versionProvider));
         });
 
         JavaPluginExtension javaPluginExtension = project.getExtensions().getByType(JavaPluginExtension.class);
         javaPluginExtension.withJavadocJar();
         javaPluginExtension.withSourcesJar();
-    }
-
-    /**
-     * This is effectively a provider for the project version string value. The jar manifest may be configured
-     * before project versions have been set, particularly for subprojects which are configured via 'allprojects'
-     * or 'subprojects'.
-     */
-    private static final class ProjectVersionToString {
-        private final Project project;
-
-        private ProjectVersionToString(Project project) {
-            this.project = project;
-        }
-
-        @Override
-        public String toString() {
-            return Objects.toString(project.getVersion());
-        }
     }
 }
