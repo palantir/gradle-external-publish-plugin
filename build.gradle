@@ -17,7 +17,6 @@ buildscript {
         classpath 'com.palantir.baseline:gradle-baseline-java:6.39.0'
         classpath 'com.palantir.gradle.gitversion:gradle-git-version:4.0.0'
         classpath 'com.palantir.gradle.idea-configuration:gradle-idea-configuration:0.4.0'
-        classpath 'gradle.plugin.org.inferred:gradle-processors:3.7.0'
         classpath 'com.gradle.publish:plugin-publish-plugin:1.3.1'
     }
 }
@@ -47,7 +46,6 @@ version System.env.CIRCLE_TAG ?: gitVersion()
 apply plugin: 'com.palantir.baseline'
 apply plugin: 'java-gradle-plugin'
 apply plugin: 'groovy'
-apply plugin: 'org.inferred.processors'
 apply plugin: 'com.palantir.consistent-versions'
 apply plugin: 'com.palantir.baseline-java-versions'
 apply plugin: 'com.palantir.jdks.latest'
