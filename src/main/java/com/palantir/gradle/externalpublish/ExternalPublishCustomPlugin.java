@@ -21,6 +21,7 @@ import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 
 public final class ExternalPublishCustomPlugin implements Plugin<Project> {
+    @SuppressWarnings("for-rollout:NonAbstractGradleType")
     @Override
     public void apply(Project project) {
         ExternalPublishBasePlugin basePlugin = ExternalPublishBasePlugin.applyTo(project);
