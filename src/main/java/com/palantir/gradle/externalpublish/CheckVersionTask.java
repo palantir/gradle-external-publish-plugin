@@ -23,6 +23,7 @@ import org.gradle.api.tasks.TaskAction;
 public abstract class CheckVersionTask extends DefaultTask {
     @TaskAction
     public final void checkVersion() {
+        @SuppressWarnings("for-rollout:IllegalMethodCalledDuringTaskExecution")
         String version = getProject().getVersion().toString();
 
         if (version.endsWith("dirty")) {

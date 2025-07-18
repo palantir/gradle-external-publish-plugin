@@ -21,6 +21,7 @@ import org.gradle.api.GradleException;
 import org.gradle.api.tasks.TaskAction;
 
 public abstract class CheckSigningKeyTask extends DefaultTask {
+    @SuppressWarnings("for-rollout:IllegalMethodCalledDuringTaskExecution")
     @TaskAction
     public final void checkSigningKey() {
         if (!GpgSigningKey.fromEnv(getProject()).isPresent()) {
