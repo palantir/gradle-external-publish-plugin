@@ -29,8 +29,10 @@ public class ExternalPublishConjurePlugin implements Plugin<Project> {
         try {
             project.getPluginManager().apply(CONJURE_PUBLISH_PLUGIN);
         } catch (UnknownPluginException e) {
-            throw new GradleException("Could not find " + CONJURE_PUBLISH_PLUGIN + " to apply. "
-                    + "Ensure you've added gradle-conjure as a buildscript dependency.");
+            throw new GradleException(
+                    "Could not find " + CONJURE_PUBLISH_PLUGIN + " to apply. "
+                            + "Ensure you've added gradle-conjure as a buildscript dependency.",
+                    e);
         }
 
         ExternalPublishBasePlugin.applyTo(project).addPublication("conjure", _publication -> {});

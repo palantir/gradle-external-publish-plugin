@@ -36,8 +36,10 @@ public class ExternalPublishGradlePluginPlugin implements Plugin<Project> {
         try {
             project.getPluginManager().apply("com.gradle.plugin-publish");
         } catch (UnknownPluginException e) {
-            throw new GradleException("Could not find com.gradle.plugin-publish - ensure you have com.gradle"
-                    + ".publish:plugin-publish-plugin on your buildscript classpath");
+            throw new GradleException(
+                    "Could not find com.gradle.plugin-publish - ensure you have com.gradle"
+                            + ".publish:plugin-publish-plugin on your buildscript classpath",
+                    e);
         }
 
         TaskProvider<?> publishPluginsTask = project.getTasks().named("publishPlugins");
