@@ -1,16 +1,16 @@
 com.fasterxml.jackson.*:* = 2.19.1
 com.netflix.nebula:nebula-test = 10.6.2
 io.github.gradle-nexus:publish-plugin = 2.0.0
-com.netflix.nebula:nebula-publishing-plugin = 21.1.0
-com.netflix.nebula:gradle-info-plugin = 13.3.0
-org.junit.platform:* = 1.9.0
+com.netflix.nebula:nebula-publishing-plugin = 22.0.0
+com.netflix.nebula:gradle-info-plugin = 14.0.0
+org.junit.platform:* = 1.13.4
 org.rauschig:jarchivelib = 1.1.0
-com.google.guava:guava = 33.4.0-jre
-com.palantir.gradle.utils:environment-variables = 0.7.0
+com.google.guava:guava = 33.4.8-jre
+com.palantir.gradle.utils:environment-variables = 0.15.0
 org.jetbrains.intellij.plugins:gradle-intellij-plugin = 1.17.3
 org.junit.jupiter:* = 5.13.4
 
 # conflict resolution
 com.google.code.findbugs:jsr305 = 3.0.2
 com.google.errorprone:error_prone_annotations = 2.11.0
-org.checkerframework:checker-qual = 3.49.0
+org.checkerframework:checker-qual = 3.49.5
