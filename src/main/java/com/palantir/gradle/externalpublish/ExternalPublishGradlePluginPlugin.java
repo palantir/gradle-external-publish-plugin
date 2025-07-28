@@ -17,6 +17,9 @@
 package com.palantir.gradle.externalpublish;
 
 import com.palantir.gradle.utils.environmentvariables.EnvironmentVariables;
+import groovy.util.Node;
+import groovy.util.NodeList;
+import java.util.Optional;
 import org.gradle.api.GradleException;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
@@ -114,11 +117,18 @@ public class ExternalPublishGradlePluginPlugin implements Plugin<Project> {
         project.getExtensions().getByType(PublishingExtension.class).publications(publications -> publications
                 .withType(MavenPublication.class)
                 .configureEach(mavenPublication -> {
-                    mavenPublication.pom(mavenPom -> {
-                        mavenPom.getProperties()
-                                .put(
+                    // We should be using getProperties here but currently the maven-publish plugin is not fully
+                    // configuration-cache friendly. This should be reverted to getProperties once this gradle issue
+                    // is resolved: https://github.com/gradle/gradle/issues/23397
+                    mavenPublication.getPom().withXml(xmlProvider -> {
+                        Node pomNode = xmlProvider.asNode();
+                        Optional.of((NodeList) pomNode.get("properties"))
+                                .filter(nodes -> !nodes.isEmpty())
+                                .map(nodes -> (Node) nodes.get(0))
+                                .orElseGet(() -> pomNode.appendNode("properties"))
+                                .appendNode(
                                         PUBLISHED_PLUGIN_IDS_KEY,
-                                        generatePluginMdTask.map(GenerateGradlePluginMetaDataTask::getMetaDataJson));
+                                        generatePluginMdTask.get().getMetaDataJson());
                     });
                 }));
     }

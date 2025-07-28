@@ -55,14 +55,6 @@ class ExternalGradlePluginMetaDataPluginIntegrationSpec extends IntegrationSpec 
 
     }
 
-    def 'list tasks'() {
-        when:
-        ExecutionResult result = runTasksSuccessfully('tasks', '-a')
-
-        then:
-        println result.standardOutput
-    }
-
     def 'writes plugin data from gradlePlugin extension'() {
         setup:
         buildFile << '''
@@ -115,6 +107,44 @@ class ExternalGradlePluginMetaDataPluginIntegrationSpec extends IntegrationSpec 
         def propString = xml.properties[ExternalPublishGradlePluginPlugin.PUBLISHED_PLUGIN_IDS_KEY].toString()
         List<GenerateGradlePluginMetaDataTask.GradlePluginDef> publishedPlugins = GenerateGradlePluginMetaDataTask.OBJECT_MAPPER.readValue(propString, GRADLE_PLUGIN_DEF_TYPE_REF)
 
+        publishedPlugins[0].id == 'com.palantir.test-plugin1'
+        publishedPlugins[0].implementingClass == 'com.palantir.gradle.TestPlugin1'
+    }
+
+    def 'existing properties are maintained and only one properties block is present'() {
+        setup:
+        metaFilesPath.mkdirs()
+        File pluginDefFile = new File(metaFilesPath, 'com.palantir.test-plugin1.properties')
+        pluginDefFile << 'implementation-class=com.palantir.gradle.TestPlugin1'
+
+        //language=groovy
+        buildFile << '''
+            publishing {
+                publications {
+                    nebula(MavenPublication) {
+                        pom {
+                            properties.put('existing-property', 'existing-value')
+                        }
+                    }
+                }
+            }
+        '''.stripIndent(true)
+
+        when:
+        ExecutionResult result = runTasksSuccessfully('generatePomFileForPluginMavenPublication')
+
+        then:
+        result.wasExecuted('processResources')
+        pomFile.exists()
+
+        def xml = new XmlSlurper().parseText(pomFile.text)
+        def propertiesBlock = xml.properties
+        propertiesBlock.size() == 1 // Only one <properties> block
+
+        // Both properties are present in the same block
+        propertiesBlock.'existing-property'.text() == 'existing-value'
+        def propString = propertiesBlock[GradlePluginMetaDataPlugin.PUBLISHED_PLUGIN_IDS_KEY].text()
+        List<GenerateGradlePluginMetaDataTask.GradlePluginDef> publishedPlugins = GenerateGradlePluginMetaDataTask.OBJECT_MAPPER.readValue(propString, GRADLE_PLUGIN_DEF_TYPE_REF)
         publishedPlugins[0].id == 'com.palantir.test-plugin1'
         publishedPlugins[0].implementingClass == 'com.palantir.gradle.TestPlugin1'
     }
