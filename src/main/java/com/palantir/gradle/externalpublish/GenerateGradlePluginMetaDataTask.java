@@ -19,6 +19,7 @@ package com.palantir.gradle.externalpublish;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.palantir.logsafe.exceptions.SafeUncheckedIoException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -70,7 +71,7 @@ public abstract class GenerateGradlePluginMetaDataTask extends DefaultTask {
             String result = OBJECT_MAPPER.writeValueAsString(getPluginDefs());
             Files.writeString(getOutputFile().get().getAsFile().toPath(), result);
         } catch (IOException e) {
-            throw new RuntimeException("Error writing plugin mapping", e);
+            throw new SafeUncheckedIoException("Error writing plugin mapping", e);
         }
     }
 
@@ -90,7 +91,7 @@ public abstract class GenerateGradlePluginMetaDataTask extends DefaultTask {
                     .map(file -> GradlePluginDef.of(getPluginId(file), getImplementationClass(file)))
                     .collect(Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(GradlePluginDef::id))));
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new SafeUncheckedIoException(e);
         }
     }
 
@@ -121,7 +122,7 @@ public abstract class GenerateGradlePluginMetaDataTask extends DefaultTask {
         try (InputStream inputStream = Files.newInputStream(path)) {
             properties.load(inputStream);
         } catch (IOException e) {
-            throw new RuntimeException("Error reading plugin descriptor file", e);
+            throw new SafeUncheckedIoException("Error reading plugin descriptor file", e);
         }
         return properties;
     }
@@ -134,7 +135,7 @@ public abstract class GenerateGradlePluginMetaDataTask extends DefaultTask {
         try {
             return Files.readString(getOutputFile().getAsFile().get().toPath());
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new SafeUncheckedIoException(e);
         }
     }
 

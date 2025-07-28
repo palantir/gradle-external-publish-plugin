@@ -63,6 +63,7 @@ dependencies {
     implementation 'com.netflix.nebula:gradle-info-plugin'
     implementation 'com.palantir.gradle.utils:environment-variables'
     implementation 'org.jetbrains.intellij.plugins:gradle-intellij-plugin'
+    implementation 'com.palantir.safe-logging:preconditions'
 
     testImplementation gradleTestKit()
     testImplementation 'com.google.guava:guava'
