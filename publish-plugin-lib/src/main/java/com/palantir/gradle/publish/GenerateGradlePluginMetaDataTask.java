@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package com.palantir.gradle.externalpublish;
+package com.palantir.gradle.publish;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.palantir.logsafe.exceptions.SafeRuntimeException;
 import com.palantir.logsafe.exceptions.SafeUncheckedIoException;
 import java.io.File;
 import java.io.IOException;
@@ -42,14 +41,13 @@ import org.gradle.api.tasks.OutputFile;
 import org.gradle.api.tasks.PathSensitive;
 import org.gradle.api.tasks.PathSensitivity;
 import org.gradle.api.tasks.TaskAction;
-import org.immutables.value.Value;
 
 @CacheableTask
 public abstract class GenerateGradlePluginMetaDataTask extends DefaultTask {
     public static final String TASK_NAME = "generatePluginMetaData";
     public static final String IMPLEMENTATION_CLASS_KEY = "implementation-class";
 
-    static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     public GenerateGradlePluginMetaDataTask() {
         getOutputFile().convention(getProject().getLayout().getBuildDirectory().file(getName() + ".json"));
@@ -112,7 +110,7 @@ public abstract class GenerateGradlePluginMetaDataTask extends DefaultTask {
     private static String getImplementationClass(Path pluginDefFile) {
         Properties pluginDesc = loadProperties(pluginDefFile);
         if (!pluginDesc.containsKey(IMPLEMENTATION_CLASS_KEY)) {
-            throw new RuntimeException("Could not find plugin impl class in file");
+            throw new SafeRuntimeException("Could not find plugin impl class in file");
         }
         return pluginDesc.get(IMPLEMENTATION_CLASS_KEY).toString();
     }
@@ -136,22 +134,6 @@ public abstract class GenerateGradlePluginMetaDataTask extends DefaultTask {
             return Files.readString(getOutputFile().getAsFile().get().toPath());
         } catch (IOException e) {
             throw new SafeUncheckedIoException(e);
-        }
-    }
-
-    @JsonSerialize(as = ImmutableGradlePluginDef.class)
-    @JsonDeserialize(builder = ImmutableGradlePluginDef.Builder.class)
-    @Value.Immutable
-    interface GradlePluginDef {
-        String id();
-
-        String implementingClass();
-
-        static GradlePluginDef of(String id, String implementingClass) {
-            return ImmutableGradlePluginDef.builder()
-                    .id(id)
-                    .implementingClass(implementingClass)
-                    .build();
         }
     }
 }

@@ -16,6 +16,7 @@
 
 package com.palantir.gradle.externalpublish;
 
+import com.palantir.gradle.publish.GenerateGradlePluginMetaDataTask;
 import com.palantir.gradle.utils.environmentvariables.EnvironmentVariables;
 import groovy.util.Node;
 import groovy.util.NodeList;

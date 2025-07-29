@@ -24,6 +24,11 @@ buildscript {
 allprojects {
     apply plugin: 'com.palantir.java-format'
     apply plugin: 'com.palantir.jakarta-package-alignment'
+
+    repositories {
+        mavenCentral() { metadataSources { mavenPom(); ignoreGradleMetadataRedirection() } }
+        gradlePluginPortal()
+    }
 }
 
 apply plugin: 'com.palantir.external-publish'
@@ -31,11 +36,6 @@ apply plugin: 'com.palantir.external-publish-gradle-plugin'
 apply plugin: 'com.palantir.failure-reports'
 // So we get publishToMavenLocal
 apply plugin: 'maven-publish'
-
-repositories {
-    mavenCentral() { metadataSources { mavenPom(); ignoreGradleMetadataRedirection() } }
-    gradlePluginPortal()
-}
 
 apply plugin: 'com.palantir.git-version'
 apply plugin: 'com.palantir.gradle-guide'
@@ -57,6 +57,7 @@ dependencies {
 
     compileOnly 'org.immutables:value::annotations'
 
+    implementation project(':publish-plugin-lib')
     implementation 'io.github.gradle-nexus:publish-plugin'
     implementation 'com.fasterxml.jackson.core:jackson-databind'
     implementation 'com.netflix.nebula:nebula-publishing-plugin'

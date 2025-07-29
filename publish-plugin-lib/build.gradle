@@ -1,0 +1,13 @@
+apply plugin: 'java-library'
+apply plugin: 'com.palantir.external-publish-jar'
+
+dependencies {
+    annotationProcessor 'org.immutables:value'
+    compileOnly 'org.immutables:value::annotations'
+
+    api gradleApi()
+    implementation 'com.fasterxml.jackson.core:jackson-databind'
+    implementation 'com.palantir.safe-logging:preconditions'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+}
