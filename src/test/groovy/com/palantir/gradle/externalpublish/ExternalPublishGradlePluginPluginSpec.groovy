@@ -121,7 +121,7 @@ class ExternalPublishGradlePluginPluginSpec extends IntegrationSpec {
         buildFile << '''
             publishing {
                 publications {
-                    nebula(MavenPublication) {
+                    pluginMaven(MavenPublication) {
                         pom {
                             properties.put('existing-property', 'existing-value')
                         }
@@ -143,7 +143,7 @@ class ExternalPublishGradlePluginPluginSpec extends IntegrationSpec {
 
         // Both properties are present in the same block
         propertiesBlock.'existing-property'.text() == 'existing-value'
-        def propString = propertiesBlock[GradlePluginMetaDataPlugin.PUBLISHED_PLUGIN_IDS_KEY].text()
+        def propString = propertiesBlock[ExternalPublishGradlePluginPlugin.PUBLISHED_PLUGIN_IDS_KEY].text()
         List<GenerateGradlePluginMetaDataTask.GradlePluginDef> publishedPlugins = GenerateGradlePluginMetaDataTask.OBJECT_MAPPER.readValue(propString, GRADLE_PLUGIN_DEF_TYPE_REF)
         publishedPlugins[0].id == 'com.palantir.test-plugin1'
         publishedPlugins[0].implementingClass == 'com.palantir.gradle.TestPlugin1'
