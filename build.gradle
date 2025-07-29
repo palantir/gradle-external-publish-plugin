@@ -56,23 +56,18 @@ allprojects {
 
 
 dependencies {
-    annotationProcessor 'org.immutables:value'
-
-    compileOnly 'org.immutables:value::annotations'
-
     implementation project(':publish-plugin-lib')
     implementation 'io.github.gradle-nexus:publish-plugin'
-    implementation 'com.fasterxml.jackson.core:jackson-databind'
     implementation 'com.netflix.nebula:nebula-publishing-plugin'
     implementation 'com.netflix.nebula:gradle-info-plugin'
     implementation 'com.palantir.gradle.utils:environment-variables'
     implementation 'org.jetbrains.intellij.plugins:gradle-intellij-plugin'
-    implementation 'com.palantir.safe-logging:preconditions'
 
     testImplementation gradleTestKit()
     testImplementation 'com.google.guava:guava'
     testImplementation 'com.netflix.nebula:nebula-test'
     testImplementation 'org.rauschig:jarchivelib'
+    testImplementation 'com.fasterxml.jackson.core:jackson-databind'
 }
 
 
