@@ -20,7 +20,7 @@ import com.fasterxml.jackson.core.type.TypeReference
 import nebula.test.IntegrationSpec
 import nebula.test.functional.ExecutionResult
 
-class ExternalGradlePluginMetaDataPluginIntegrationSpec extends IntegrationSpec {
+class ExternalPublishGradlePluginPluginSpec extends IntegrationSpec {
     File buildDir
     File pomFile
     File metaFilesPath
