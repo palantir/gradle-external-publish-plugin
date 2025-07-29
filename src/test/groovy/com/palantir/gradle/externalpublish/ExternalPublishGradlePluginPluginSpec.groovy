@@ -19,6 +19,7 @@ package com.palantir.gradle.externalpublish
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.palantir.gradle.publish.GradlePluginDef
+import com.palantir.gradle.publish.PublishGradlePluginUtils
 import nebula.test.IntegrationSpec
 import nebula.test.functional.ExecutionResult
 
@@ -84,7 +85,7 @@ class ExternalPublishGradlePluginPluginSpec extends IntegrationSpec {
         pomFile.exists()
 
         def xml = new XmlSlurper().parseText(pomFile.text)
-        def propString = xml.properties[ExternalPublishGradlePluginPlugin.PUBLISHED_PLUGIN_IDS_KEY].toString()
+        def propString = xml.properties[PublishGradlePluginUtils.PUBLISHED_PLUGIN_IDS_KEY].toString()
         List<GradlePluginDef> publishedPlugins = OBJECT_MAPPER.readValue(propString, GRADLE_PLUGIN_DEF_TYPE_REF)
 
         publishedPlugins[0].id == 'com.palantir.test-plugin1'
@@ -108,7 +109,7 @@ class ExternalPublishGradlePluginPluginSpec extends IntegrationSpec {
         pomFile.exists()
 
         def xml = new XmlSlurper().parseText(pomFile.text)
-        def propString = xml.properties[ExternalPublishGradlePluginPlugin.PUBLISHED_PLUGIN_IDS_KEY].toString()
+        def propString = xml.properties[PublishGradlePluginUtils.PUBLISHED_PLUGIN_IDS_KEY].toString()
         List<GradlePluginDef> publishedPlugins = OBJECT_MAPPER.readValue(propString, GRADLE_PLUGIN_DEF_TYPE_REF)
 
         publishedPlugins[0].id == 'com.palantir.test-plugin1'
@@ -147,7 +148,7 @@ class ExternalPublishGradlePluginPluginSpec extends IntegrationSpec {
 
         // Both properties are present in the same block
         propertiesBlock.'existing-property'.text() == 'existing-value'
-        def propString = propertiesBlock[ExternalPublishGradlePluginPlugin.PUBLISHED_PLUGIN_IDS_KEY].text()
+        def propString = propertiesBlock[PublishGradlePluginUtils.PUBLISHED_PLUGIN_IDS_KEY].text()
         List<GradlePluginDef> publishedPlugins = OBJECT_MAPPER.readValue(propString, GRADLE_PLUGIN_DEF_TYPE_REF)
         publishedPlugins[0].id == 'com.palantir.test-plugin1'
         publishedPlugins[0].implementingClass == 'com.palantir.gradle.TestPlugin1'
