@@ -9,3 +9,5 @@ buildscript {
 }
 apply plugin: 'com.palantir.jdks.settings'
 rootProject.name = 'gradle-external-publish-plugin'
+
+include 'publish-plugin-lib'
