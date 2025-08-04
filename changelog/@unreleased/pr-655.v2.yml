@@ -1,0 +1,5 @@
+type: fix
+fix:
+  description: Republish to fix publish failures
+  links:
+  - https://github.com/palantir/gradle-external-publish-plugin/pull/655
