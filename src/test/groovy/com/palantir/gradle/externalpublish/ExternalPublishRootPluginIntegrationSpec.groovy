@@ -375,23 +375,23 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
 
 
         then:
-        ['foo', 'bar'].each { name ->
-            def gnv = new File(mavenRepoDir, "group/${name}/version")
-            verifyPomFile(gnv, name)
+        ['foo', 'bar'].each { artifactId ->
+            def gnv = new File(mavenRepoDir, "group/${artifactId}/version")
+            verifyPomFile(gnv, artifactId)
 
-            new File(gnv, "${name}-version.gradle").exists()
+            assert new File(gnv, "${artifactId}-version.gradle").exists()
         }
     }
 
-    void verifyPomFile(File gnv, String name) {
-        verifyPomFile(gnv, name, 'version')
+    void verifyPomFile(File gnv, String artifactId) {
+        verifyPomFile(gnv, artifactId, 'version')
     }
 
-    void verifyPomFile(File gnv, String name, String version) {
-        def pom = new XmlParser().parse(new File(gnv, "${name}-${version}.pom"))
+    void verifyPomFile(File gnv, String artifactId, String version) {
+        def pom = new XmlParser().parse(new File(gnv, "${artifactId}-${version}.pom"))
 
         assert pom.groupId.text() == 'group'
-        assert pom.name.text() == name
+        assert pom.artifactId.text() == artifactId
         assert pom.version.text() == version
         // Sonatype requires a description
         assert !pom.description.text().isEmpty()
