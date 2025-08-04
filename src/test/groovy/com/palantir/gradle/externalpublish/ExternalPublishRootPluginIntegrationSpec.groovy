@@ -390,23 +390,23 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
     void verifyPomFile(File gnv, String name, String version) {
         def pom = new XmlParser().parse(new File(gnv, "${name}-${version}.pom"))
 
-        pom.groupId.text() == 'group'
-        pom.name.text() == name
-        pom.version.text() == version
+        assert pom.groupId.text() == 'group'
+        assert pom.name.text() == name
+        assert pom.version.text() == version
         // Sonatype requires a description
-        !pom.description.text().isEmpty()
-        pom.url.text().endsWith 'gradle-external-publish-plugin'
+        assert !pom.description.text().isEmpty()
+        assert pom.url.text().endsWith('gradle-external-publish-plugin')
 
         def license = pom.licenses.license
-        license.name.text() == 'The Apache License, Version 2.0'
-        license.url.text() == 'https://www.apache.org/licenses/LICENSE-2.0'
+        assert license.name.text() == 'The Apache License, Version 2.0'
+        assert license.url.text() == 'https://www.apache.org/licenses/LICENSE-2.0'
 
         def developer = pom.developers.developer
-        developer.id.text() == 'palantir'
-        developer.name.text() == 'Palantir Technologies Inc'
-        developer.organizationUrl.text() == 'https://www.palantir.com'
+        assert developer.id.text() == 'palantir'
+        assert developer.name.text() == 'Palantir Technologies Inc'
+        assert developer.organizationUrl.text() == 'https://www.palantir.com'
 
-        pom.scm.url.text().endsWith 'gradle-external-publish-plugin.git'
+        assert pom.scm.url.text().endsWith('gradle-external-publish-plugin.git')
     }
 
     File testingMavenRepo() {
