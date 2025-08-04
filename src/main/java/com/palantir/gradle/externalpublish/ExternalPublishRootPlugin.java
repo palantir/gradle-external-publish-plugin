@@ -22,6 +22,7 @@ import io.github.gradlenexus.publishplugin.NexusPublishPlugin;
 import java.net.URI;
 import java.time.Duration;
 import java.util.Optional;
+import nebula.plugin.info.scm.ScmInfoPlugin;
 import org.gradle.api.GradleException;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
@@ -39,6 +40,10 @@ public class ExternalPublishRootPlugin implements Plugin<Project> {
             throw new GradleException("The " + ExternalPublishRootPlugin.class.getSimpleName()
                     + " plugin must be applied on the root project");
         }
+
+        // This is required to be applied to the root project so the nebula MavenScmPlugin will work properly
+        // on subprojects
+        rootProject.getPluginManager().apply(ScmInfoPlugin.class);
 
         rootProject.getPluginManager().apply(NexusPublishPlugin.class);
         NexusPublishExtension publishExtension = rootProject.getExtensions().getByType(NexusPublishExtension.class);
