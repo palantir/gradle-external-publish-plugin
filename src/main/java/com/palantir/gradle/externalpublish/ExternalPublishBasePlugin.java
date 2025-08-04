@@ -19,6 +19,11 @@ package com.palantir.gradle.externalpublish;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
+import nebula.plugin.info.scm.ScmInfoPlugin;
+import nebula.plugin.publishing.maven.MavenBasePublishPlugin;
+import nebula.plugin.publishing.maven.MavenManifestPlugin;
+import nebula.plugin.publishing.maven.MavenScmPlugin;
 import org.gradle.api.Action;
 import org.gradle.api.GradleException;
 import org.gradle.api.Plugin;
@@ -26,6 +31,7 @@ import org.gradle.api.Project;
 import org.gradle.api.publish.Publication;
 import org.gradle.api.publish.PublishingExtension;
 import org.gradle.api.publish.maven.MavenPublication;
+import org.gradle.api.publish.maven.plugins.MavenPublishPlugin;
 import org.gradle.api.publish.maven.tasks.AbstractPublishToMaven;
 import org.gradle.api.publish.maven.tasks.PublishToMavenLocal;
 import org.gradle.api.publish.maven.tasks.PublishToMavenRepository;
@@ -46,7 +52,7 @@ final class ExternalPublishBasePlugin implements Plugin<Project> {
     public void apply(Project projectVal) {
         this.project = projectVal;
 
-        project.getPluginManager().apply("com.netflix.nebula.maven-publish");
+        applyNebulaPublishingPlugins();
         linkWithRootProject();
         disableOtherPublicationsFromPublishingToSonatype();
         disableModuleMetadata();
@@ -58,6 +64,22 @@ final class ExternalPublishBasePlugin implements Plugin<Project> {
         if (project.getDescription() == null) {
             project.setDescription("Palantir open source project");
         }
+    }
+
+    private void applyNebulaPublishingPlugins() {
+        // Intentionally not applying nebula.maven-publish, but most of its constituent plugins,
+        // because we generally do not want to add new nebula plugins without reviewing them first.
+        Stream.of(
+                        MavenPublishPlugin.class,
+                        MavenBasePublishPlugin.class,
+                        MavenManifestPlugin.class,
+                        // TODO(callumr): Replace this nebula plugin with our internal version that handle ssh
+                        //                remotes properly - ie changing them to http remotes in the pom
+                        MavenScmPlugin.class,
+                        // We need this in the subproject as well as the root project as the subproject plugin
+                        // reads the root project extension to save loading the same git info many times
+                        ScmInfoPlugin.class)
+                .forEach(plugin -> project.getPluginManager().apply(plugin));
     }
 
     private void linkWithRootProject() {
