@@ -767,7 +767,7 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
         def mavenRepoDir = testingMavenRepo()
 
         when:
-        runTasksSuccessfully('publishBomPublicationToTestRepoRepository')
+        runTasksSuccessfully('publishBomPublicationToTestRepoRepository', 'publishMavenPublicationToTestRepoRepository')
 
         then:
         def gnv = new File(mavenRepoDir, 'group/platform-bom/version')
@@ -781,10 +781,6 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
 
         verifyPomFile(gnv, 'platform-bom')
 
-        when:
-        runTasksSuccessfully('publishMavenPublicationToTestRepoRepository')
-
-        then:
         def gnvJar = new File(mavenRepoDir, 'group/jar/version')
         def moduleJar = new File(gnvJar, 'jar-version.module')
         moduleJar.exists()

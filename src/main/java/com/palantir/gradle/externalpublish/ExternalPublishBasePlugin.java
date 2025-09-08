@@ -29,7 +29,6 @@ import org.gradle.api.publish.maven.MavenPublication;
 import org.gradle.api.publish.maven.tasks.AbstractPublishToMaven;
 import org.gradle.api.publish.maven.tasks.PublishToMavenLocal;
 import org.gradle.api.publish.maven.tasks.PublishToMavenRepository;
-import org.gradle.api.publish.tasks.GenerateModuleMetadata;
 import org.gradle.api.tasks.TaskCollection;
 import org.gradle.language.base.plugins.LifecycleBasePlugin;
 import org.gradle.plugins.signing.Sign;
@@ -49,7 +48,6 @@ final class ExternalPublishBasePlugin implements Plugin<Project> {
         project.getPluginManager().apply("com.netflix.nebula.maven-publish");
         linkWithRootProject();
         disableOtherPublicationsFromPublishingToSonatype();
-        conditionallyDisableModuleMetadata();
         publishToMavenLocalAsPartOfBuild();
         addSignPublishDependency();
 
@@ -92,22 +90,6 @@ final class ExternalPublishBasePlugin implements Plugin<Project> {
 
                 return true;
             });
-        });
-    }
-
-    private void conditionallyDisableModuleMetadata() {
-        // Only disable module metadata if no BOM plugin is present in any subproject
-        // The BOM plugin requires GMM for proper version alignment
-        project.afterEvaluate(proj -> {
-            boolean hasBomPlugin = proj.getRootProject().getSubprojects().stream()
-                    .anyMatch(subproject -> subproject.getPlugins().hasPlugin(ExternalPublishBomPlugin.class));
-
-            if (!hasBomPlugin) {
-                // Turning off module metadata so that all consumers just use regular POMs
-                proj.getTasks()
-                        .withType(GenerateModuleMetadata.class)
-                        .configureEach(generateModuleMetadata -> generateModuleMetadata.setEnabled(false));
-            }
         });
     }
 
