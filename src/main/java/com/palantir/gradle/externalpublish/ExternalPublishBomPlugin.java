@@ -23,7 +23,6 @@ public class ExternalPublishBomPlugin implements Plugin<Project> {
     @Override
     public final void apply(Project project) {
         project.getPluginManager().apply("java-platform");
-        //        project.getPluginManager().apply(MavenPublishPlugin.class);
 
         configurePlatformConstraints(project);
 
