@@ -101,6 +101,10 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
         publishProject('custom')
     }
 
+    File publishBom() {
+        publishProject('bom', 'platform-bom')
+    }
+
     File publishProject(String type, String subprojectName = type) {
         def subprojectDir = new File(projectDir, subprojectName)
 
@@ -729,6 +733,68 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
         then:
         def postText = new File("versions.lock").text
         assert emptyText == postText
+    }
+
+    def 'can apply bom plugin and creates platform publication'() {
+        setup:
+        publishBom()
+
+        when:
+        ExecutionResult result = runTasksSuccessfully(':platform-bom:tasks', '--all')
+
+        then:
+        result.standardOutput.contains('publishBomPublicationToMavenLocal')
+        result.standardOutput.contains('generatePomFileForBomPublication')
+    }
+
+    def 'subprojects with external-publish-jar get platform dependency added'() {
+        setup:
+        // Create BOM project
+        publishBom()
+        publishJar()
+
+        when:
+        def result = runTasksSuccessfully(':jar:dependencies', '--configuration', 'api')
+
+        then:
+        result.standardOutput.contains('-- project platform-bom')
+    }
+
+    def 'can published module metadata is correct'() {
+        setup:
+        publishBom()
+        publishJar()
+        def mavenRepoDir = testingMavenRepo()
+
+        when:
+        runTasksSuccessfully('publishBomPublicationToTestRepoRepository')
+
+        then:
+        def gnv = new File(mavenRepoDir, 'group/platform-bom/version')
+        def module = new File(gnv, 'platform-bom-version.module')
+        module.exists()
+
+        module.text.contains('"dependencyConstraints"')
+        module.text.contains('"group": "group"')
+        module.text.contains('"module": "jar"')
+        module.text.contains('"requires": "version"')
+
+        verifyPomFile(gnv, 'platform-bom')
+
+        when:
+        runTasksSuccessfully('publishMavenPublicationToTestRepoRepository')
+
+        then:
+        def gnvJar = new File(mavenRepoDir, 'group/jar/version')
+        def moduleJar = new File(gnvJar, 'jar-version.module')
+        moduleJar.exists()
+
+        moduleJar.text.contains('"dependencies"')
+        moduleJar.text.contains('"group": "group"')
+        moduleJar.text.contains('"module": "platform-bom"')
+        moduleJar.text.contains('"requires": "version"')
+        moduleJar.text.contains('"org.gradle.category": "platform"')
+        moduleJar.text.contains('"endorseStrictVersions": true')
     }
 
     private void disableAllTaskActions() {

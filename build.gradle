@@ -130,6 +130,13 @@ gradlePlugin {
             implementationClass = 'com.palantir.gradle.externalpublish.ExternalPublishCustomPlugin'
             tags.set(['publishing'])
         }
+        externalPublishBom {
+            id = 'com.palantir.external-publish-bom'
+            displayName = 'Palantir External Publish Bom Plugin'
+            description = pluginDescription('a jar bom')
+            implementationClass = 'com.palantir.gradle.externalpublish.ExternalPublishBomPlugin'
+            tags.set(['publishing'])
+        }
     }
 }
 

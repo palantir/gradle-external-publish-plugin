@@ -59,6 +59,24 @@ apply plugin: 'com.palantir.external-publish-jar'
 
 Source and javadoc jars will be published automatically. Additionally, `Implementation-Version` will be added to Jar manifest, based on the Gradle project version.
 
+## Publishing BOMs (Bill of Materials)
+
+Apply the `com.palantir.external-publish-bom` plugin to publish a BOM that manages versions for your published artifacts:
+
+```gradle
+apply plugin: 'com.palantir.external-publish-bom'
+```
+
+This plugin automatically:
+- Creates a Java platform (BOM) that declares version constraints for all sibling projects that use `com.palantir.external-publish-jar`
+- Adds the BOM as a platform dependency to each jar project, ensuring version alignment
+
+### Why this matters
+
+The plugin publishes [Gradle Module Metadata](https://docs.gradle.org/current/userguide/publishing_gradle_module_metadata.html) which solves a critical gap: **buildScript transitive version conflicts**.
+
+While gradle-consistent-versions manages regular dependencies, it doesn't apply to buildScript classpath. This causes runtime failures when plugins pull in incompatible transitive versions. The BOM's platform constraints in Gradle Module Metadata ensure all transitives align to compatible versions.
+
 ## Publishing Application Dists
 
 Apply the `com.palantir.external-publish-application-dist` to publish an executable Java application distribution `.tgz` based on the Gradle `application` plugin:
