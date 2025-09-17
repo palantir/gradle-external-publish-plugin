@@ -10,15 +10,15 @@ com.fasterxml.jackson.module:jackson-module-kotlin:2.19.2 (3 constraints: a93f9c
 
 com.google.code.gson:gson:2.10.1 (1 constraints: de1a3b54)
 
-com.google.errorprone:error_prone_annotations:2.36.0 (3 constraints: b820826a)
+com.google.errorprone:error_prone_annotations:2.41.0 (3 constraints: b420b369)
 
 com.google.guava:failureaccess:1.0.3 (1 constraints: 160ae3b4)
 
-com.google.guava:guava:33.4.8-jre (3 constraints: d83a7a75)
+com.google.guava:guava:33.5.0-jre (3 constraints: d13a6271)
 
 com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava (1 constraints: bd17c918)
 
-com.google.j2objc:j2objc-annotations:3.0.0 (1 constraints: 150aeab4)
+com.google.j2objc:j2objc-annotations:3.1 (1 constraints: b809f1a0)
 
 com.googlecode.plist:dd-plist:1.28 (1 constraints: 5316b0df)
 
