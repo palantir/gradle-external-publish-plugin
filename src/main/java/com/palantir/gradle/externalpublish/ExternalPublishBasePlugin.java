@@ -16,6 +16,7 @@
 
 package com.palantir.gradle.externalpublish;
 
+import com.palantir.gradle.publish.SharedProperties;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -43,7 +44,6 @@ import org.gradle.plugins.signing.SigningExtension;
 import org.gradle.plugins.signing.SigningPlugin;
 
 final class ExternalPublishBasePlugin implements Plugin<Project> {
-    private static final String PUBLISH_MODULE_METADATA_PROPERTY = "publishModuleMetadata";
 
     private final Set<String> sonatypePublicationNames = new HashSet<>();
 
@@ -119,8 +119,8 @@ final class ExternalPublishBasePlugin implements Plugin<Project> {
     }
 
     private void disableModuleMetadata() {
-        if (project.hasProperty(PUBLISH_MODULE_METADATA_PROPERTY)
-                && "true".equals(project.findProperty(PUBLISH_MODULE_METADATA_PROPERTY))) {
+        if (project.hasProperty(SharedProperties.PUBLISH_MODULE_METADATA_PROPERTY)
+                && "true".equals(project.findProperty(SharedProperties.PUBLISH_MODULE_METADATA_PROPERTY))) {
             return;
         }
 
