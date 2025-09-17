@@ -43,6 +43,7 @@ import org.gradle.plugins.signing.SigningExtension;
 import org.gradle.plugins.signing.SigningPlugin;
 
 final class ExternalPublishBasePlugin implements Plugin<Project> {
+    private static final String PUBLISH_MODULE_METADATA_PROPERTY = "com.palantir.externalpublish.publishModuleMetadata";
 
     private final Set<String> sonatypePublicationNames = new HashSet<>();
 
@@ -118,6 +119,11 @@ final class ExternalPublishBasePlugin implements Plugin<Project> {
     }
 
     private void disableModuleMetadata() {
+        if (project.hasProperty(PUBLISH_MODULE_METADATA_PROPERTY)
+                && "true".equals(project.findProperty(PUBLISH_MODULE_METADATA_PROPERTY))) {
+            return;
+        }
+
         // Turning off module metadata so that all consumers just use regular POMs
         project.getTasks()
                 .withType(GenerateModuleMetadata.class)
