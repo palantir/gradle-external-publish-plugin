@@ -17,11 +17,9 @@
 package com.palantir.gradle.externalpublish;
 
 import com.palantir.gradle.publish.GradlePluginMetaDataPlugin;
-import com.palantir.gradle.utils.environmentvariables.EnvironmentVariables;
 import org.gradle.api.GradleException;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
-import org.gradle.api.plugins.ExtraPropertiesExtension;
 import org.gradle.api.plugins.UnknownPluginException;
 import org.gradle.api.tasks.TaskProvider;
 
@@ -51,15 +49,5 @@ public class ExternalPublishGradlePluginPlugin implements Plugin<Project> {
         });
 
         project.getPluginManager().apply(GradlePluginMetaDataPlugin.class);
-
-        EnvironmentVariables envVars = OurEnvironmentVariables.environmentVariables(project);
-
-        ExtraPropertiesExtension extraProperties = project.getExtensions().getExtraProperties();
-        extraProperties.set(
-                "gradle.publish.key",
-                envVars.envVarOrFromTestingProperty("GRADLE_KEY").getOrNull());
-        extraProperties.set(
-                "gradle.publish.secret",
-                envVars.envVarOrFromTestingProperty("GRADLE_SECRET").getOrNull());
     }
 }
