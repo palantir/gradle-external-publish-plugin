@@ -45,7 +45,7 @@ class ExternalPublishGradlePluginPluginSpec extends IntegrationSpec {
                 }
                 
                 dependencies {
-                    classpath 'com.gradle.publish:plugin-publish-plugin:1.3.0'
+                    classpath 'com.gradle.publish:plugin-publish-plugin:2.0.0'
                 }
             }
 
