@@ -24,13 +24,13 @@ com.googlecode.plist:dd-plist:1.28 (1 constraints: 5316b0df)
 
 com.jcraft:jzlib:1.1.2 (1 constraints: df085992)
 
-com.netflix.nebula:gradle-contacts-plugin:7.0.2 (2 constraints: 652230e2)
+com.netflix.nebula:gradle-contacts-plugin:8.0.0 (2 constraints: 652268e2)
 
-com.netflix.nebula:gradle-info-plugin:14.0.0 (2 constraints: de177471)
+com.netflix.nebula:gradle-info-plugin:15.0.0 (2 constraints: df17ae71)
 
-com.netflix.nebula:nebula-gradle-interop:2.3.0 (2 constraints: 5e2271e1)
+com.netflix.nebula:nebula-gradle-interop:2.3.0 (1 constraints: e70f3e97)
 
-com.netflix.nebula:nebula-publishing-plugin:22.0.0 (1 constraints: 3605373b)
+com.netflix.nebula:nebula-publishing-plugin:22.1.0 (1 constraints: 37053a3b)
 
 com.palantir.gradle.utils:environment-variables:0.20.0 (1 constraints: 3405273b)
 
