@@ -16,4 +16,4 @@ org.junit.jupiter:* = 6.0.1
 # conflict resolution
 com.google.code.findbugs:jsr305 = 3.0.2
 com.google.errorprone:error_prone_annotations = 2.11.0
-org.checkerframework:checker-qual = 3.51.1
+org.checkerframework:checker-qual = 3.52.0
