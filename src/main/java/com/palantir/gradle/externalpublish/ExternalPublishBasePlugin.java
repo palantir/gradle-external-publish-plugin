@@ -183,6 +183,7 @@ final class ExternalPublishBasePlugin implements Plugin<Project> {
         });
     }
 
+    @SuppressWarnings("for-rollout:TaskDependsOn")
     private void addSignPublishDependency() {
         // TODO(gradle#26091): Fix Gradle warning about signing tasks using publishing task outputs without explicit.
         // see: https://github.com/gradle/gradle/issues/26091

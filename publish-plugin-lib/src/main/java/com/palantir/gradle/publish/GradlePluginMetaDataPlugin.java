@@ -49,6 +49,7 @@ public final class GradlePluginMetaDataPlugin implements Plugin<Project> {
      * @see <a href=https://github.com/gradle/gradle/blob/9bfee9d10dfad5011e2fbd066de43e86166b5b53/platforms/extensibility/plugin-development/src/main/java/org/gradle/plugin/devel/plugins/JavaGradlePluginPlugin.java#L248-L259>JavaGradlePluginPlugin</a>
      * @see <a href=https://github.com/gradle/gradle/blob/9bfee9d10dfad5011e2fbd066de43e86166b5b53/platforms/software/maven/src/main/java/org/gradle/api/publish/maven/plugins/MavenPublishPlugin.java#L201-L212>MavenPublishPlugin</a>
      */
+    @SuppressWarnings("for-rollout:TaskDependsOn")
     @Override
     public void apply(Project project) {
         project.getPluginManager().withPlugin("java-gradle-plugin", _plugin -> {
