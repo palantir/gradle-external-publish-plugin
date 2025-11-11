@@ -32,7 +32,7 @@ com.netflix.nebula:nebula-gradle-interop:2.3.0 (1 constraints: e70f3e97)
 
 com.netflix.nebula:nebula-publishing-plugin:22.1.0 (1 constraints: 37053a3b)
 
-com.palantir.gradle.utils:environment-variables:0.20.0 (1 constraints: 3405273b)
+com.palantir.gradle.utils:environment-variables:0.21.0 (1 constraints: 35052a3b)
 
 com.palantir.safe-logging:preconditions:3.9.0 (1 constraints: 0e051536)
 
