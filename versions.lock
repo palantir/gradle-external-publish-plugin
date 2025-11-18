@@ -82,7 +82,7 @@ org.glassfish.jaxb:jaxb-runtime:2.3.1 (1 constraints: 42155c9f)
 
 org.glassfish.jaxb:txw2:2.3.1 (1 constraints: bb0db335)
 
-org.immutables:value:2.11.6 (1 constraints: 3c05383b)
+org.immutables:value:2.11.7 (1 constraints: 3d05393b)
 
 org.jdom:jdom2:2.0.6.1 (1 constraints: a3156dca)
 
