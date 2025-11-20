@@ -68,6 +68,7 @@ dependencies {
     testImplementation gradleTestKit()
     testImplementation 'com.google.guava:guava'
     testImplementation 'com.netflix.nebula:nebula-test'
+    testImplementation 'com.palantir.gradle.plugintesting:gradle-plugin-testing-junit'
     testImplementation 'org.rauschig:jarchivelib'
     testImplementation 'com.fasterxml.jackson.core:jackson-databind'
 }

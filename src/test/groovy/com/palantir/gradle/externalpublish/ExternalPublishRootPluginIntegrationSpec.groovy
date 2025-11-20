@@ -31,11 +31,15 @@ import org.rauschig.jarchivelib.ArchiverFactory
 import spock.lang.Unroll
 
 class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
+    // ***DELINEATOR FOR REVIEW: PUBLISH_PROJECT_TYPES
     private static final List<String> PUBLISH_PROJECT_TYPES = ImmutableList.of(
             'jar', 'dist', 'application-dist', 'gradle-plugin', 'conjure', 'intellij', 'custom')
+    // ***DELINEATOR FOR REVIEW: SONATYPE_PROJECT_TYPES
     private static final List<String> SONATYPE_PROJECT_TYPES = PUBLISH_PROJECT_TYPES - 'gradle-plugin'
+    // ***DELINEATOR FOR REVIEW: NON_CONFLICTING_PROJECT_TYPES
     private static final List<String> NON_CONFLICTING_PROJECT_TYPES = PUBLISH_PROJECT_TYPES - 'dist'
 
+    // ***DELINEATOR FOR REVIEW: setup
     def setup() {
         // language=gradle
         settingsFile << '''
@@ -73,34 +77,42 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
         runTasks('writeVersionLocks')
     }
 
+    // ***DELINEATOR FOR REVIEW: publishJar
     File publishJar() {
         publishProject('jar')
     }
 
+    // ***DELINEATOR FOR REVIEW: publishDist
     File publishDist() {
         publishProject('dist')
     }
 
+    // ***DELINEATOR FOR REVIEW: publishApplicationDist
     File publishApplicationDist() {
         publishProject('application-dist')
     }
 
+    // ***DELINEATOR FOR REVIEW: publishGradlePlugin
     File publishGradlePlugin() {
         publishProject('gradle-plugin')
     }
 
+    // ***DELINEATOR FOR REVIEW: publishConjure
     File publishConjure() {
         publishProject('conjure')
     }
 
+    // ***DELINEATOR FOR REVIEW: publishIntellij
     File publishIntellij() {
         publishProject('intellij')
     }
 
+    // ***DELINEATOR FOR REVIEW: publishCustom
     File publishCustom() {
         publishProject('custom')
     }
 
+    // ***DELINEATOR FOR REVIEW: publishProject
     File publishProject(String type, String subprojectName = type) {
         def subprojectDir = new File(projectDir, subprojectName)
 
@@ -212,22 +224,27 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
         return subprojectDir
     }
 
+    // ***DELINEATOR FOR REVIEW: allPublishProjects
     void allPublishProjects() {
         PUBLISH_PROJECT_TYPES.each {publishProject(it) }
     }
 
+    // ***DELINEATOR FOR REVIEW: can_apply_plugin_without_signing_without_exploding
     def 'can apply plugin without signing without exploding'() {
         setup:
         allPublishProjects()
 
+        // ***DELINEATOR FOR REVIEW: when
         when:
         ExecutionResult result = runTasksSuccessfully('tasks', '--all', '-i')
         println result.standardOutput
 
+        // ***DELINEATOR FOR REVIEW: then
         then:
         result.success
     }
 
+    // ***DELINEATOR FOR REVIEW: can_publish_jar_to_local_maven_repo_on_disk
     def 'can publish jar to local maven repo on disk'() {
         setup:
         publishJar()
@@ -251,6 +268,7 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
         getJarVersionFromManifest(jarFile) == 'version'
     }
 
+    // ***DELINEATOR FOR REVIEW: can_publish_jar_to_local_maven_repo_on_disk_with_version_declared_after_plugin
     def 'can publish jar to local maven repo on disk with version declared after plugin'() {
         setup:
         publishJar()
@@ -259,9 +277,11 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
         """.stripIndent()
         def mavenRepoDir = testingMavenRepo()
 
+        // ***DELINEATOR FOR REVIEW: when
         when:
         runSuccessfullyWithSigning('publishMavenPublicationToTestRepoRepository')
 
+        // ***DELINEATOR FOR REVIEW: then
         then:
         def gnv = new File(mavenRepoDir, 'group/jar/updated')
         def jarFile = new File(gnv, 'jar-updated.jar')
@@ -277,20 +297,24 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
         getJarVersionFromManifest(jarFile) == 'updated'
     }
 
+    // ***DELINEATOR FOR REVIEW: getJarVersionFromManifest
     private static String getJarVersionFromManifest(File jarFile) {
         try (JarFile jar = new JarFile(jarFile)) {
             return jar.manifest.mainAttributes.getValue(Attributes.Name.IMPLEMENTATION_VERSION)
         }
     }
 
+    // ***DELINEATOR FOR REVIEW: can_publish_dist_to_local_maven_repo_on_disk
     def 'can publish dist to local maven repo on disk'() {
         setup:
         publishDist()
         def mavenRepoDir = testingMavenRepo()
 
+        // ***DELINEATOR FOR REVIEW: when
         when:
         runSuccessfullyWithSigning('publishDistPublicationToTestRepoRepository')
 
+        // ***DELINEATOR FOR REVIEW: then
         then:
         def gnv = new File(mavenRepoDir, 'group/dist/version')
 
@@ -301,14 +325,17 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
         verifyPomFile(gnv, 'dist')
     }
 
+    // ***DELINEATOR FOR REVIEW: can_publish_application_dist_to_local_maven_repo_on_disk
     def 'can publish application dist to local maven repo on disk'() {
         setup:
         publishApplicationDist()
         def mavenRepoDir = testingMavenRepo()
 
+        // ***DELINEATOR FOR REVIEW: when
         when:
         runSuccessfullyWithSigning('publishDistPublicationToTestRepoRepository')
 
+        // ***DELINEATOR FOR REVIEW: then
         then:
         def gnv = new File(mavenRepoDir, 'group/application-dist/version')
 
@@ -326,14 +353,17 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
         verifyPomFile(gnv, 'application-dist')
     }
 
+    // ***DELINEATOR FOR REVIEW: can_publish_conjure_json_to_local_maven_repo_on_disk
     def 'can publish conjure json to local maven repo on disk'() {
         setup:
         publishConjure()
         def mavenRepoDir = testingMavenRepo()
 
+        // ***DELINEATOR FOR REVIEW: when
         when:
         runSuccessfullyWithSigning('publishConjurePublicationToTestRepoRepository')
 
+        // ***DELINEATOR FOR REVIEW: then
         then:
         def gnv = new File(mavenRepoDir, 'group/conjure/version')
 
@@ -344,17 +374,20 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
         verifyPomFile(gnv, 'conjure')
     }
 
+    // ***DELINEATOR FOR REVIEW: can_publish_intellij_plugin_to_local_maven_repo_on_disk
     def 'can publish intellij plugin to local maven repo on disk'() {
         setup:
         publishIntellij()
         def mavenRepoDir = testingMavenRepo()
 
+        // ***DELINEATOR FOR REVIEW: when
         when:
         // instrumentCode causes a crash due to some issue with classloaders we don't fully understand
         runTasksSuccessfully('publishIntellijPublicationToTestRepoRepository',
                 '-x', ':intellij:instrumentCode',
                 '-x', ':intellij:verifyPlugin')
 
+        // ***DELINEATOR FOR REVIEW: then
         then:
         def gnv = new File(mavenRepoDir, 'group/intellij/version')
 
@@ -362,11 +395,13 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
         verifyPomFile(gnv, 'intellij')
     }
 
+    // ***DELINEATOR FOR REVIEW: can_publish_custom_publications_to_local_maven_repo_on_disk
     def 'can publish custom publications to local maven repo on disk'() {
         setup:
         publishCustom()
         def mavenRepoDir = testingMavenRepo()
 
+        // ***DELINEATOR FOR REVIEW: when
         when:
         runSuccessfullyWithSigning(
                 'publishFooPublicationToTestRepoRepository',
@@ -374,6 +409,7 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
                 '--warning-mode=none')
 
 
+        // ***DELINEATOR FOR REVIEW: then
         then:
         ['foo', 'bar'].each { artifactId ->
             def gnv = new File(mavenRepoDir, "group/${artifactId}/version")
@@ -383,10 +419,12 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
         }
     }
 
+    // ***DELINEATOR FOR REVIEW: verifyPomFile
     void verifyPomFile(File gnv, String artifactId) {
         verifyPomFile(gnv, artifactId, 'version')
     }
 
+    // ***DELINEATOR FOR REVIEW: verifyPomFile
     void verifyPomFile(File gnv, String artifactId, String version) {
         def pom = new XmlParser().parse(new File(gnv, "${artifactId}-${version}.pom"))
 
@@ -409,6 +447,7 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
         assert pom.scm.url.text().endsWith('gradle-external-publish-plugin.git')
     }
 
+    // ***DELINEATOR FOR REVIEW: testingMavenRepo
     File testingMavenRepo() {
         def mavenRepoDir = directory('mavenRepo')
 
@@ -430,28 +469,34 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
         return mavenRepoDir
     }
 
+    // ***DELINEATOR FOR REVIEW: signs_jars_correctly
     def 'signs jars correctly'() {
         setup:
         def jarSubprojectDir = publishJar()
 
+        // ***DELINEATOR FOR REVIEW: when
         when:
         runSuccessfullyWithSigning('signMavenPublication')
 
+        // ***DELINEATOR FOR REVIEW: then
         then:
         new File(jarSubprojectDir, 'build/libs/jar-version.jar.asc').exists()
         new File(jarSubprojectDir, 'build/libs/jar-version-javadoc.jar.asc').exists()
         new File(jarSubprojectDir, 'build/libs/jar-version-sources.jar.asc').exists()
     }
 
+    // ***DELINEATOR FOR REVIEW: publish_task_for_type_depends_on_publishing_to_sonatype_on_tag_builds
     @Unroll
     def 'publish task for #type depends on publishing to sonatype on tag builds'() {
         setup:
         publishProject(type)
 
+        // ***DELINEATOR FOR REVIEW: when
         when:
         def stdout = runSuccessfullyWithSigning(
                 '--dry-run', "-P__TESTING_CIRCLE_TAG=tag", ":${type}:publish").standardOutput
 
+        // ***DELINEATOR FOR REVIEW: then
         then:
         stdout.find ":${type}:publish.*PublicationToSonatypeRepository SKIPPED"
         stdout.contains ':closeSonatypeStagingRepository SKIPPED'
@@ -460,14 +505,17 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
         type << SONATYPE_PROJECT_TYPES
     }
 
+    // ***DELINEATOR FOR REVIEW: fails_with_a_good_error_message_if_signing_is_not_enabled_for_type
     @Unroll
     def 'fails with a good error message if signing is not enabled for #type'() {
         setup:
         publishProject(type)
 
+        // ***DELINEATOR FOR REVIEW: when
         when:
         def errorMessage = runTasksWithFailure(":${type}:publish").failure.cause.cause.message
 
+        // ***DELINEATOR FOR REVIEW: then
         then:
         errorMessage == 'The required environment variables to sign the release could not be found. ' +
                 'Check the logs above to find out which ones are missing.'
@@ -476,10 +524,12 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
         type << SONATYPE_PROJECT_TYPES
     }
 
+    // ***DELINEATOR FOR REVIEW: does_not_check_for_signing_keys_when_on_a_fork
     def 'does not check for signing keys when on a fork'() {
         setup:
         allPublishProjects()
 
+        // ***DELINEATOR FOR REVIEW: when
         when:
         // instrumentCode causes a crash due to some issue with classloaders we don't fully understand
         def executionResult = runTasksSuccessfully(
@@ -488,10 +538,12 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
                 '-x', ':intellij:verifyPlugin',
                 '-P__TESTING_CIRCLE_PR_USERNAME=forkyfork')
 
+        // ***DELINEATOR FOR REVIEW: then
         then:
         executionResult.wasSkipped('checkSigningKey')
     }
 
+    // ***DELINEATOR FOR REVIEW: fails_build_if_publish_if_version_ends_in_dirty
     def 'fails build if publish if version ends in dirty'() {
         setup:
         allPublishProjects()
@@ -503,15 +555,18 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
         '''.stripIndent()
 
 
+        // ***DELINEATOR FOR REVIEW: when
         when:
         def executionResult = runFailingWithSigning('publish')
         println executionResult.standardOutput
         def errorMessage = executionResult.failure.cause.cause.message
 
+        // ***DELINEATOR FOR REVIEW: then
         then:
         errorMessage.contains 'dirty'
     }
 
+    // ***DELINEATOR FOR REVIEW: does_not_init_close_release_or_publish_to_staging_sonatype_repo_if_not_on_a_tag_build
     def 'does not init, close, release or publish to staging sonatype repo if not on a tag build'() {
         // See https://issues.sonatype.org/browse/OSSRH-65523?focusedCommentId=1046249#comment-1046249 for why we can't
         // exercise the publishing codepath on develop - basically it overwhelms Sonatype and harms other users (note
@@ -520,9 +575,11 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
         allPublishProjects()
         disableAllTaskActions()
 
+        // ***DELINEATOR FOR REVIEW: when
         when:
         def stdout = runSuccessfullyWithSigning('publish').standardOutput
 
+        // ***DELINEATOR FOR REVIEW: then
         then:
         stdout.contains(':initializeSonatypeStagingRepository SKIPPED')
         PUBLISH_PROJECT_TYPES.forEach {type ->
@@ -532,14 +589,17 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
         !stdout.contains(':releaseSonatypeStagingRepository')
     }
 
+    // ***DELINEATOR FOR REVIEW: does_release_staging_sonatype_repo_if_on_a_tag_build
     def 'does release staging sonatype repo if on a tag build'() {
         setup:
         allPublishProjects()
         disableAllTaskActions()
 
+        // ***DELINEATOR FOR REVIEW: when
         when:
         def stdout = runSuccessfullyWithSigning('-P__TESTING_CIRCLE_TAG=tag', 'publish').standardOutput
 
+        // ***DELINEATOR FOR REVIEW: then
         then:
         stdout.contains(':initializeSonatypeStagingRepository UP-TO-DATE')
         PUBLISH_PROJECT_TYPES.forEach {type ->
@@ -549,10 +609,12 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
         stdout.contains(':releaseSonatypeStagingRepository')
     }
 
+    // ***DELINEATOR FOR REVIEW: does_not_run_publish_tasks_as_a_dependency_of_check_on_normal_run
     def 'does not run publish tasks as a dependency of check on normal run'() {
         setup:
         allPublishProjects()
 
+        // ***DELINEATOR FOR REVIEW: when
         when:
         def stdout = runSuccessfullyWithSigning(
                 '--dry-run', '-P__TESTING_CIRCLE_BRANCH=my-feature-branch', 'check')
@@ -560,6 +622,7 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
 
         println stdout
 
+        // ***DELINEATOR FOR REVIEW: then
         then:
         !stdout.contains(':initializeSonatypeStagingRepository SKIPPED')
         !stdout.contains(':jar:publishMavenPublicationToSonatypeRepository SKIPPED')
@@ -568,18 +631,22 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
         !stdout.contains(':releaseSonatypeStagingRepository SKIPPED')
     }
 
+    // ***DELINEATOR FOR REVIEW: does_not_publish_gradle_plugins_on_publish_on_non_tag_build
     def 'does not publish gradle plugins on publish on non tag build'() {
         setup:
         publishGradlePlugin()
         disableAllTaskActions()
 
+        // ***DELINEATOR FOR REVIEW: when
         when:
         def stdout = runSuccessfullyWithSigning('publish').standardOutput
 
+        // ***DELINEATOR FOR REVIEW: then
         then:
         stdout.contains(':gradle-plugin:publishPlugins SKIPPED')
     }
 
+    // ***DELINEATOR FOR REVIEW: fixes_gradle_26091_when_gradle_plugin_and_jar_are_used_together
     def 'fixes gradle#26091 when gradle plugin and jar are used together' () {
         setup:
         gradleVersion = '8.6'
@@ -589,9 +656,11 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
             apply plugin: 'com.palantir.external-publish-jar'
         '''.stripIndent(true)
 
+        // ***DELINEATOR FOR REVIEW: when
         when:
         ExecutionResult result = runSuccessfullyWithSigning('-P__TESTING_CIRCLE_TAG=tag', 'publishToMavenLocal')
 
+        // ***DELINEATOR FOR REVIEW: then
         then:
         result.wasExecuted(":gradle-plugin:publishPluginMavenPublicationToMavenLocal")
         result.wasExecuted(":gradle-plugin:signMavenPublication")
@@ -599,18 +668,22 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
         !result.standardError.contains("Gradle detected a problem")
     }
 
+    // ***DELINEATOR FOR REVIEW: publishes_gradle_plugins_on_publish_on_tag_build
     def 'publishes gradle plugins on publish on tag build'() {
         setup:
         publishGradlePlugin()
         disableAllTaskActions()
 
+        // ***DELINEATOR FOR REVIEW: when
         when:
         def stdout = runSuccessfullyWithSigning('-P__TESTING_CIRCLE_TAG=tag', 'publish').standardOutput
 
+        // ***DELINEATOR FOR REVIEW: then
         then:
         stdout.contains(':gradle-plugin:publishPlugins UP-TO-DATE')
     }
 
+    // ***DELINEATOR FOR REVIEW: does_not_publish_gradle_plugin_descriptors_to_sonatype_when_external_publish_jar_is_applied
     def 'does not publish gradle plugin descriptors to sonatype when external-publish-jar is applied'() {
         setup:
         def subprojectDir = publishGradlePlugin()
@@ -621,9 +694,11 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
 
         disableAllTaskActions()
 
+        // ***DELINEATOR FOR REVIEW: when
         when:
         def stdout = runSuccessfullyWithSigning('-P__TESTING_CIRCLE_TAG=tag', 'publish').standardOutput
 
+        // ***DELINEATOR FOR REVIEW: then
         then:
         stdout.contains(':gradle-plugin:publishPluginMavenPublicationToSonatypeRepository SKIPPED')
         stdout.contains(':gradle-plugin:publishTestPluginMarkerMavenPublicationToSonatypeRepository SKIPPED')
@@ -631,6 +706,7 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
         stdout.contains(':gradle-plugin:publishPlugins UP-TO-DATE')
     }
 
+    // ***DELINEATOR FOR REVIEW: can_publish_all_the_plugins_together_in_one_project_to_sonatype
     def 'can publish all the plugins together in one project to sonatype'() {
         setup:
         NON_CONFLICTING_PROJECT_TYPES.each {type ->
@@ -639,10 +715,12 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
 
         disableAllTaskActions()
 
+        // ***DELINEATOR FOR REVIEW: when
         when:
         def stdout = runSuccessfullyWithSigning('publish').standardOutput
         println stdout
 
+        // ***DELINEATOR FOR REVIEW: then
         then:
         NON_CONFLICTING_PROJECT_TYPES.each {type ->
             stdout.find ":${type}:publish.*PublicationToSonatypeRepository UP-TO-DATE"
@@ -650,87 +728,109 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
 
     }
 
+    // ***DELINEATOR FOR REVIEW: root_plugin_does_not_need_to_be_explicitly_applied_if_there_is_a_publish_plugin_applied_at_the_root
     def 'root plugin does not need to be explicitly applied if there is a publish plugin applied at the root'() {
         setup:
         publishProject('jar', '.')
 
         buildFile.text = buildFile.text.replace('''apply plugin: 'com.palantir.external-publish'\n''', '')
 
+        // ***DELINEATOR FOR REVIEW: when
         when:
         def executionResult = runTasksSuccessfully('tasks')
 
+        // ***DELINEATOR FOR REVIEW: then
         then:
         executionResult.success
     }
 
+    // ***DELINEATOR FOR REVIEW: runs_publishToMavenLocal_on_build_when_local_or_on_circle_node_0
     def 'runs publishToMavenLocal on build when local or on circle node 0'() {
         setup:
         publishProject('jar', '.')
 
+        // ***DELINEATOR FOR REVIEW: when
         when: 'on circle node 0 - should run pTML'
         def stdout = runTasksSuccessfully('build', '--dry-run',
                 '-P__TESTING_CIRCLE_NODE_INDEX=0').standardOutput
 
+        // ***DELINEATOR FOR REVIEW: then
         then:
         stdout.contains(':publishMavenPublicationToMavenLocal SKIPPED')
 
+        // ***DELINEATOR FOR REVIEW: when
         when: 'on circle node 1 - should not run pTML'
         stdout = runTasksSuccessfully('build', '--dry-run',
                 '-P__TESTING_CIRCLE_NODE_INDEX=1').standardOutput
 
+        // ***DELINEATOR FOR REVIEW: then
         then:
         !stdout.contains(':publishMavenPublicationToMavenLocal SKIPPED')
 
+        // ***DELINEATOR FOR REVIEW: when
         when: 'locally - should not run pTML'
         stdout = runTasksSuccessfully('build', '--dry-run').standardOutput
 
+        // ***DELINEATOR FOR REVIEW: then
         then:
         stdout.contains(':publishMavenPublicationToMavenLocal SKIPPED')
     }
 
+    // ***DELINEATOR FOR REVIEW: runs_publish_depends_on_publishPlugin_for_intellij
     def 'runs publish depends on publishPlugin for intellij'() {
         setup:
         publishIntellij()
 
+        // ***DELINEATOR FOR REVIEW: when
         when:
         def stdout = runTasksSuccessfully('publish', '--dry-run').standardOutput
 
+        // ***DELINEATOR FOR REVIEW: then
         then:
         stdout.contains(":publishPlugin SKIPPED")
     }
 
+    // ***DELINEATOR FOR REVIEW: publishPlugin_task_runs_only_if_CIRCLE_TAG_is_set
     def 'publishPlugin task runs only if CIRCLE TAG is set'() {
         setup:
         publishIntellij()
         disableAllTaskActions()
 
+        // ***DELINEATOR FOR REVIEW: when
         when: 'on a tag build'
 
         def stdoutTagBuild = runTasksSuccessfully('publishPlugin', '-P__TESTING_CIRCLE_TAG=tag').standardOutput
 
+        // ***DELINEATOR FOR REVIEW: then
         then: 'publishPlugin task should be executed'
         stdoutTagBuild.contains("Skipping task ':intellij:publishPlugin' as it has no actions.")
 
+        // ***DELINEATOR FOR REVIEW: when
         when: 'not on a tag build'
         def stdoutNonTagBuild = runTasksSuccessfully('publishPlugin').standardOutput
 
+        // ***DELINEATOR FOR REVIEW: then
         then: 'publishPlugin task should be skipped'
         stdoutNonTagBuild.contains("Skipping task ':intellij:publishPlugin' as task onlyIf 'Task satisfies onlyIf spec' is false.")
     }
 
+    // ***DELINEATOR FOR REVIEW: Check_versions_lock_is_not_effected_by_intellij_plugin
     def 'Check versions.lock is not effected by intellij plugin' (){
         setup:
         publishIntellij()
         def emptyText = new File("versions.lock").text
 
+        // ***DELINEATOR FOR REVIEW: when
         when:
         runTasksSuccessfully("writeVersionsLock")
 
+        // ***DELINEATOR FOR REVIEW: then
         then:
         def postText = new File("versions.lock").text
         assert emptyText == postText
     }
 
+    // ***DELINEATOR FOR REVIEW: disableAllTaskActions
     private void disableAllTaskActions() {
         //language=groovy
         buildFile << '''
@@ -744,14 +844,17 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
         '''.stripIndent()
     }
 
+    // ***DELINEATOR FOR REVIEW: runSuccessfullyWithSigning
     private ExecutionResult runSuccessfullyWithSigning(String... tasks) {
         return runWithSigning({ String... args -> runTasksSuccessfully(args) }, tasks)
     }
 
+    // ***DELINEATOR FOR REVIEW: runFailingWithSigning
     private ExecutionResult runFailingWithSigning(String... tasks) {
         return runWithSigning({ String... args -> runTasksWithFailure(args) }, tasks)
     }
 
+    // ***DELINEATOR FOR REVIEW: runWithSigning
     private ExecutionResult runWithSigning(Closure<ExecutionResult> runTasksMethod, String... tasks) {
         def privateKey = getClass().getClassLoader()
                 .getResourceAsStream("testing-gpg-key.pgp")
@@ -764,6 +867,7 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
                 Stream.of(tasks)).toArray({new String[it] }))
     }
 
+    // ***DELINEATOR FOR REVIEW: runTasksSuccessfully
     @Override
     ExecutionResult runTasksSuccessfully(String... tasks) {
         def executionResult = runTasks(tasks)
@@ -776,6 +880,7 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
         return executionResult
     }
 
+    // ***DELINEATOR FOR REVIEW: runTasks
     @Override
     ExecutionResult runTasks(String... tasks) {
         return super.runTasks(Stream.concat(Stream.of("-P__TESTING=true"), Stream.of(tasks)).toArray({ new String[it] }))
