@@ -26,11 +26,11 @@ com.jcraft:jzlib:1.1.2 (1 constraints: df085992)
 
 com.netflix.nebula:gradle-contacts-plugin:8.0.0 (2 constraints: 652268e2)
 
-com.netflix.nebula:gradle-info-plugin:15.0.0 (2 constraints: df17ae71)
+com.netflix.nebula:gradle-info-plugin:16.0.0 (2 constraints: e217f271)
 
 com.netflix.nebula:nebula-gradle-interop:2.3.0 (1 constraints: e70f3e97)
 
-com.netflix.nebula:nebula-publishing-plugin:22.2.0 (1 constraints: 38053d3b)
+com.netflix.nebula:nebula-publishing-plugin:23.0.0 (1 constraints: 37053c3b)
 
 com.palantir.gradle.utils:environment-variables:0.21.0 (1 constraints: 35052a3b)
 
