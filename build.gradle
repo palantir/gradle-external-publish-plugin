@@ -139,6 +139,7 @@ tasks.named('processResources').configure {
 }
 
 javaVersions {
+    javaCompiler = 25
     libraryTarget = 17
 }
 
