@@ -16,6 +16,7 @@
 
 package com.palantir.gradle.externalpublish;
 
+import com.palantir.gradle.publish.SharedProperties;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -118,6 +119,11 @@ final class ExternalPublishBasePlugin implements Plugin<Project> {
     }
 
     private void disableModuleMetadata() {
+        if (project.hasProperty(SharedProperties.PUBLISH_MODULE_METADATA_PROPERTY)
+                && "true".equals(project.findProperty(SharedProperties.PUBLISH_MODULE_METADATA_PROPERTY))) {
+            return;
+        }
+
         // Turning off module metadata so that all consumers just use regular POMs
         project.getTasks()
                 .withType(GenerateModuleMetadata.class)
