@@ -16,6 +16,7 @@
 
 package com.palantir.gradle.externalpublish;
 
+import com.palantir.gradle.publish.PalantirMavenScmPlugin;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -23,7 +24,6 @@ import java.util.stream.Stream;
 import nebula.plugin.info.scm.ScmInfoPlugin;
 import nebula.plugin.publishing.maven.MavenBasePublishPlugin;
 import nebula.plugin.publishing.maven.MavenManifestPlugin;
-import nebula.plugin.publishing.maven.MavenScmPlugin;
 import org.gradle.api.Action;
 import org.gradle.api.GradleException;
 import org.gradle.api.Plugin;
@@ -73,9 +73,9 @@ final class ExternalPublishBasePlugin implements Plugin<Project> {
                         MavenPublishPlugin.class,
                         MavenBasePublishPlugin.class,
                         MavenManifestPlugin.class,
-                        // TODO(callumr): Replace this nebula plugin with our internal version that handle ssh
-                        //                remotes properly - ie changing them to http remotes in the pom
-                        MavenScmPlugin.class,
+                        // Our own PalantirMavenScmPlugin that handles ssh remotes properly - converting them to
+                        // https URLs in the pom
+                        PalantirMavenScmPlugin.class,
                         // We need this in the subproject as well as the root project as the subproject plugin
                         // reads the root project extension to save loading the same git info many times
                         ScmInfoPlugin.class)

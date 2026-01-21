@@ -406,7 +406,12 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
         assert developer.name.text() == 'Palantir Technologies Inc'
         assert developer.organizationUrl.text() == 'https://www.palantir.com'
 
-        assert pom.scm.url.text().endsWith('gradle-external-publish-plugin.git')
+        // The scm.url is the raw git remote origin - may or may not have .git suffix
+        assert pom.scm.url.text().contains('gradle-external-publish-plugin')
+
+        // PalantirMavenScmPlugin adds the originBranch property
+        assert pom.properties.originBranch.text() != null
+        assert !pom.properties.originBranch.text().isEmpty()
     }
 
     File testingMavenRepo() {
