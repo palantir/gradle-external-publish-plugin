@@ -1,7 +1,6 @@
 com.fasterxml.jackson.*:* = 2.20.1
 com.fasterxml.jackson.core:jackson-annotations = 2.20
 com.netflix.nebula:nebula-test = 10.6.2
-com.palantir.gradle.plugintesting:gradle-plugin-testing-junit = 0.46.0
 io.github.gradle-nexus:publish-plugin = 2.0.0
 com.netflix.nebula:nebula-publishing-plugin = 23.0.0
 com.netflix.nebula:gradle-info-plugin = 16.0.0
