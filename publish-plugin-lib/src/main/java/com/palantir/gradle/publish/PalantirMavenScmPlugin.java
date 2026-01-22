@@ -35,6 +35,7 @@ import org.gradle.api.provider.Provider;
 import org.gradle.api.provider.ProviderFactory;
 import org.gradle.api.publish.PublishingExtension;
 import org.gradle.api.publish.maven.MavenPublication;
+import org.gradle.api.publish.maven.plugins.MavenPublishPlugin;
 import org.gradle.process.ExecOutput;
 
 /**
@@ -58,6 +59,8 @@ public abstract class PalantirMavenScmPlugin implements Plugin<Project> {
 
     @Override
     public final void apply(Project project) {
+        project.getPlugins().apply(MavenPublishPlugin.class);
+
         if (insideTmpDir(project.getRootDir())) {
             return;
         }
