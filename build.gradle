@@ -72,6 +72,9 @@ dependencies {
     testImplementation 'com.netflix.nebula:nebula-test'
     testImplementation 'org.rauschig:jarchivelib'
     testImplementation 'com.fasterxml.jackson.core:jackson-databind'
+    testImplementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml'
+
+    gradlePluginForTesting "com.gradle.publish:plugin-publish-plugin"
 }
 
 
