@@ -18,72 +18,43 @@ package com.palantir.gradle.externalpublish;
 
 import static com.palantir.gradle.testing.assertion.GradlePluginTestAssertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.groups.Tuple.tuple;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.palantir.gradle.publish.GradlePluginDef;
 import com.palantir.gradle.publish.GradlePluginMetaDataPlugin;
 import com.palantir.gradle.testing.execution.GradleInvoker;
 import com.palantir.gradle.testing.execution.InvocationResult;
-import com.palantir.gradle.testing.files.gradle.GradleFile;
 import com.palantir.gradle.testing.junit.DisabledConfigurationCache;
 import com.palantir.gradle.testing.junit.GradlePluginTests;
 import com.palantir.gradle.testing.project.RootProject;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 
 @GradlePluginTests
 @DisabledConfigurationCache
 class ExternalPublishGradlePluginPluginTest {
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static final XmlMapper XML_MAPPER = XmlMapper.builder()
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+            .build();
 
-    private static final TypeReference<List<GradlePluginDef>> GRADLE_PLUGIN_DEF_TYPE_REF =
-            new TypeReference<List<GradlePluginDef>>() {};
-
-    private Path buildDir;
-    private Path pomFile;
+    private static final TypeReference<List<GradlePluginDef>> GRADLE_PLUGIN_DEF_TYPE_REF = new TypeReference<>() {};
 
     @BeforeEach
     void setup(RootProject rootProject) {
-        buildDir = rootProject.buildDir().path().resolve("build");
-        pomFile = buildDir.resolve("publications/pluginMaven/pom-default.xml");
-
-        standardBuildFile(rootProject);
-    }
-
-    @SuppressWarnings("GradleTestPluginsBlock")
-    GradleFile standardBuildFile(RootProject rootProject) {
-        // Using buildscript block + apply plugin pattern to support external plugin-publish-plugin
-        rootProject.buildGradle().prepend("""
-            buildscript {
-                repositories {
-                    gradlePluginPortal()
-                    mavenCentral()
-                }
-
-                dependencies {
-                    classpath 'com.gradle.publish:plugin-publish-plugin:2.0.0'
-                }
-            }
-
-            """).append("""
-                apply plugin: 'com.palantir.external-publish'
-                apply plugin: 'java-gradle-plugin'
-                apply plugin: 'com.palantir.external-publish-gradle-plugin'
-
-                group = 'com.palantir.test-palantir'
-                version = '0.1.0'
-                """);
-
-        return rootProject.buildGradle();
+        rootProject
+                .buildGradle()
+                .plugins()
+                .add("com.palantir.external-publish")
+                .add("java-gradle-plugin")
+                .add("com.palantir.external-publish-gradle-plugin");
     }
 
     @Test
@@ -115,14 +86,16 @@ class ExternalPublishGradlePluginPluginTest {
                 .assertThat()
                 .exists();
 
-        Document pomDoc = parseXmlFile(pomFile);
-        String propString = getPropertyFromPom(pomDoc, GradlePluginMetaDataPlugin.PUBLISHED_PLUGIN_IDS_KEY);
-        List<GradlePluginDef> publishedPlugins = OBJECT_MAPPER.readValue(propString, GRADLE_PLUGIN_DEF_TYPE_REF);
+        PomProject pom =
+                parsePomFile(rootProject.buildDir().path().resolve("publications/pluginMaven/pom-default.xml"));
+        List<GradlePluginDef> publishedPlugins =
+                OBJECT_MAPPER.readValue(pom.properties().publishedPluginIds(), GRADLE_PLUGIN_DEF_TYPE_REF);
 
-        assertThat(publishedPlugins.get(0).id()).isEqualTo("com.palantir.test-plugin1");
-        assertThat(publishedPlugins.get(0).implementingClass()).isEqualTo("com.palantir.gradle.TestPlugin1");
-        assertThat(publishedPlugins.get(1).id()).isEqualTo("com.palantir.test-plugin2");
-        assertThat(publishedPlugins.get(1).implementingClass()).isEqualTo("com.palantir.gradle.TestPlugin2");
+        assertThat(publishedPlugins)
+                .extracting(GradlePluginDef::id, GradlePluginDef::implementingClass)
+                .containsExactly(
+                        tuple("com.palantir.test-plugin1", "com.palantir.gradle.TestPlugin1"),
+                        tuple("com.palantir.test-plugin2", "com.palantir.gradle.TestPlugin2"));
     }
 
     @Test
@@ -143,12 +116,14 @@ class ExternalPublishGradlePluginPluginTest {
                 .assertThat()
                 .exists();
 
-        Document pomDoc = parseXmlFile(pomFile);
-        String propString = getPropertyFromPom(pomDoc, GradlePluginMetaDataPlugin.PUBLISHED_PLUGIN_IDS_KEY);
-        List<GradlePluginDef> publishedPlugins = OBJECT_MAPPER.readValue(propString, GRADLE_PLUGIN_DEF_TYPE_REF);
+        PomProject pom =
+                parsePomFile(rootProject.buildDir().path().resolve("publications/pluginMaven/pom-default.xml"));
+        List<GradlePluginDef> publishedPlugins =
+                OBJECT_MAPPER.readValue(pom.properties().publishedPluginIds(), GRADLE_PLUGIN_DEF_TYPE_REF);
 
-        assertThat(publishedPlugins.get(0).id()).isEqualTo("com.palantir.test-plugin1");
-        assertThat(publishedPlugins.get(0).implementingClass()).isEqualTo("com.palantir.gradle.TestPlugin1");
+        assertThat(publishedPlugins)
+                .extracting(GradlePluginDef::id, GradlePluginDef::implementingClass)
+                .containsExactly(tuple("com.palantir.test-plugin1", "com.palantir.gradle.TestPlugin1"));
     }
 
     @Test
@@ -182,42 +157,31 @@ class ExternalPublishGradlePluginPluginTest {
                 .assertThat()
                 .exists();
 
-        Document pomDoc = parseXmlFile(pomFile);
+        PomProject pom =
+                parsePomFile(rootProject.buildDir().path().resolve("publications/pluginMaven/pom-default.xml"));
 
-        // Only one <properties> block
-        NodeList propertiesElements = pomDoc.getElementsByTagName("properties");
-        assertThat(propertiesElements.getLength()).isEqualTo(1);
+        assertThat(pom.properties().existingProperty())
+                .as("Both properties are present")
+                .isEqualTo("existing-value");
 
-        // Both properties are present in the same block
-        assertThat(getPropertyFromPom(pomDoc, "existing-property")).isEqualTo("existing-value");
+        List<GradlePluginDef> publishedPlugins =
+                OBJECT_MAPPER.readValue(pom.properties().publishedPluginIds(), GRADLE_PLUGIN_DEF_TYPE_REF);
 
-        String propString = getPropertyFromPom(pomDoc, GradlePluginMetaDataPlugin.PUBLISHED_PLUGIN_IDS_KEY);
-        List<GradlePluginDef> publishedPlugins = OBJECT_MAPPER.readValue(propString, GRADLE_PLUGIN_DEF_TYPE_REF);
-
-        assertThat(publishedPlugins.get(0).id()).isEqualTo("com.palantir.test-plugin1");
-        assertThat(publishedPlugins.get(0).implementingClass()).isEqualTo("com.palantir.gradle.TestPlugin1");
+        assertThat(publishedPlugins)
+                .extracting(GradlePluginDef::id, GradlePluginDef::implementingClass)
+                .containsExactly(tuple("com.palantir.test-plugin1", "com.palantir.gradle.TestPlugin1"));
     }
 
-    private Document parseXmlFile(Path xmlFile) throws Exception {
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder builder = factory.newDocumentBuilder();
-        return builder.parse(Files.newInputStream(xmlFile));
+    private PomProject parsePomFile(Path xmlFile) throws Exception {
+        return XML_MAPPER.readValue(xmlFile.toFile(), PomProject.class);
     }
 
-    private Element getPropertiesElement(Document doc) {
-        NodeList propertiesList = doc.getElementsByTagName("properties");
-        if (propertiesList.getLength() == 0) {
-            throw new IllegalStateException("No properties element found in POM");
-        }
-        return (Element) propertiesList.item(0);
-    }
+    private record PomProject(PomProperties properties) {}
 
-    private String getPropertyFromPom(Document doc, String propertyName) {
-        Element propertiesElement = getPropertiesElement(doc);
-        NodeList propertyElements = propertiesElement.getElementsByTagName(propertyName);
-        if (propertyElements.getLength() == 0) {
-            throw new IllegalStateException("Property '" + propertyName + "' not found in POM");
-        }
-        return propertyElements.item(0).getTextContent();
-    }
+    private record PomProperties(
+            @JacksonXmlProperty(localName = GradlePluginMetaDataPlugin.PUBLISHED_PLUGIN_IDS_KEY)
+            String publishedPluginIds,
+
+            @JacksonXmlProperty(localName = "existing-property")
+            String existingProperty) {}
 }
