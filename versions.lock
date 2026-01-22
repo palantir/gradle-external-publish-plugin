@@ -34,9 +34,9 @@ com.netflix.nebula:nebula-publishing-plugin:23.0.0 (1 constraints: 37053c3b)
 
 com.palantir.gradle.utils:environment-variables:0.21.0 (1 constraints: 35052a3b)
 
-com.palantir.safe-logging:preconditions:3.10.0 (1 constraints: 3605353b)
+com.palantir.safe-logging:preconditions:3.11.0 (1 constraints: 3705383b)
 
-com.palantir.safe-logging:safe-logging:3.10.0 (1 constraints: 301157d1)
+com.palantir.safe-logging:safe-logging:3.11.0 (1 constraints: 31115ad1)
 
 com.perforce:p4java:2015.2.1365273 (1 constraints: b7117b2f)
 
