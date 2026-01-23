@@ -24,11 +24,11 @@ com.googlecode.plist:dd-plist:1.28 (1 constraints: 5316b0df)
 
 com.jcraft:jzlib:1.1.2 (1 constraints: df085992)
 
-com.netflix.nebula:gradle-contacts-plugin:8.0.0 (2 constraints: 652268e2)
+com.netflix.nebula:gradle-contacts-plugin:8.1.0 (2 constraints: 65226ee2)
 
-com.netflix.nebula:gradle-info-plugin:16.0.0 (2 constraints: e217f271)
+com.netflix.nebula:gradle-info-plugin:16.0.1 (2 constraints: e3172872)
 
-com.netflix.nebula:nebula-gradle-interop:2.3.0 (1 constraints: e70f3e97)
+com.netflix.nebula:nebula-gradle-interop:3.1.0 (1 constraints: e60f3d97)
 
 com.netflix.nebula:nebula-publishing-plugin:23.0.0 (1 constraints: 37053c3b)
 
@@ -98,7 +98,7 @@ org.jetbrains.intellij.plugins:structure-base:3.269 (2 constraints: dd2b90b1)
 
 org.jetbrains.intellij.plugins:structure-intellij:3.269 (1 constraints: 8c1642f6)
 
-org.jetbrains.kotlin:kotlin-stdlib:2.1.0 (5 constraints: 3c558eb0)
+org.jetbrains.kotlin:kotlin-stdlib:2.2.0 (5 constraints: 3d5552b1)
 
 org.jetbrains.kotlin:kotlin-stdlib-common:1.9.22 (3 constraints: 9737664b)
 
