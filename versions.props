@@ -7,6 +7,7 @@ com.netflix.nebula:gradle-info-plugin = 16.0.1
 org.junit.platform:* = 6.0.2
 org.rauschig:jarchivelib = 1.1.0
 com.google.guava:guava = 33.5.0-jre
+com.palantir.gradle.gitversion:gradle-git-version = 4.3.0
 com.palantir.gradle.utils:environment-variables = 0.21.0
 com.palantir.safe-logging:preconditions = 3.11.0
 org.jetbrains.intellij.plugins:gradle-intellij-plugin = 1.17.3
