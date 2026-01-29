@@ -18,6 +18,7 @@ package com.palantir.gradle.publish;
 
 import com.palantir.gradle.gitversion.GitVersionCacheService;
 import com.palantir.gradle.gitversion.VersionDetails;
+import com.palantir.logsafe.exceptions.SafeUncheckedIoException;
 import groovy.util.Node;
 import groovy.util.NodeList;
 import java.io.File;
@@ -71,7 +72,7 @@ public abstract class PalantirMavenScmPlugin implements Plugin<Project> {
             try {
                 return details.getBranchName();
             } catch (IOException e) {
-                throw new RuntimeException("Failed to get branchName from GitVersionCacheService", e);
+                throw new SafeUncheckedIoException("Failed to get branchName from GitVersionCacheService", e);
             }
         });
 
