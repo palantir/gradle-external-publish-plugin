@@ -71,10 +71,7 @@ public abstract class PalantirMavenScmPlugin implements Plugin<Project> {
         Provider<String> branch = versionDetails.map(details -> {
             try {
                 String branchName = details.getBranchName();
-                if (branchName != null) {
-                    return branchName;
-                }
-                return details.getGitHashFull();
+                return branchName != null ? branchName : details.getGitHashFull();
             } catch (IOException e) {
                 throw new SafeUncheckedIoException("Failed to get branchName from GitVersionCacheService", e);
             }
