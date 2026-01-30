@@ -14,7 +14,7 @@ com.google.errorprone:error_prone_annotations:2.41.0 (3 constraints: 8120f448)
 
 com.google.guava:failureaccess:1.0.3 (1 constraints: 160ae3b4)
 
-com.google.guava:guava:33.5.0-jre (4 constraints: 1156f720)
+com.google.guava:guava:33.5.0-jre (5 constraints: 7b6c1f06)
 
 com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava (1 constraints: bd17c918)
 
@@ -31,6 +31,8 @@ com.netflix.nebula:gradle-info-plugin:16.0.1 (2 constraints: e3172872)
 com.netflix.nebula:nebula-gradle-interop:3.1.0 (1 constraints: e60f3d97)
 
 com.netflix.nebula:nebula-publishing-plugin:23.0.0 (1 constraints: 37053c3b)
+
+com.palantir.gradle.gitversion:gradle-git-version:4.3.0 (1 constraints: 09050836)
 
 com.palantir.gradle.utils:environment-variables:0.22.0 (1 constraints: 36052d3b)
 
