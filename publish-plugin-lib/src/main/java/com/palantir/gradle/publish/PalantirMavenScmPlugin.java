@@ -16,14 +16,15 @@
 
 package com.palantir.gradle.publish;
 
-import com.google.common.base.Strings;
+import com.palantir.gradle.gitversion.GitVersionCacheService;
+import com.palantir.gradle.gitversion.VersionDetails;
+import com.palantir.logsafe.exceptions.SafeUncheckedIoException;
 import groovy.util.Node;
 import groovy.util.NodeList;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.inject.Inject;
@@ -36,7 +37,6 @@ import org.gradle.api.provider.ProviderFactory;
 import org.gradle.api.publish.PublishingExtension;
 import org.gradle.api.publish.maven.MavenPublication;
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin;
-import org.gradle.process.ExecOutput;
 
 /**
  * A replacement for nebula's MavenScmPlugin that correctly converts SSH git remotes to HTTPS URLs
@@ -65,8 +65,17 @@ public abstract class PalantirMavenScmPlugin implements Plugin<Project> {
             return;
         }
 
-        Provider<String> originUrl = getOriginUrl(project.getRootDir());
-        Provider<String> branch = getBranch(project.getRootDir());
+        Provider<VersionDetails> versionDetails = GitVersionCacheService.getSharedGitVersionCacheService(project)
+                .map(cacheService -> cacheService.getVersionDetails(project.getProjectDir(), null));
+        Provider<String> originUrl = versionDetails.map(VersionDetails::getOriginUrl);
+        Provider<String> branch = versionDetails.map(details -> {
+            try {
+                String branchName = details.getBranchName();
+                return branchName != null ? branchName : details.getGitHashFull();
+            } catch (IOException e) {
+                throw new SafeUncheckedIoException("Failed to get branchName from GitVersionCacheService", e);
+            }
+        });
 
         project.getExtensions().getByType(PublishingExtension.class).publications(publications -> publications
                 .withType(MavenPublication.class)
@@ -82,38 +91,6 @@ public abstract class PalantirMavenScmPlugin implements Plugin<Project> {
                         propertiesNode.appendNode(SCM_BRANCH_KEY, branch.get());
                     });
                 })));
-    }
-
-    private Provider<String> getOriginUrl(File rootDir) {
-        return runCommand(rootDir, "git", "config", "remote.origin.url");
-    }
-
-    private Provider<String> getBranch(File rootDir) {
-        return runCommand(rootDir, "git", "branch", "--show", "current")
-                .map(Strings::emptyToNull)
-                .orElse(runCommand(rootDir, "git", "rev-parse", "HEAD"));
-    }
-
-    private Provider<String> runCommand(File rootDir, String... command) {
-        ExecOutput output = getProviderFactory().exec(execSpec -> {
-            execSpec.commandLine((Object[]) command);
-            execSpec.workingDir(rootDir);
-            execSpec.setIgnoreExitValue(true);
-        });
-
-        record OutputStreams(String stdOut, String stdErr) {}
-
-        Provider<OutputStreams> outputStreams = output.getStandardOutput()
-                .getAsText()
-                .zip(output.getStandardError().getAsText(), OutputStreams::new);
-
-        return output.getResult().zip(outputStreams, (result, streams) -> {
-            if (result.getExitValue() != 0) {
-                throw new RuntimeException(String.format(
-                        Locale.ROOT, "Exited with code %d:\n\n%s", result.getExitValue(), streams.stdErr()));
-            }
-            return streams.stdOut().trim();
-        });
     }
 
     static String calculateUrlFromOriginUrl(String originUrl) {
