@@ -172,6 +172,30 @@ class ExternalPublishGradlePluginPluginTest {
                 .containsExactly(tuple("com.palantir.test-plugin1", "com.palantir.gradle.TestPlugin1"));
     }
 
+    @Test
+    void succeeds_when_no_plugins_defined(GradleInvoker gradle, RootProject rootProject) throws Exception {
+        // No gradlePlugin block, no properties files - simulates applying java-gradle-plugin
+        // without defining any plugins (e.g., when using gradle-plugin-testing for tests only)
+
+        InvocationResult result =
+                gradle.withArgs("generatePomFileForPluginMavenPublication").buildsSuccessfully();
+
+        // processResources may be NO_SOURCE if there are no resources
+        assertThat(result).task(":generatePluginMetaData").succeeded();
+        rootProject
+                .buildDir()
+                .file("publications/pluginMaven/pom-default.xml")
+                .assertThat()
+                .exists();
+
+        PomProject pom =
+                parsePomFile(rootProject.buildDir().path().resolve("publications/pluginMaven/pom-default.xml"));
+        List<GradlePluginDef> publishedPlugins =
+                OBJECT_MAPPER.readValue(pom.properties().publishedPluginIds(), GRADLE_PLUGIN_DEF_TYPE_REF);
+
+        assertThat(publishedPlugins).as("Empty list when no plugins defined").isEmpty();
+    }
+
     private PomProject parsePomFile(Path xmlFile) throws Exception {
         return XML_MAPPER.readValue(xmlFile.toFile(), PomProject.class);
     }
