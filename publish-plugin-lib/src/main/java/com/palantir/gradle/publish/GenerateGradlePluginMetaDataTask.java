@@ -19,23 +19,20 @@ package com.palantir.gradle.publish;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.palantir.logsafe.exceptions.SafeRuntimeException;
 import com.palantir.logsafe.exceptions.SafeUncheckedIoException;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import org.gradle.api.DefaultTask;
-import org.gradle.api.file.DirectoryProperty;
+import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.tasks.CacheableTask;
-import org.gradle.api.tasks.InputDirectory;
+import org.gradle.api.tasks.InputFiles;
 import org.gradle.api.tasks.Internal;
 import org.gradle.api.tasks.OutputFile;
 import org.gradle.api.tasks.PathSensitive;
@@ -53,9 +50,9 @@ public abstract class GenerateGradlePluginMetaDataTask extends DefaultTask {
         getOutputFile().convention(getProject().getLayout().getBuildDirectory().file(getName() + ".json"));
     }
 
-    @InputDirectory
+    @InputFiles
     @PathSensitive(PathSensitivity.RELATIVE)
-    public abstract DirectoryProperty getPluginDescDirectory();
+    public abstract ConfigurableFileCollection getPluginDescriptorFiles();
 
     @OutputFile
     public abstract RegularFileProperty getOutputFile();
@@ -74,23 +71,13 @@ public abstract class GenerateGradlePluginMetaDataTask extends DefaultTask {
     }
 
     /**
-     * Scan the generated gradle-plugins directory and get the set of all plugin ids and implementing class names.
+     * Scan the plugin descriptor files and get the set of all plugin ids and implementing class names.
      */
     private Set<GradlePluginDef> getPluginDefs() {
-        File gradlePluginsDescriptorDir = getPluginDescDirectory().get().getAsFile();
-
-        if (!gradlePluginsDescriptorDir.exists()) {
-            return Collections.emptySet();
-        }
-
-        try (Stream<Path> walk = Files.walk(gradlePluginsDescriptorDir.toPath(), 1)) {
-            return walk.filter(Files::isRegularFile)
-                    .filter(file -> file.getFileName().toString().endsWith(".properties"))
-                    .map(file -> GradlePluginDef.of(getPluginId(file), getImplementationClass(file)))
-                    .collect(Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(GradlePluginDef::id))));
-        } catch (IOException e) {
-            throw new SafeUncheckedIoException(e);
-        }
+        return getPluginDescriptorFiles().getFiles().stream()
+                .filter(file -> file.getName().endsWith(".properties"))
+                .map(file -> GradlePluginDef.of(getPluginId(file.toPath()), getImplementationClass(file.toPath())))
+                .collect(Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(GradlePluginDef::id))));
     }
 
     /**

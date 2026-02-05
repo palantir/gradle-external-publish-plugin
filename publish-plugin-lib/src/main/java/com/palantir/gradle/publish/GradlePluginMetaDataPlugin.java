@@ -18,10 +18,10 @@ package com.palantir.gradle.publish;
 
 import groovy.util.Node;
 import groovy.util.NodeList;
+import java.io.File;
 import java.util.Optional;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
-import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.publish.PublishingExtension;
 import org.gradle.api.publish.maven.MavenPublication;
@@ -60,17 +60,20 @@ public final class GradlePluginMetaDataPlugin implements Plugin<Project> {
 
             TaskProvider<ProcessResources> processResources =
                     project.getTasks().named(mainSourceSet.getProcessResourcesTaskName(), ProcessResources.class);
-            DirectoryProperty resourcesDirectory = project.getObjects()
-                    .directoryProperty()
-                    .fileProvider(processResources.map(ProcessResources::getDestinationDir));
 
             TaskProvider<GenerateGradlePluginMetaDataTask> generatePluginMdTask = project.getTasks()
                     .register(
                             GenerateGradlePluginMetaDataTask.TASK_NAME,
                             GenerateGradlePluginMetaDataTask.class,
-                            task -> task.getPluginDescDirectory()
-                                    .set(resourcesDirectory.map(
-                                            resources -> resources.dir("META-INF/gradle-plugins"))));
+                            task -> {
+                                // Use a file tree that gracefully handles missing directories.
+                                // The directory may not exist if java-gradle-plugin is applied but no
+                                // plugins are defined (e.g., when using gradle-plugin-testing for tests).
+                                task.getPluginDescriptorFiles().from(processResources.map(pr -> {
+                                    File pluginDescDir = new File(pr.getDestinationDir(), "META-INF/gradle-plugins");
+                                    return project.fileTree(pluginDescDir, tree -> tree.include("*.properties"));
+                                }));
+                            });
 
             // Because the GeneratePom task is an UntrackedTask, it doesn't know that another task needs to run in order
             // to provide all of its inputs.  So we have to force the dependsOn.
