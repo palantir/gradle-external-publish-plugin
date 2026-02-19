@@ -36,9 +36,9 @@ com.palantir.gradle.gitversion:gradle-git-version:4.3.0 (1 constraints: 09050836
 
 com.palantir.gradle.utils:environment-variables:0.23.0 (1 constraints: 3705303b)
 
-com.palantir.safe-logging:preconditions:3.11.0 (1 constraints: 3705383b)
+com.palantir.safe-logging:preconditions:3.12.0 (1 constraints: 38053b3b)
 
-com.palantir.safe-logging:safe-logging:3.11.0 (1 constraints: 31115ad1)
+com.palantir.safe-logging:safe-logging:3.12.0 (1 constraints: 32115dd1)
 
 com.perforce:p4java:2015.2.1365273 (1 constraints: b7117b2f)
 
@@ -88,7 +88,7 @@ org.immutables:value:2.12.1 (1 constraints: 3805363b)
 
 org.jdom:jdom2:2.0.6.1 (1 constraints: a3156dca)
 
-org.jetbrains:annotations:26.0.2 (5 constraints: 4a646d20)
+org.jetbrains:annotations:26.1.0 (5 constraints: 4964ce1f)
 
 org.jetbrains.intellij:blockmap:1.0.5 (1 constraints: 4c16d9e3)
 
