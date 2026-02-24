@@ -77,20 +77,22 @@ public abstract class PalantirMavenScmPlugin implements Plugin<Project> {
             }
         });
 
-        project.getExtensions().getByType(PublishingExtension.class).publications(publications -> publications
-                .withType(MavenPublication.class)
-                .configureEach(mavenPublication -> mavenPublication.pom(mavenPom -> {
-                    mavenPom.getUrl().set(originUrl.map(PalantirMavenScmPlugin::calculateUrlFromOriginUrl));
-                    mavenPom.scm(mavenPomScm -> mavenPomScm.getUrl().set(originUrl));
-                    mavenPom.withXml(xmlProvider -> {
-                        Node rootNode = xmlProvider.asNode();
-                        NodeList propertiesList = (NodeList) rootNode.get("properties");
-                        Node propertiesNode = propertiesList.isEmpty()
-                                ? rootNode.appendNode("properties")
-                                : (Node) propertiesList.get(0);
-                        propertiesNode.appendNode(SCM_BRANCH_KEY, branch.get());
-                    });
-                })));
+        project.getExtensions()
+                .getByType(PublishingExtension.class)
+                .publications(publications -> publications
+                        .withType(MavenPublication.class)
+                        .configureEach(mavenPublication -> mavenPublication.pom(mavenPom -> {
+                            mavenPom.getUrl().set(originUrl.map(PalantirMavenScmPlugin::calculateUrlFromOriginUrl));
+                            mavenPom.scm(mavenPomScm -> mavenPomScm.getUrl().set(originUrl));
+                            mavenPom.withXml(xmlProvider -> {
+                                Node rootNode = xmlProvider.asNode();
+                                NodeList propertiesList = (NodeList) rootNode.get("properties");
+                                Node propertiesNode = propertiesList.isEmpty()
+                                        ? rootNode.appendNode("properties")
+                                        : (Node) propertiesList.get(0);
+                                propertiesNode.appendNode(SCM_BRANCH_KEY, branch.get());
+                            });
+                        })));
     }
 
     static String calculateUrlFromOriginUrl(String originUrl) {
