@@ -81,23 +81,27 @@ public final class GradlePluginMetaDataPlugin implements Plugin<Project> {
                 generatePom.dependsOn(generatePluginMdTask);
             });
 
-            project.getExtensions().getByType(PublishingExtension.class).publications(publications -> publications
-                    .withType(MavenPublication.class)
-                    .configureEach(mavenPublication -> {
-                        // We should be using getProperties here but currently the maven-publish plugin is not fully
-                        // configuration-cache friendly. This should be reverted to getProperties once this gradle issue
-                        // is resolved: https://github.com/gradle/gradle/issues/23397
-                        mavenPublication.getPom().withXml(xmlProvider -> {
-                            Node pomNode = xmlProvider.asNode();
-                            Optional.of((NodeList) pomNode.get("properties"))
-                                    .filter(nodes -> !nodes.isEmpty())
-                                    .map(nodes -> (Node) nodes.get(0))
-                                    .orElseGet(() -> pomNode.appendNode("properties"))
-                                    .appendNode(
-                                            PUBLISHED_PLUGIN_IDS_KEY,
-                                            generatePluginMdTask.get().getMetaDataJson());
-                        });
-                    }));
+            project.getExtensions()
+                    .getByType(PublishingExtension.class)
+                    .publications(publications -> publications
+                            .withType(MavenPublication.class)
+                            .configureEach(mavenPublication -> {
+                                // We should be using getProperties here but currently the maven-publish plugin is not
+                                // fully
+                                // configuration-cache friendly. This should be reverted to getProperties once this
+                                // gradle issue
+                                // is resolved: https://github.com/gradle/gradle/issues/23397
+                                mavenPublication.getPom().withXml(xmlProvider -> {
+                                    Node pomNode = xmlProvider.asNode();
+                                    Optional.of((NodeList) pomNode.get("properties"))
+                                            .filter(nodes -> !nodes.isEmpty())
+                                            .map(nodes -> (Node) nodes.get(0))
+                                            .orElseGet(() -> pomNode.appendNode("properties"))
+                                            .appendNode(
+                                                    PUBLISHED_PLUGIN_IDS_KEY,
+                                                    generatePluginMdTask.get().getMetaDataJson());
+                                });
+                            }));
         });
     }
 }
