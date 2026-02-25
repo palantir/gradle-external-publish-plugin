@@ -94,7 +94,7 @@ org.immutables:value:2.12.1 (1 constraints: 3805363b)
 
 org.jdom:jdom2:2.0.6.1 (1 constraints: a3156dca)
 
-org.jetbrains:annotations:26.1.0 (5 constraints: 4964ce1f)
+org.jetbrains:annotations:26.1.0 (5 constraints: 4864fe1e)
 
 org.jetbrains.intellij:blockmap:1.0.5 (1 constraints: 4c16d9e3)
 
@@ -140,13 +140,13 @@ com.gradle.publish:plugin-publish-plugin:2.0.0 (1 constraints: 0405f535)
 
 com.netflix.nebula:nebula-test:10.6.2 (2 constraints: d61de72d)
 
-com.palantir.gradle.plugintesting:configuration-cache-spec:0.59.0 (1 constraints: 40054e3b)
+com.palantir.gradle.plugintesting:configuration-cache-spec:0.60.0 (1 constraints: 3805373b)
 
-com.palantir.gradle.plugintesting:discover-tests-cli:0.59.0 (1 constraints: 40054e3b)
+com.palantir.gradle.plugintesting:discover-tests-cli:0.60.0 (1 constraints: 3805373b)
 
-com.palantir.gradle.plugintesting:gradle-plugin-testing-junit:0.59.0 (1 constraints: 40054e3b)
+com.palantir.gradle.plugintesting:gradle-plugin-testing-junit:0.60.0 (1 constraints: 3805373b)
 
-com.palantir.gradle.plugintesting:plugin-testing-core:0.59.0 (1 constraints: 40054e3b)
+com.palantir.gradle.plugintesting:plugin-testing-core:0.60.0 (1 constraints: 3805373b)
 
 info.picocli:picocli:4.7.7 (1 constraints: 2816dcdd)
 
