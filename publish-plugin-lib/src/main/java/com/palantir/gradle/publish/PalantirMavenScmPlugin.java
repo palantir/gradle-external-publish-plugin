@@ -26,7 +26,6 @@ import java.nio.file.Paths;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.inject.Inject;
-import org.gradle.api.tasks.Nested;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.logging.Logger;
@@ -36,6 +35,7 @@ import org.gradle.api.provider.ProviderFactory;
 import org.gradle.api.publish.PublishingExtension;
 import org.gradle.api.publish.maven.MavenPublication;
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin;
+import org.gradle.api.tasks.Nested;
 
 /**
  * A replacement for nebula's MavenScmPlugin that correctly converts SSH git remotes to HTTPS URLs
@@ -69,8 +69,7 @@ public abstract class PalantirMavenScmPlugin implements Plugin<Project> {
 
         CommonGitOperations commonGitOperations = getCommonGitOperations();
         Provider<String> originUrl = commonGitOperations.originUrl();
-        Provider<String> branch = commonGitOperations.branchName()
-                .orElse(commonGitOperations.fullGitHash());
+        Provider<String> branch = commonGitOperations.branchName().orElse(commonGitOperations.fullGitHash());
 
         project.getExtensions()
                 .getByType(PublishingExtension.class)
