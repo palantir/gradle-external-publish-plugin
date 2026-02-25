@@ -16,9 +16,7 @@
 
 package com.palantir.gradle.publish;
 
-import com.palantir.gradle.gitversion.GitVersionCacheService;
-import com.palantir.gradle.gitversion.VersionDetails;
-import com.palantir.logsafe.exceptions.SafeUncheckedIoException;
+import com.palantir.gradle.gitversion.CommonGitOperations;
 import groovy.util.Node;
 import groovy.util.NodeList;
 import java.io.File;
@@ -28,6 +26,7 @@ import java.nio.file.Paths;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.inject.Inject;
+import org.gradle.api.tasks.Nested;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.logging.Logger;
@@ -57,6 +56,9 @@ public abstract class PalantirMavenScmPlugin implements Plugin<Project> {
     @SuppressWarnings("JavaxInjectOnAbstractMethod") // Gradle's recommended pattern for service injection in plugins
     protected abstract ProviderFactory getProviderFactory();
 
+    @Nested
+    protected abstract CommonGitOperations.Default getCommonGitOperations();
+
     @Override
     public final void apply(Project project) {
         project.getPlugins().apply(MavenPublishPlugin.class);
@@ -65,17 +67,10 @@ public abstract class PalantirMavenScmPlugin implements Plugin<Project> {
             return;
         }
 
-        Provider<VersionDetails> versionDetails = GitVersionCacheService.getSharedGitVersionCacheService(project)
-                .map(cacheService -> cacheService.getVersionDetails(project.getProjectDir(), null));
-        Provider<String> originUrl = versionDetails.map(VersionDetails::getOriginUrl);
-        Provider<String> branch = versionDetails.map(details -> {
-            try {
-                String branchName = details.getBranchName();
-                return branchName != null ? branchName : details.getGitHashFull();
-            } catch (IOException e) {
-                throw new SafeUncheckedIoException("Failed to get branchName from GitVersionCacheService", e);
-            }
-        });
+        CommonGitOperations commonGitOperations = getCommonGitOperations();
+        Provider<String> originUrl = commonGitOperations.originUrl();
+        Provider<String> branch = commonGitOperations.branchName()
+                .orElse(commonGitOperations.fullGitHash());
 
         project.getExtensions()
                 .getByType(PublishingExtension.class)
