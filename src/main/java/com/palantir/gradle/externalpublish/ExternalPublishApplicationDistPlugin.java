@@ -54,12 +54,10 @@ public class ExternalPublishApplicationDistPlugin implements Plugin<Project> {
      * classpath.
      */
     private static final class FixWindowsStartScripts implements Action<Task> {
-        @SuppressWarnings("for-rollout:deprecation")
         @Override
         public void execute(Task task) {
             CreateStartScripts createStartScripts = (CreateStartScripts) task;
 
-            @SuppressWarnings("for-rollout:deprecation")
             String windowsScript = GFileUtils.readFile(createStartScripts.getWindowsScript());
             String modified = windowsScript.replaceFirst("(set CLASSPATH=%APP_HOME%\\\\lib\\\\).*", "$1*");
             GFileUtils.writeFile(modified, createStartScripts.getWindowsScript(), StandardCharsets.UTF_8.toString());
