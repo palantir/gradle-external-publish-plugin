@@ -18,8 +18,7 @@ package com.palantir.gradle.externalpublish;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.nio.charset.StandardCharsets;
-import org.apache.commons.io.FileUtils;
+import java.nio.file.Files;
 import org.gradle.api.Action;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
@@ -62,9 +61,9 @@ public class ExternalPublishApplicationDistPlugin implements Plugin<Project> {
 
             try {
                 String windowsScript =
-                        FileUtils.readFileToString(createStartScripts.getWindowsScript(), StandardCharsets.UTF_8);
+                        Files.readString(createStartScripts.getWindowsScript().toPath());
                 String modified = windowsScript.replaceFirst("(set CLASSPATH=%APP_HOME%\\\\lib\\\\).*", "$1*");
-                FileUtils.writeStringToFile(createStartScripts.getWindowsScript(), modified, StandardCharsets.UTF_8);
+                Files.writeString(createStartScripts.getWindowsScript().toPath(), modified);
             } catch (IOException e) {
                 throw new UncheckedIOException(e);
             }
