@@ -16,7 +16,9 @@
 
 package com.palantir.gradle.externalpublish;
 
-import java.nio.charset.StandardCharsets;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.file.Files;
 import org.gradle.api.Action;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
@@ -24,7 +26,6 @@ import org.gradle.api.Task;
 import org.gradle.api.tasks.application.CreateStartScripts;
 import org.gradle.api.tasks.bundling.Compression;
 import org.gradle.api.tasks.bundling.Tar;
-import org.gradle.util.GFileUtils;
 
 public class ExternalPublishApplicationDistPlugin implements Plugin<Project> {
 
@@ -54,15 +55,18 @@ public class ExternalPublishApplicationDistPlugin implements Plugin<Project> {
      * classpath.
      */
     private static final class FixWindowsStartScripts implements Action<Task> {
-        @SuppressWarnings("for-rollout:deprecation")
         @Override
         public void execute(Task task) {
             CreateStartScripts createStartScripts = (CreateStartScripts) task;
 
-            @SuppressWarnings("for-rollout:deprecation")
-            String windowsScript = GFileUtils.readFile(createStartScripts.getWindowsScript());
-            String modified = windowsScript.replaceFirst("(set CLASSPATH=%APP_HOME%\\\\lib\\\\).*", "$1*");
-            GFileUtils.writeFile(modified, createStartScripts.getWindowsScript(), StandardCharsets.UTF_8.toString());
+            try {
+                String windowsScript =
+                        Files.readString(createStartScripts.getWindowsScript().toPath());
+                String modified = windowsScript.replaceFirst("(set CLASSPATH=%APP_HOME%\\\\lib\\\\).*", "$1*");
+                Files.writeString(createStartScripts.getWindowsScript().toPath(), modified);
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
         }
     }
 }
