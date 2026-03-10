@@ -28,7 +28,7 @@ com.jcraft:jzlib:1.1.2 (1 constraints: df085992)
 
 com.netflix.nebula:gradle-contacts-plugin:8.1.0 (2 constraints: 65226ee2)
 
-com.netflix.nebula:gradle-info-plugin:16.2.0 (2 constraints: e4176272)
+com.netflix.nebula:gradle-info-plugin:16.2.1 (2 constraints: e5179872)
 
 com.netflix.nebula:nebula-gradle-interop:3.1.0 (1 constraints: e60f3d97)
 
