@@ -66,7 +66,7 @@ com.sun.xml.bind:jaxb-impl:2.3.2 (1 constraints: 4d16e4e3)
 
 com.sun.xml.fastinfoset:FastInfoset:1.2.15 (1 constraints: ee0d9943)
 
-commons-io:commons-io:2.19.0 (3 constraints: 2c3d1e33)
+commons-io:commons-io:2.21.0 (3 constraints: 253d4e30)
 
 gradle.plugin.org.jetbrains.gradle.plugin.idea-ext:gradle-idea-ext:1.1.8 (1 constraints: 801624f6)
 
@@ -140,13 +140,13 @@ com.gradle.publish:plugin-publish-plugin:2.0.0 (1 constraints: 0405f535)
 
 com.netflix.nebula:nebula-test:10.6.2 (2 constraints: d61de72d)
 
-com.palantir.gradle.plugintesting:configuration-cache-spec:0.66.0 (1 constraints: 3e05493b)
+com.palantir.gradle.plugintesting:configuration-cache-spec:0.67.0 (1 constraints: 3f054c3b)
 
-com.palantir.gradle.plugintesting:discover-tests-cli:0.66.0 (1 constraints: 3e05493b)
+com.palantir.gradle.plugintesting:discover-tests-cli:0.67.0 (1 constraints: 3f054c3b)
 
-com.palantir.gradle.plugintesting:gradle-plugin-testing-junit:0.66.0 (1 constraints: 3e05493b)
+com.palantir.gradle.plugintesting:gradle-plugin-testing-junit:0.67.0 (1 constraints: 3f054c3b)
 
-com.palantir.gradle.plugintesting:plugin-testing-core:0.66.0 (1 constraints: 3e05493b)
+com.palantir.gradle.plugintesting:plugin-testing-core:0.67.0 (1 constraints: 3f054c3b)
 
 info.picocli:picocli:4.7.7 (1 constraints: 2816dcdd)
 
