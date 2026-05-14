@@ -42,9 +42,9 @@ com.palantir.gradle.utils:exec:0.23.0 (1 constraints: f714a0a5)
 
 com.palantir.gradle.utils:providers:0.23.0 (1 constraints: 700ddd31)
 
-com.palantir.safe-logging:preconditions:3.14.0 (1 constraints: 3a05413b)
+com.palantir.safe-logging:preconditions:3.15.0 (1 constraints: 3b05443b)
 
-com.palantir.safe-logging:safe-logging:3.14.0 (1 constraints: 341163d1)
+com.palantir.safe-logging:safe-logging:3.15.0 (1 constraints: 351166d1)
 
 com.perforce:p4java:2015.2.1365273 (1 constraints: b7117b2f)
 
