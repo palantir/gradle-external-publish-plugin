@@ -36,7 +36,7 @@ com.netflix.nebula:nebula-publishing-plugin:23.1.0 (1 constraints: 38053f3b)
 
 com.palantir.gradle.gitversion:gradle-git-version:5.0.0 (1 constraints: 07050436)
 
-com.palantir.gradle.utils:environment-variables:0.24.0 (2 constraints: 2e1a9e14)
+com.palantir.gradle.utils:environment-variables:0.26.0 (2 constraints: 301a1a15)
 
 com.palantir.gradle.utils:exec:0.23.0 (1 constraints: f714a0a5)
 
