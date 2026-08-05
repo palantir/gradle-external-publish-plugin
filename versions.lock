@@ -1,12 +1,12 @@
 # Run ./gradlew writeVersionsLocks to regenerate this file. Blank lines are to minimize merge conflicts.
 
-com.fasterxml.jackson.core:jackson-annotations:2.21 (4 constraints: 194311e1)
+com.fasterxml.jackson.core:jackson-annotations:2.22 (4 constraints: 1d4374e2)
 
-com.fasterxml.jackson.core:jackson-core:2.21.4 (2 constraints: f529ad13)
+com.fasterxml.jackson.core:jackson-core:2.22.1 (2 constraints: f1292b13)
 
-com.fasterxml.jackson.core:jackson-databind:2.21.4 (6 constraints: ec7026a1)
+com.fasterxml.jackson.core:jackson-databind:2.22.1 (6 constraints: e6709a9b)
 
-com.fasterxml.jackson.module:jackson-module-kotlin:2.21.4 (3 constraints: a93f9c96)
+com.fasterxml.jackson.module:jackson-module-kotlin:2.22.1 (3 constraints: a93f9c96)
 
 com.github.ben-manes.caffeine:caffeine:3.2.3 (1 constraints: ca14b390)
 
@@ -132,9 +132,9 @@ org.tukaani:xz:1.9 (1 constraints: 28136f1c)
 
 cglib:cglib-nodep:3.2.2 (1 constraints: 490ded24)
 
-com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.21.4 (1 constraints: 3b053a3b)
+com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.22.1 (1 constraints: 39053a3b)
 
-com.fasterxml.woodstox:woodstox-core:7.1.1 (1 constraints: 3d174926)
+com.fasterxml.woodstox:woodstox-core:7.2.0 (1 constraints: 3d174b26)
 
 com.gradle.publish:plugin-publish-plugin:2.0.0 (1 constraints: 0405f535)
 
@@ -162,7 +162,7 @@ org.assertj:assertj-core:3.27.3 (1 constraints: de1913df)
 
 org.codehaus.groovy:groovy:3.0.24 (3 constraints: 133429dd)
 
-org.codehaus.woodstox:stax2-api:4.2.2 (2 constraints: 6a278bd2)
+org.codehaus.woodstox:stax2-api:4.3.0 (2 constraints: 682760d2)
 
 org.hamcrest:hamcrest:2.2 (1 constraints: d20cdc04)
 
