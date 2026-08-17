@@ -12,11 +12,11 @@ com.github.ben-manes.caffeine:caffeine:3.2.3 (1 constraints: ca14b390)
 
 com.google.code.gson:gson:2.10.1 (1 constraints: de1a3b54)
 
-com.google.errorprone:error_prone_annotations:2.47.0 (4 constraints: be301907)
+com.google.errorprone:error_prone_annotations:2.50.0 (4 constraints: b830e805)
 
 com.google.guava:failureaccess:1.0.3 (1 constraints: 160ae3b4)
 
-com.google.guava:guava:33.6.0-jre (5 constraints: 7c6c4107)
+com.google.guava:guava:33.7.0-jre (5 constraints: 7d6c6308)
 
 com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava (1 constraints: bd17c918)
 
@@ -118,7 +118,7 @@ org.jetbrains.kotlinx:kotlinx-serialization-json-jvm:1.6.3 (1 constraints: e6147
 
 org.jsoup:jsoup:1.16.1 (1 constraints: 7515d3b4)
 
-org.jspecify:jspecify:1.0.0 (8 constraints: 4980dcf3)
+org.jspecify:jspecify:1.0.1 (8 constraints: 4a80fdf4)
 
 org.jvnet.staxex:stax-ex:1.8 (1 constraints: 600d701a)
 
