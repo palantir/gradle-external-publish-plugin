@@ -4,25 +4,23 @@ com.fasterxml.jackson.core:jackson-annotations:2.22 (4 constraints: 1d4374e2)
 
 com.fasterxml.jackson.core:jackson-core:2.22.1 (2 constraints: f1292b13)
 
-com.fasterxml.jackson.core:jackson-databind:2.22.1 (6 constraints: e6709a9b)
+com.fasterxml.jackson.core:jackson-databind:2.22.1 (5 constraints: 3f5a6b5b)
 
-com.fasterxml.jackson.module:jackson-module-kotlin:2.22.1 (3 constraints: a93f9c96)
+com.fasterxml.jackson.module:jackson-module-kotlin:2.22.1 (4 constraints: f5526532)
 
-com.github.ben-manes.caffeine:caffeine:3.2.3 (1 constraints: ca14b390)
+com.fasterxml.woodstox:woodstox-core:7.2.0 (2 constraints: 572aca23)
 
-com.google.code.gson:gson:2.10.1 (1 constraints: de1a3b54)
+com.github.ben-manes.caffeine:caffeine:3.2.3 (2 constraints: 5128a936)
 
 com.google.errorprone:error_prone_annotations:2.50.0 (4 constraints: b830e805)
 
 com.google.guava:failureaccess:1.0.3 (1 constraints: 160ae3b4)
 
-com.google.guava:guava:33.7.1-jre (5 constraints: 7e6c8309)
+com.google.guava:guava:33.7.1-jre (4 constraints: 895068f2)
 
 com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava (1 constraints: bd17c918)
 
 com.google.j2objc:j2objc-annotations:3.1 (1 constraints: b809f1a0)
-
-com.googlecode.plist:dd-plist:1.28 (1 constraints: 5316b0df)
 
 com.jcraft:jzlib:1.1.2 (1 constraints: df085992)
 
@@ -48,15 +46,17 @@ com.palantir.safe-logging:safe-logging:3.18.0 (1 constraints: 38116fd1)
 
 com.perforce:p4java:2015.2.1365273 (1 constraints: b7117b2f)
 
-com.squareup.okhttp3:okhttp:4.4.1 (2 constraints: 82244090)
+com.squareup.okhttp3:okhttp:4.12.0 (3 constraints: 513f4348)
 
-com.squareup.okio:okio:2.4.3 (1 constraints: 530c30fd)
+com.squareup.okio:okio:3.6.0 (1 constraints: 530c38fd)
 
-com.squareup.retrofit2:converter-jackson:2.9.0 (1 constraints: 5116f4e3)
+com.squareup.okio:okio-jvm:3.6.0 (1 constraints: 500ad3b9)
 
-com.squareup.retrofit2:converter-jaxb:2.9.0 (1 constraints: 5116f4e3)
+com.squareup.retrofit2:converter-jackson:2.11.0 (1 constraints: 7a165afa)
 
-com.squareup.retrofit2:retrofit:2.10.0 (4 constraints: ad4e7963)
+com.squareup.retrofit2:converter-jaxb:2.11.0 (1 constraints: 7a165afa)
+
+com.squareup.retrofit2:retrofit:2.11.0 (4 constraints: 1e539b4d)
 
 com.sun.istack:istack-commons-runtime:3.0.7 (1 constraints: bf0db535)
 
@@ -66,25 +66,49 @@ com.sun.xml.bind:jaxb-impl:2.3.2 (1 constraints: 4d16e4e3)
 
 com.sun.xml.fastinfoset:FastInfoset:1.2.15 (1 constraints: ee0d9943)
 
-commons-io:commons-io:2.22.0 (3 constraints: 263db530)
+commons-codec:commons-codec:1.19.0 (1 constraints: a40f8887)
 
-gradle.plugin.org.jetbrains.gradle.plugin.idea-ext:gradle-idea-ext:1.1.8 (1 constraints: 801624f6)
+commons-io:commons-io:2.22.0 (3 constraints: 203d942f)
 
 io.github.gradle-nexus:publish-plugin:2.0.0 (1 constraints: 0405f535)
 
+io.github.pdvrieze.xmlutil:core-jvmcommon:0.91.3 (2 constraints: 0b2e03e5)
+
+io.github.pdvrieze.xmlutil:serialization-jvm:0.91.3 (1 constraints: a81ad31c)
+
+io.smallrye.common:smallrye-common-annotation:2.6.0 (1 constraints: c30d1c36)
+
+io.smallrye.common:smallrye-common-constraint:2.6.0 (4 constraints: 8a413caf)
+
+io.smallrye.common:smallrye-common-cpu:2.6.0 (2 constraints: 731c91d2)
+
+io.smallrye.common:smallrye-common-expression:2.4.0 (1 constraints: b10e835a)
+
+io.smallrye.common:smallrye-common-function:2.6.0 (2 constraints: 5c215988)
+
+io.smallrye.common:smallrye-common-net:2.4.0 (1 constraints: b10e835a)
+
+io.smallrye.common:smallrye-common-os:2.4.0 (1 constraints: b10e835a)
+
+io.smallrye.common:smallrye-common-ref:2.4.0 (1 constraints: b10e835a)
+
+io.undertow:undertow-core:2.3.22.Final (1 constraints: bc1c2bc3)
+
 javax.activation:javax.activation-api:1.2.0 (2 constraints: fc17908f)
 
-javax.xml.bind:jaxb-api:2.4.0-b180830.0359 (4 constraints: 6c4c2972)
+javax.xml.bind:jaxb-api:2.3.1 (3 constraints: 2f3370c6)
 
 net.java.dev.jna:jna:5.16.0 (1 constraints: c40c2318)
 
 net.java.dev.jna:jna-platform:5.16.0 (1 constraints: 1e1073a7)
 
-org.apache.commons:commons-compress:1.26.0 (2 constraints: ab1e9196)
+org.apache.commons:commons-compress:1.28.0 (2 constraints: ad1ed796)
 
-org.apache.commons:commons-lang3:3.14.0 (1 constraints: a10f8587)
+org.apache.commons:commons-lang3:3.18.0 (1 constraints: a50f9187)
 
 org.atteo:evo-inflector:1.3 (1 constraints: 2213691c)
+
+org.codehaus.woodstox:stax2-api:4.3.0 (2 constraints: 682760d2)
 
 org.glassfish.jaxb:jaxb-runtime:2.3.1 (1 constraints: 42155c9f)
 
@@ -92,29 +116,45 @@ org.glassfish.jaxb:txw2:2.3.1 (1 constraints: bb0db335)
 
 org.immutables:value:2.12.2 (1 constraints: 3905373b)
 
+org.jboss.logging:jboss-logging:3.6.1.Final (7 constraints: c4838fcc)
+
+org.jboss.threads:jboss-threads:3.7.0.Final (2 constraints: 5c1ab543)
+
+org.jboss.xnio:xnio-api:3.8.16.Final (2 constraints: d71a2474)
+
+org.jboss.xnio:xnio-nio:3.8.16.Final (1 constraints: f80dc53d)
+
 org.jdom:jdom2:2.0.6.1 (1 constraints: a3156dca)
 
-org.jetbrains:annotations:26.1.0 (5 constraints: 4864fe1e)
+org.jetbrains:annotations:26.1.0 (4 constraints: 9c4d01e2)
 
 org.jetbrains.intellij:blockmap:1.0.5 (1 constraints: 4c16d9e3)
 
-org.jetbrains.intellij:plugin-repository-rest-client:2.0.39 (1 constraints: b416e40c)
+org.jetbrains.intellij:plugin-repository-rest-client:2.0.50 (1 constraints: a21abd1c)
 
-org.jetbrains.intellij.plugins:gradle-intellij-plugin:1.17.3 (1 constraints: 3e05413b)
+org.jetbrains.intellij.platform:intellij-platform-gradle-plugin:2.11.0 (1 constraints: 3605323b)
 
-org.jetbrains.intellij.plugins:structure-base:3.269 (2 constraints: dd2b90b1)
+org.jetbrains.intellij.plugins:structure-base:3.320 (2 constraints: ba2f36a0)
 
-org.jetbrains.intellij.plugins:structure-intellij:3.269 (1 constraints: 8c1642f6)
+org.jetbrains.intellij.plugins:structure-ide:3.320 (1 constraints: 751a2c02)
 
-org.jetbrains.kotlin:kotlin-stdlib:2.2.0 (5 constraints: 3d5552b1)
+org.jetbrains.intellij.plugins:structure-intellij:3.320 (2 constraints: 912d3daa)
 
-org.jetbrains.kotlin:kotlin-stdlib-common:1.9.22 (3 constraints: 9737664b)
+org.jetbrains.kotlin:kotlin-stdlib:2.3.0 (7 constraints: f58411e3)
 
-org.jetbrains.kotlinx:kotlinx-serialization-core-jvm:1.6.3 (1 constraints: 601622e8)
+org.jetbrains.kotlin:kotlin-stdlib-common:1.9.10 (1 constraints: fc0b24f9)
 
-org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3 (1 constraints: 80162ef6)
+org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.9.10 (1 constraints: e210ffd2)
 
-org.jetbrains.kotlinx:kotlinx-serialization-json-jvm:1.6.3 (1 constraints: e614798a)
+org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.10 (2 constraints: 8118c1c5)
+
+org.jetbrains.kotlinx:kotlinx-serialization-core:1.10.0 (1 constraints: 9d1ab31c)
+
+org.jetbrains.kotlinx:kotlinx-serialization-core-jvm:1.10.0 (4 constraints: 985098e2)
+
+org.jetbrains.kotlinx:kotlinx-serialization-json:1.10.0 (1 constraints: 9d1ab31c)
+
+org.jetbrains.kotlinx:kotlinx-serialization-json-jvm:1.10.0 (1 constraints: 0e15779f)
 
 org.jsoup:jsoup:1.16.1 (1 constraints: 7515d3b4)
 
@@ -122,9 +162,11 @@ org.jspecify:jspecify:1.0.1 (9 constraints: 8c8d94fc)
 
 org.jvnet.staxex:stax-ex:1.8 (1 constraints: 600d701a)
 
-org.slf4j:slf4j-api:2.0.7 (1 constraints: 85133c43)
-
 org.tukaani:xz:1.9 (1 constraints: 28136f1c)
+
+org.wildfly.client:wildfly-client-config:1.0.1.Final (1 constraints: 940c6308)
+
+org.wildfly.common:wildfly-common:2.0.0 (2 constraints: 581ab548)
 
 
 
@@ -133,8 +175,6 @@ org.tukaani:xz:1.9 (1 constraints: 28136f1c)
 cglib:cglib-nodep:3.2.2 (1 constraints: 490ded24)
 
 com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.22.1 (1 constraints: 39053a3b)
-
-com.fasterxml.woodstox:woodstox-core:7.2.0 (1 constraints: 3d174b26)
 
 com.gradle.publish:plugin-publish-plugin:2.0.0 (1 constraints: 0405f535)
 
@@ -165,8 +205,6 @@ org.apiguardian:apiguardian-api:1.1.2 (6 constraints: 5366ce6e)
 org.assertj:assertj-core:3.27.7 (2 constraints: 62276bd1)
 
 org.codehaus.groovy:groovy:3.0.24 (1 constraints: 9c18228f)
-
-org.codehaus.woodstox:stax2-api:4.3.0 (2 constraints: 682760d2)
 
 org.hamcrest:hamcrest:3.0 (1 constraints: d10cdd04)
 
