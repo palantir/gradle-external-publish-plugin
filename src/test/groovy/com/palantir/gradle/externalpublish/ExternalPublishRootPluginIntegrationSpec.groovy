@@ -54,7 +54,7 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
                 dependencies {
                     classpath 'com.gradle.publish:plugin-publish-plugin:1.3.0'
                     classpath 'com.palantir.gradle.conjure:gradle-conjure:5.51.0'
-                    classpath 'com.palantir.gradle.consistentversions:gradle-consistent-versions:2.26.0'
+                    classpath 'com.palantir.gradle.consistentversions:gradle-consistent-versions:3.18.0'
                 }
             }
 
