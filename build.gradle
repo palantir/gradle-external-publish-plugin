@@ -75,6 +75,9 @@ dependencies {
     testImplementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml'
 
     gradlePluginForTesting "com.gradle.publish:plugin-publish-plugin"
+    testImplementation 'org.spockframework:spock-core'
+    testCompileOnly 'junit:junit'
+    testRuntimeOnly 'org.spockframework:spock-junit4'
 }
 
 

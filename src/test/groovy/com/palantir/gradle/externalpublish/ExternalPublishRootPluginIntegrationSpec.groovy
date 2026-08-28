@@ -18,6 +18,7 @@ package com.palantir.gradle.externalpublish
 
 import com.google.common.collect.ImmutableList
 import com.palantir.gradle.utils.environmentvariables.EnvironmentVariables
+import groovy.xml.XmlParser
 import org.gradle.api.Project
 
 import java.util.jar.Attributes
@@ -37,6 +38,8 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
     private static final List<String> NON_CONFLICTING_PROJECT_TYPES = PUBLISH_PROJECT_TYPES - 'dist'
 
     def setup() {
+        jvmArguments = ['-Djakarta.xml.bind.JAXBContextFactory=org.glassfish.jaxb.runtime.v2.JAXBContextFactory']
+
         // language=gradle
         settingsFile << '''
             rootProject.name = 'root'
@@ -53,7 +56,7 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
                 dependencies {
                     classpath 'com.gradle.publish:plugin-publish-plugin:1.3.0'
                     classpath 'com.palantir.gradle.conjure:gradle-conjure:5.51.0'
-                    classpath 'com.palantir.gradle.consistentversions:gradle-consistent-versions:2.26.0'
+                    classpath 'com.palantir.gradle.consistentversions:gradle-consistent-versions:3.18.0'
                 }
             }
 
