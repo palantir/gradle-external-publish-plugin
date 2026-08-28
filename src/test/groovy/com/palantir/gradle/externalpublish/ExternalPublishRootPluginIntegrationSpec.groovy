@@ -38,8 +38,6 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
     private static final List<String> NON_CONFLICTING_PROJECT_TYPES = PUBLISH_PROJECT_TYPES - 'dist'
 
     def setup() {
-        jvmArguments = ['-Djakarta.xml.bind.JAXBContextFactory=org.glassfish.jaxb.runtime.v2.JAXBContextFactory']
-
         // language=gradle
         settingsFile << '''
             rootProject.name = 'root'
