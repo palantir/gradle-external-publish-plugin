@@ -178,18 +178,31 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
         if (type == 'intellij') {
             // language=gradle
             subprojectBuildGradle << '''
-                intellij{
-                    pluginName = 'foo'
-                    updateSinceUntilBuild = true
-                    version = "2024.1"
-                    plugins = ['java', 'org.jetbrains.plugins.gradle']
+                repositories {
+                    intellijPlatform {
+                        defaultRepositories()
+                    }
                 }
-                
-                patchPluginXml {
-                    pluginDescription = "bar"
-                    sinceBuild = '213'
-                    untilBuild = ''
-                } 
+
+                dependencies {
+                    intellijPlatform {
+                        intellijIdeaCommunity('2024.1') {
+                            useInstaller = false
+                        }
+                        bundledPlugins('com.intellij.java', 'org.jetbrains.plugins.gradle')
+                    }
+                }
+
+                intellijPlatform {
+                    pluginConfiguration {
+                        name = 'foo'
+                        description = 'bar'
+                        ideaVersion {
+                            sinceBuild = '213'
+                            untilBuild = provider { null }
+                        }
+                    }
+                }
             '''.stripIndent(true)
         }
 
