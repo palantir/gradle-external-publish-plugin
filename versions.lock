@@ -10,13 +10,13 @@ com.fasterxml.jackson.module:jackson-module-kotlin:2.22.1 (4 constraints: f55265
 
 com.fasterxml.woodstox:woodstox-core:7.2.0 (2 constraints: 572aca23)
 
-com.github.ben-manes.caffeine:caffeine:3.2.3 (2 constraints: 5128a936)
+com.github.ben-manes.caffeine:caffeine:3.2.4 (2 constraints: 5228e036)
 
-com.google.errorprone:error_prone_annotations:2.50.0 (4 constraints: b830e805)
+com.google.errorprone:error_prone_annotations:2.50.0 (4 constraints: be30da07)
 
 com.google.guava:failureaccess:1.0.3 (1 constraints: 160ae3b4)
 
-com.google.guava:guava:33.7.1-jre (4 constraints: 895068f2)
+com.google.guava:guava:33.7.1-jre (4 constraints: 8c5025f4)
 
 com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava (1 constraints: bd17c918)
 
@@ -32,13 +32,15 @@ com.netflix.nebula:nebula-gradle-interop:3.1.0 (1 constraints: e60f3d97)
 
 com.netflix.nebula:nebula-publishing-plugin:23.1.0 (1 constraints: 38053f3b)
 
-com.palantir.gradle.gitversion:gradle-git-version:5.0.0 (1 constraints: 07050436)
+com.palantir.gradle.gitversion:gradle-git-version:5.1.0 (1 constraints: 08050736)
 
-com.palantir.gradle.utils:environment-variables:0.28.0 (2 constraints: 321a9615)
+com.palantir.gradle.utils:environment-variables:0.28.0 (2 constraints: 371aa515)
 
-com.palantir.gradle.utils:exec:0.23.0 (1 constraints: f714a0a5)
+com.palantir.gradle.utils:exec:0.24.0 (1 constraints: f814a3a5)
 
-com.palantir.gradle.utils:providers:0.23.0 (1 constraints: 700ddd31)
+com.palantir.gradle.utils:providers:0.24.0 (1 constraints: 710de031)
+
+com.palantir.gradle.utils:safe-exec-commandline:0.24.0 (1 constraints: 710de031)
 
 com.palantir.safe-logging:preconditions:3.18.0 (1 constraints: 3e054d3b)
 
