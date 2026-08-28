@@ -38,6 +38,11 @@ class ExternalPublishRootPluginIntegrationSpec extends IntegrationSpec {
     private static final List<String> NON_CONFLICTING_PROJECT_TYPES = PUBLISH_PROJECT_TYPES - 'dist'
 
     def setup() {
+        // IntelliJ Platform Gradle Plugin 2.18 upgrades plugin-structure from JAXB 2 to Jakarta JAXB.
+        // Nebula's embedded runner can still load the JAXB 2 factory from the test worker, which is not a Jakarta
+        // JAXBContextFactory. Forking prevents this test-only classloader collision and matches a normal Gradle invocation.
+        fork = true
+
         // language=gradle
         settingsFile << '''
             rootProject.name = 'root'
