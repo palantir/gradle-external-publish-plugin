@@ -1,5 +1,0 @@
-type: improvement
-improvement:
-  description: disable javaLanucher for test task
-  links:
-  - https://github.com/palantir/gradle-external-publish-plugin/pull/460

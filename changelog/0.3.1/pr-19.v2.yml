@@ -1,4 +1,0 @@
-type: fix
-fix:
-  description: If a descriptions does not exist on a project, set a dummy description to placate Sonatype.
-  links: []

@@ -1,4 +1,0 @@
-type: fix
-fix:
-  description: Bump out connect and nexus transitioning timeouts to 10 mins.
-  links: []

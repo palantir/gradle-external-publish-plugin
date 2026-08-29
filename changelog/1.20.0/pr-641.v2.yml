@@ -1,5 +1,0 @@
-type: improvement
-improvement:
-  description: just do normal com.netflix.nebula.maven-publish include now
-  links:
-  - https://github.com/palantir/gradle-external-publish-plugin/pull/641

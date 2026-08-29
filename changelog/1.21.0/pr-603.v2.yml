@@ -1,5 +1,0 @@
-type: improvement
-improvement:
-  description: add plugin id metadata to pom file
-  links:
-  - https://github.com/palantir/gradle-external-publish-plugin/pull/603

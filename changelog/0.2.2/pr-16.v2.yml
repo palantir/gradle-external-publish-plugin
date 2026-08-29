@@ -1,4 +1,0 @@
-type: fix
-fix:
-  description: Ensure Sonatype plugin is executed at the right time so publishes work.
-  links: []
