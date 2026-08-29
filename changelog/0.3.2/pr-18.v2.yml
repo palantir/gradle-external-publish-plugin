@@ -1,4 +1,0 @@
-type: fix
-fix:
-  description: Add a task to verify that the signing key is correctly created.
-  links: []

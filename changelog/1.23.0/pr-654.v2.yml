@@ -1,6 +1,0 @@
-type: fix
-fix:
-  description: Fix OSS publishing by ensuring we're putting `url` and `scm.url` in
-    pom.
-  links:
-  - https://github.com/palantir/gradle-external-publish-plugin/pull/654

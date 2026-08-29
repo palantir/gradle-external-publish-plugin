@@ -1,4 +1,0 @@
-type: fix
-fix:
-  description: Ensure when `./gradlew publish` is run, the artifact is published to sonatype.
-  links: []

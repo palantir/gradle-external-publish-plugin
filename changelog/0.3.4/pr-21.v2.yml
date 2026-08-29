@@ -1,4 +1,0 @@
-type: feature
-feature:
-  description: The `com.palantir.external-publish-application-dist` plugin can be used to publish application distributions.
-  links: []

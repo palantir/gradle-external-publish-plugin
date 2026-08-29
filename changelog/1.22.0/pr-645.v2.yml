@@ -1,5 +1,0 @@
-type: improvement
-improvement:
-  description: move plugin metadata code to library
-  links:
-  - https://github.com/palantir/gradle-external-publish-plugin/pull/645
