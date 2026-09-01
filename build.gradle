@@ -73,8 +73,13 @@ dependencies {
     testImplementation 'org.rauschig:jarchivelib'
     testImplementation 'com.fasterxml.jackson.core:jackson-databind'
     testImplementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml'
+    testImplementation 'org.spockframework:spock-core'
+    testCompileOnly 'junit:junit'
+    testRuntimeOnly 'org.spockframework:spock-junit4'
 
     gradlePluginForTesting "com.gradle.publish:plugin-publish-plugin"
+    gradlePluginForTesting 'com.palantir.gradle.conjure:gradle-conjure:5.51.0'
+    gradlePluginForTesting 'com.palantir.gradle.consistentversions:gradle-consistent-versions:2.26.0'
 }
 
 
@@ -159,4 +164,3 @@ jdks {
 gradleTestUtils {
     configurationCacheEnabled = true
 }
-
