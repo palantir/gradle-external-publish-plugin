@@ -8,7 +8,7 @@ buildscript {
         classpath 'com.palantir.jakartapackagealignment:jakarta-package-alignment:0.6.0'
         classpath 'com.palantir.gradle.jdks:gradle-jdks:0.82.0'
         classpath 'com.palantir.gradle.jdkslatest:gradle-jdks-latest:0.32.0'
-        classpath 'com.palantir.gradle.plugintesting:gradle-plugin-testing:0.75.0'
+        classpath 'com.palantir.gradle.plugintesting:gradle-plugin-testing:0.76.0'
         classpath 'com.palantir.gradle.externalpublish:gradle-external-publish-plugin:1.37.0'
         classpath 'com.palantir.gradle.failure-reports:gradle-failure-reports:1.21.0'
         classpath 'com.palantir.javaformat:gradle-palantir-java-format:2.97.0'
@@ -73,8 +73,13 @@ dependencies {
     testImplementation 'org.rauschig:jarchivelib'
     testImplementation 'com.fasterxml.jackson.core:jackson-databind'
     testImplementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml'
+    testImplementation 'org.spockframework:spock-core'
+    testCompileOnly 'junit:junit'
+    testRuntimeOnly 'org.spockframework:spock-junit4'
 
     gradlePluginForTesting "com.gradle.publish:plugin-publish-plugin"
+    gradlePluginForTesting 'com.palantir.gradle.conjure:gradle-conjure:5.51.0'
+    gradlePluginForTesting 'com.palantir.gradle.consistentversions:gradle-consistent-versions:2.26.0'
 }
 
 
@@ -159,4 +164,3 @@ jdks {
 gradleTestUtils {
     configurationCacheEnabled = true
 }
-
