@@ -65,7 +65,7 @@ dependencies {
     implementation 'com.netflix.nebula:nebula-publishing-plugin'
     implementation 'com.netflix.nebula:gradle-info-plugin'
     implementation 'com.palantir.gradle.utils:environment-variables'
-    implementation 'org.jetbrains.intellij.plugins:gradle-intellij-plugin'
+    implementation 'org.jetbrains.intellij.platform:intellij-platform-gradle-plugin'
 
     testImplementation gradleTestKit()
     testImplementation 'com.google.guava:guava'
@@ -159,4 +159,3 @@ jdks {
 gradleTestUtils {
     configurationCacheEnabled = true
 }
-
