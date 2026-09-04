@@ -18,6 +18,7 @@ package com.palantir.gradle.externalpublish
 
 import com.google.common.collect.ImmutableList
 import com.palantir.gradle.utils.environmentvariables.EnvironmentVariables
+import groovy.xml.XmlParser
 import org.gradle.api.Project
 
 import java.util.jar.Attributes
