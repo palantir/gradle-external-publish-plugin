@@ -94,7 +94,7 @@ io.smallrye.common:smallrye-common-os:2.4.0 (1 constraints: b10e835a)
 
 io.smallrye.common:smallrye-common-ref:2.4.0 (1 constraints: b10e835a)
 
-io.undertow:undertow-core:2.3.22.Final (1 constraints: bc1c2bc3)
+io.undertow:undertow-core:2.3.25.Final (1 constraints: bc1c2bc3)
 
 javax.activation:javax.activation-api:1.2.0 (2 constraints: fc17908f)
 
