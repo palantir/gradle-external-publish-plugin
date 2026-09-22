@@ -82,6 +82,7 @@ final class ExternalPublishBasePlugin implements Plugin<Project> {
                 .forEach(plugin -> project.getPluginManager().apply(plugin));
     }
 
+    @SuppressWarnings("for-rollout:ReferenceEquality")
     private void linkWithRootProject() {
         if (project == project.getRootProject()) {
             // Can only do this on the root project as the Nexus plugin uses afterEvaluates which do not get run if

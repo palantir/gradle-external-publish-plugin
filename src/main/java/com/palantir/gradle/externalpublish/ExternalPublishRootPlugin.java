@@ -32,6 +32,7 @@ import org.gradle.api.tasks.TaskProvider;
 public class ExternalPublishRootPlugin implements Plugin<Project> {
     private Project rootProject;
 
+    @SuppressWarnings("for-rollout:ReferenceEquality")
     @Override
     public final void apply(Project rootProjectVal) {
         this.rootProject = rootProjectVal;
