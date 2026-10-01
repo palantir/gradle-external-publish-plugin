@@ -2,11 +2,11 @@
 
 com.fasterxml.jackson.core:jackson-annotations:2.22 (4 constraints: 1d4374e2)
 
-com.fasterxml.jackson.core:jackson-core:2.22.1 (2 constraints: f1292b13)
+com.fasterxml.jackson.core:jackson-core:2.22.3 (2 constraints: f529b113)
 
-com.fasterxml.jackson.core:jackson-databind:2.22.1 (5 constraints: 3f5a6b5b)
+com.fasterxml.jackson.core:jackson-databind:2.22.3 (5 constraints: 455a835f)
 
-com.fasterxml.jackson.module:jackson-module-kotlin:2.22.1 (4 constraints: f5526532)
+com.fasterxml.jackson.module:jackson-module-kotlin:2.22.3 (4 constraints: f5526532)
 
 com.fasterxml.woodstox:woodstox-core:7.2.0 (2 constraints: 572aca23)
 
@@ -176,7 +176,7 @@ org.wildfly.common:wildfly-common:2.0.0 (2 constraints: 581ab548)
 
 cglib:cglib-nodep:3.2.2 (1 constraints: 490ded24)
 
-com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.22.1 (1 constraints: 39053a3b)
+com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.22.3 (1 constraints: 3b053c3b)
 
 com.gradle.publish:plugin-publish-plugin:2.0.0 (1 constraints: 0405f535)
 
