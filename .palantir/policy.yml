@@ -1,0 +1,338 @@
+# This policy should not be moved, as it will break all current consumers
+policy:
+  approval:
+    - and:
+        - disapprove all 'WIP' PRs
+        - or:
+            - and:
+                - maintainers have approved any AI commits
+                - or:
+                    - one maintainer has approved (PR contributors not allowed)
+                    - two maintainers have approved
+                - or:
+                    - security approval
+                    - trusted bot
+            - and:
+                - trusted bot
+                - trusted bot approval required
+                - lines added to baseline-class-uniqueness.lock require maintainer approval
+            - excavator/elevator only touched allowed files
+            - changelog only and contributor approval
+            - major incident responder approval
+            - approval is deferred to later
+            - perf squad has approved a telemetry PR
+            - BE Infra exception-only do-not-request
+            - BE Infra fixing excavator exception
+
+  disapproval:
+    requires:
+      organizations: ["foundry", "gotham", "foundations"]
+
+approval_rules:
+  - name: maintainers have approved any AI commits
+    if:
+      has_contributor_in:
+        users: ["svc-cybernit"]
+    options:
+      invalidate_on_push: true
+      ignore_edited_comments: true
+      ignore_commits_by:
+        organizations: ["foundry"]
+    requires:
+      count: 1
+      permissions: ["admin", "maintain"]
+  - name: disapprove all 'WIP' PRs
+    if:
+      has_labels:
+        - WIP
+    requires:
+      count: 1
+      users: []
+    options:
+      ignore_edited_comments: true
+
+  - name: security approval
+    if:
+      changed_files:
+        paths:
+          - "^.*/security\\.lock$"
+    options:
+      allow_contributor: true
+      invalidate_on_push: true
+      ignore_edited_comments: true
+    requires:
+      count: 1
+      teams: ["foundry/auth-infra"]
+
+  # Solution to workaround giving teams Maintain on everything
+  - name: BE Infra exception-only do-not-request
+    options:
+      allow_contributor: false
+      ignore_edited_comments: true
+    requires:
+      count: 1
+      teams: ["foundry/Infrastructure"]
+
+  # Allow Foundations to unblock Excavator fixes.
+  - name: BE Infra fixing excavator exception
+    options:
+      allow_contributor: false
+      ignore_edited_comments: true
+    requires:
+      count: 1
+      teams: ["foundry/Infrastructure"]
+    if:
+      has_author_in:
+        users: ["elevator[bot]", "svc-excavator"]
+
+  - name: one maintainer has approved (PR contributors not allowed)
+    options:
+      allow_contributor: false
+      ignore_edited_comments: true
+    requires:
+      count: 1
+      permissions: ["admin", "maintain"]
+
+  - name: two maintainers have approved
+    options:
+      allow_contributor: true
+      ignore_edited_comments: true
+    requires:
+      count: 2
+      permissions: ["admin", "maintain"]
+
+  - name: changelog only and contributor approval
+    options:
+      allow_contributor: true
+      ignore_edited_comments: true
+    requires:
+      count: 1
+      permissions: ["admin", "maintain"]
+    if:
+      only_changed_files:
+        paths:
+          - "changelog/@unreleased/.*\\.yml"
+
+  - name: major incident responder approval
+    options:
+      allow_contributor: true
+      ignore_edited_comments: true
+    requires:
+      count: 2
+      teams: ["foundry/major-incident-responders"]
+
+  # DEVTOOLS-6623: approve-later is only triggerable by users with "maintain"
+  # https://github.palantir.build/devtools/approve-later/commit/e847b7cefeec5aa2371951b3e80614cda8d4f6ad
+  - name: approval is deferred to later
+    requires:
+      count: 1
+      users: ["approve-later[bot]"]
+    options:
+      ignore_edited_comments: true
+
+  - name: trusted bot
+    requires:
+      count: 0
+    if:
+      from_branch:
+        pattern: "^(elevator|go|roomba)/.+$"
+      has_valid_signatures_by_keys:
+        key_ids:
+          - "B6102294F1E22A77" # Excavator
+          - "EB0BBD59BBF13140" # Elevator
+          - "AD51919C7E64B957" # Nit
+
+    options:
+      ignore_edited_comments: true
+  - name: trusted bot approval required
+    requires:
+      count: 1
+      permissions: ["admin", "maintain"]
+    if:
+      changed_files:
+        paths:
+          - "^\\.policy.yml$"
+          - "^\\.palantir/policy\\.yml$"
+
+    options:
+      ignore_edited_comments: true
+  # Trusted bots may remove entries from (or delete) baseline-class-uniqueness.lock
+  # without approval, but any added lines require a maintainer.
+  - name: lines added to baseline-class-uniqueness.lock require maintainer approval
+    requires:
+      count: 1
+      permissions: ["admin", "maintain"]
+    if:
+      modified_lines:
+        additions: "> 0"
+        files:
+          include:
+            - "^.*/baseline-class-uniqueness\\.lock$"
+  - name: excavator/elevator only touched allowed files
+    requires:
+      count: 0
+    if:
+      has_author_in:
+        users: ["elevator[bot]", "svc-excavator", "svc-nit"]
+      only_changed_files:
+        paths:
+          - "^changelog/@unreleased/.*\\.yml$"
+          - "^\\.baseline/.*$"
+          - "^\\.circleci/.*$"
+          - "^\\.docker-compose-rule\\.yml$"
+          - "^\\.github/workflows/.*$"
+          - "^.*gradle$"
+          - "^gradle/wrapper/.*"
+          - "^gradlew$"
+          - "^gradlew.bat$"
+          - "^gradle.properties$"
+          - "^package.json$"
+          - "^package-lock.json$"
+          - "^pnpm-lock.yaml$"
+          - "^settings.gradle$"
+          - "^versions.props$"
+          - "^versions.lock$"
+          - "^(.+/)?dev-env-products.lock$"
+          - "^.*/product-dependencies.lock$"
+          - "^.*/product\\.lock$"
+          - "^.*/schema-versions.lock$"
+          - "^(.+/)?metrics.md$" # markdown generated by https://github.com/palantir/metric-schema
+          - "managed-dockerfiles\\.lock$"
+          - "^.*/monitors.md$" # markdown generated by https://github.palantir.build/foundry/hyperion
+          # gradle-conjure produces some .gitignore files which must be checked-in to ensure directories don't get deleted
+          - ".*/\\.gitignore$"
+          - "^.*/junit-platform.properties$"
+          # We update this file as a hack to get hotfix PRs to autorelease
+          - "^.palantir/excavator.yml$"
+          - "^.gitignore$" # Gitignore manager excavator: https://github.palantir.build/excavator-checks/excavator-gradle/issues/2986
+          - "^.github/PULL_REQUEST_TEMPLATE.md$" # PR template excavator: https://github.palantir.build/foundry/standards/issues/265
+          # Magritte plugins store dependencies in a seperate lock file. See MagrittePluginPluginIntegrationSpec in Foundry/gradle-magritte
+          - "^.*/bundle.lock"
+          # foundry-state-machines can update SVG visualiazations
+          - "^.*/state-machines/.*\\.svg$"
+          - "^conan.lock$" # Used by gradle-conan
+          - "^.*yarn.lock$"
+          - "^.*pnpm-lock.yaml$"
+          - "^.*package.json$"
+          - "^.*package-lock.json$"
+          # Go stuff
+          - "^\\.palantir/go-version$"
+          - "^vendor/.*$"
+          - "^Gopkg.toml$"
+          - "^Gopkg.lock$"
+          - "^go.mod$"
+          - "^go.sum$"
+          - "^godel/config/dist-plugin.yml$"
+          - "^godel/config/godel.properties$"
+          - "^godel/config/godel.yml$"
+          - "^godelw$"
+          - "^(.+/)?zz_generated_refreshables\\.go$"
+          - "^(.+/)?zz_generated_sls_diagnostics\\.go$"
+          - "^(.+/)?.+\\.conjure\\.go$"
+          - "^(.+/)?.+\\.conjure\\.json$"
+          - "^(.+/)?.+_mocks\\.go$"
+          # Godel SLS dister embedded hyperion cli upgrades
+          - "^internal/hyperioncli/.*$"
+          # Alpine docker image upgrades
+          - "^manageddockerbuilder/dockerimages.go$"
+          # Python infra
+          - "^(.+/)?hatchw$"
+          - "^(.+/)?hatch-config.toml$"
+          - "^(.+/)?pyproject.managed.jinja2.toml$"
+          - "^(.+/)?pyproject.user.jinja2.toml$"
+          - "^(.+/)?pyproject.toml$"
+          - "^(.+/)?.python-version$"
+          - "^hatch-managed-excavator/hatch_managed_excavator/resources/version-pins-external.yaml$"
+          - "^hatch-managed-excavator/hatch_managed_excavator/resources/version-pins-internal.yaml$"
+          - "^hatch-managed-excavator/hatch_managed_excavator/resources/version-policy.yaml$"
+          # Rust infra
+          - "^(.+/)?Cargo.toml$"
+          - "^Cargo.lock$"
+          - "^rust-toolchain.toml$"
+          # HashiDeployW
+          - "^hashideployw$"
+          # We only allow changes to excavator.yml and changelog.yml
+          # Policy or eggtimer changes are more dangerous and should be approved by a maintainer
+          - "^.palantir/autorelease.yml$"
+          - "^.palantir/changelog.yml$"
+          - "^.palantir/bulldozer.yml$"
+          - "^.palantir/excavator.yml$"
+          - "^.palantir/label-maker.yml$"
+          - "^.palantir/product-settings.yml$"
+          # This file will be created by a central stalebot excavator (https://github.palantir.build/foundry/standards/issues/64)
+          - "^.github/stale.yml$"
+          # Hyperion dashboards
+          - "^.+/dashboards/.+\\.json$"
+          # Monitor translation
+          - "^rules/info.txt$"
+          - "^rules/.+\\.yml$"
+          # dev-env overrides
+          - "^gofigure.custom.yml$"
+          - "^.*docker-compose.custom.yml$"
+          # dockerfiles
+          - "^.*Dockerfile$"
+          # RTFM
+          - "^.*docs/.*$"
+          # depot configuration
+          - "^depot/dist/sls/deployment/configuration\\.yml$"
+          # Rubix manifests
+          - "^application[^/]*/manifests/.+\\.yml$"
+          - "^application[^/]*/[^/]*/static-pods/.+\\.yml$"
+          - "^application[^/]*/[^/]*/manifests/.+\\.yml$"
+          - "^generator/templates/.+\\.yml$"
+          - "^generator/templates/.+\\.yml\\.tpl$"
+          - "^godel/config/.+\\.yml$"
+          - "^helm-charts?/(.+/)?templates/.+\\.y(a?)ml$"
+          - "^helm-charts?/(.+/)?values\\.y(a?)ml$"
+          - "^helm-charts?/(.+/)?tests/.+\\.y(a?)ml$" # generated by excavator roomba/helm-unittest
+          - "^helm-charts?/(.+/)?.+\\.tpl$"
+          # Helm chart dependency bumps: excavator helm-chart-dependencies-bump
+          # edits Chart.yaml (the version), regenerates Chart.lock, and re-vendors
+          # the dependency archives under charts/*.tgz
+          - "^(.+/)?Chart\\.ya?ml$"
+          - "^(.+/)?Chart\\.lock$"
+          - "^(.+/)?charts/.+\\.tgz$"
+          # Certificates
+          - "^.*\\.crt$"
+          - "^.*\\.cer$"
+          - "^.*\\.cert$"
+          - "^.*\\.pem$"
+          - "^.*\\.key$"
+          - "^.*\\.jks$"
+          # security.go allows changing certs in deployability/axiom for gofigure
+          - "^.*/security\\.go$"
+          # Allow automated readme updates
+          - "^readme.md$"
+          - "^README.md$"
+          - "^(.+/)?src/main/audit/.*\\.yml$" # audit files read by https://github.com/palantir/audit-schema
+          # Allow updates to windsurf rules
+          - "^\\.windsurfrules$"
+          - "^\\.windsurf/rules/.*$"
+          # Allow updates to claude.md
+          - "^claude.md$"
+          - "^CLAUDE.md$"
+          - "^CLAUDE.MD$"
+          # Allow updates to agents.md
+          - "^agents.md$"
+          - "^AGENTS.md$"
+          - "^AGENTS.MD$"
+          # FIDO MDS fallback JWT, refreshed by excavator https://github.palantir.build/excavator-checks/excavator-go/pull/3305
+          - "^stargate/src/main/resources/fido-mds-fallback\\.jwt$"
+          # Enable auto-update of rust-gateway-api - follows api-gateway releases
+          - "^gateway-api/api-v2.json$"
+          - "^gateway-api/src/generated/.+\\.rs$"
+      has_valid_signatures_by_keys:
+        key_ids:
+          - "B6102294F1E22A77" # Excavator
+          - "EB0BBD59BBF13140" # Elevator
+          - "AD51919C7E64B957" # Nit
+
+    options:
+      ignore_edited_comments: true
+  - name: perf squad has approved a telemetry PR
+    options:
+      allow_contributor: true
+      ignore_edited_comments: true
+    requires:
+      count: 2
+      teams: ["foundry/perf-squad"]
