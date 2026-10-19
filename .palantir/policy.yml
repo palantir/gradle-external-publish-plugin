@@ -167,7 +167,7 @@ approval_rules:
         additions: "> 0"
         files:
           include:
-            - "^.*/baseline-class-uniqueness\\.lock$"
+            - "^.*baseline-class-uniqueness\\.lock$"
   - name: excavator/elevator only touched allowed files
     requires:
       count: 0
