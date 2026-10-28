@@ -30,7 +30,7 @@ com.netflix.nebula:gradle-info-plugin:16.3.0 (2 constraints: e5179a72)
 
 com.netflix.nebula:nebula-gradle-interop:3.1.0 (1 constraints: e60f3d97)
 
-com.netflix.nebula:nebula-publishing-plugin:23.1.0 (1 constraints: 38053f3b)
+com.netflix.nebula:nebula-publishing-plugin:23.2.0 (1 constraints: 3905423b)
 
 com.palantir.gradle.gitversion:gradle-git-version:5.1.0 (1 constraints: 08050736)
 
