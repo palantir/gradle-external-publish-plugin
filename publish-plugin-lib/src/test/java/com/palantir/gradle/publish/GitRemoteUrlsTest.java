@@ -18,16 +18,16 @@ package com.palantir.gradle.publish;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.Optional;
 import java.util.stream.Stream;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-class PalantirMavenScmPluginTest {
+class GitRemoteUrlsTest {
     @ParameterizedTest
     @MethodSource("expected_urls")
     void calculates_correct_https_urls_from_origin(TestCase testCase) {
-        assertThat(PalantirMavenScmPlugin.calculateUrlFromOriginUrl(testCase.input))
-                .isEqualTo(testCase.expectedOutput);
+        assertThat(GitRemoteUrls.toHttpsUrl(testCase.input)).isEqualTo(testCase.expectedOutput);
     }
 
     static Stream<TestCase> expected_urls() {
@@ -50,8 +50,8 @@ class PalantirMavenScmPluginTest {
                 // Enterprise GitHub (subdomains)
                 new TestCase("https://github.example.com/org/repo.git", "https://github.example.com/org/repo"),
                 new TestCase("git@github.example.com:org/repo.git", "https://github.example.com/org/repo"),
-                // Invalid URL passthrough
-                new TestCase("invalid_url", "invalid_url"),
+                // Unparsable URLs
+                new TestCase("invalid_url", null),
                 // GitLab nested groups/subgroups
                 new TestCase("git@gitlab.com:org/subgroup/repo.git", "https://gitlab.com/org/subgroup/repo"),
                 new TestCase("https://gitlab.com/org/subgroup/repo.git", "https://gitlab.com/org/subgroup/repo"));
@@ -59,16 +59,16 @@ class PalantirMavenScmPluginTest {
 
     private static final class TestCase {
         private final String input;
-        private final String expectedOutput;
+        private final Optional<String> expectedOutput;
 
         TestCase(String input, String expectedOutput) {
             this.input = input;
-            this.expectedOutput = expectedOutput;
+            this.expectedOutput = Optional.ofNullable(expectedOutput);
         }
 
         @Override
         public String toString() {
-            return String.format("%s -> %s", input, expectedOutput);
+            return String.format("%s -> %s", input, expectedOutput.orElse("<empty>"));
         }
     }
 }

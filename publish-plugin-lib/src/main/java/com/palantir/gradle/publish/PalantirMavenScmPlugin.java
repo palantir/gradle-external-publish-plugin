@@ -23,8 +23,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import javax.inject.Inject;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
@@ -47,10 +45,6 @@ public abstract class PalantirMavenScmPlugin implements Plugin<Project> {
     private static final Logger log = Logging.getLogger(PalantirMavenScmPlugin.class);
 
     private static final Object SCM_BRANCH_KEY = "originBranch";
-
-    private static final Pattern ORIGIN_URL_PATTERN = Pattern.compile(
-            "((git|ssh|https?):(//))?(\\w+@)?(?<domainOwner>[\\w.@\\-~]+)([:\\\\/])(?<repo>[\\w.@:/\\-~]+?)"
-                    + "(\\.git)?(/)?");
 
     @Inject
     @SuppressWarnings("JavaxInjectOnAbstractMethod") // Gradle's recommended pattern for service injection in plugins
@@ -76,7 +70,7 @@ public abstract class PalantirMavenScmPlugin implements Plugin<Project> {
                 .publications(publications -> publications
                         .withType(MavenPublication.class)
                         .configureEach(mavenPublication -> mavenPublication.pom(mavenPom -> {
-                            mavenPom.getUrl().set(originUrl.map(PalantirMavenScmPlugin::calculateUrlFromOriginUrl));
+                            mavenPom.getUrl().set(GitRemoteUrls.toHttpsUrl(originUrl));
                             mavenPom.scm(mavenPomScm -> mavenPomScm.getUrl().set(originUrl));
                             mavenPom.withXml(xmlProvider -> {
                                 Node rootNode = xmlProvider.asNode();
@@ -87,16 +81,6 @@ public abstract class PalantirMavenScmPlugin implements Plugin<Project> {
                                 propertiesNode.appendNode(SCM_BRANCH_KEY, branch.get());
                             });
                         })));
-    }
-
-    static String calculateUrlFromOriginUrl(String originUrl) {
-        Matcher matcher = ORIGIN_URL_PATTERN.matcher(originUrl);
-
-        if (matcher.matches()) {
-            return String.format("https://%s/%s", matcher.group("domainOwner"), matcher.group("repo"));
-        } else {
-            return originUrl;
-        }
     }
 
     private static boolean insideTmpDir(File rootDir) {
