@@ -24,13 +24,13 @@ com.google.j2objc:j2objc-annotations:3.1 (1 constraints: b809f1a0)
 
 com.jcraft:jzlib:1.1.2 (1 constraints: df085992)
 
-com.netflix.nebula:gradle-contacts-plugin:8.1.0 (2 constraints: 65226ee2)
+com.netflix.nebula:gradle-contacts-plugin:8.2.0 (2 constraints: 672274e2)
 
-com.netflix.nebula:gradle-info-plugin:17.1.1 (2 constraints: e5179a72)
+com.netflix.nebula:gradle-info-plugin:17.1.1 (2 constraints: e817a372)
 
 com.netflix.nebula:nebula-gradle-interop:3.1.0 (1 constraints: e60f3d97)
 
-com.netflix.nebula:nebula-publishing-plugin:23.2.0 (1 constraints: 3905423b)
+com.netflix.nebula:nebula-publishing-plugin:24.0.0 (1 constraints: 3805413b)
 
 com.palantir.gradle.gitversion:gradle-git-version:5.2.0 (1 constraints: 09050a36)
 
